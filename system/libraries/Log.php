@@ -89,12 +89,12 @@ class CI_Log {
 		// Pull in ClearOS logging infrastructure
 		require_once('/usr/clearos/framework/config.php');
 
-		if (!ClearOsFramework::$debug_mode) 
+		if (!ClearOsConfig::$debug_mode) 
 			return FALSE;
 
 		// See ClearOsError.php for explanation of error code handling
-		require_once(ClearOsFramework::$framework_path . '/shared/ClearOsLogger.php');
-		require_once(ClearOsFramework::$framework_path . '/shared/ClearOsError.php');
+		require_once(ClearOsConfig::$framework_path . '/shared/ClearOsLogger.php');
+		require_once(ClearOsConfig::$framework_path . '/shared/ClearOsError.php');
 
 		if ($level === 'ERROR') {
 			$clearos_level = ClearOsError::CODE_ERROR;

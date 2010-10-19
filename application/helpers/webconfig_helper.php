@@ -41,7 +41,7 @@ require_once('/usr/clearos/framework/config.php');
 
 clearos_load_library('base/Webconfig');
 
-// require_once(ClearOsFramework::$framework_path . '/application/libraries/Webconfig.php');
+// require_once(ClearOsConfig::$framework_path . '/application/libraries/Webconfig.php');
 
 ///////////////////////////////////////////////////////////////////////////////
 // C O N S T A N T S
@@ -153,7 +153,7 @@ define('WEBCONFIG_DIALOG_ICON_WARNING', WebSetIcon('dialog_icon_warning.png', fa
 
 function WebSetIcon($icon, $is_imgtag = true)
 {
-	if (isset($_SESSION['system_template']) && file_exists(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/images/icons/16x16/$icon"))
+	if (isset($_SESSION['system_template']) && file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/images/icons/16x16/$icon"))
 		$template = $_SESSION['system_template'];
 	else
 		$template = "base";
@@ -205,11 +205,11 @@ function WebButton($name, $text, $image, $options = null)
 	if (empty($options['type']))
 		$optionlist .= " type='submit'";
 
-	if (file_exists(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.inc")) {
-		include(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.inc");
+	if (file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.inc")) {
+		include(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.inc");
 		return $button;
-	} else if (file_exists(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.inc")) {
-		include(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.inc");
+	} else if (file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.inc")) {
+		include(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.inc");
 		return $button;
 	} else {
 		return "$image <input class='button' name='$name' value=\"". $text . "\" $optionlist />\n";
@@ -359,7 +359,7 @@ function WebButtonNext($name, $step = null, $options = null)
 
 function WebTab($tabtitle, $tabinfo, $active)
 {
-	require(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/tabs.inc");
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/tabs.inc");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -429,13 +429,13 @@ function WebDialogIntro($title, $icon, $summary)
 	$large_icon = "icon-$basename.png";
 	$small_icon = "icon-$basename.png";
 
-	$large_icon_override = ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/images/icons/32x32/" . $large_icon;
-	$small_icon_override = ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/images/icons/16x16/" . $small_icon;
+	$large_icon_override = ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/images/icons/32x32/" . $large_icon;
+	$small_icon_override = ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/images/icons/16x16/" . $small_icon;
 
 	$page['large_icon'] = (file_exists($large_icon_override)) ? $large_icon_override : "/images/icons/32x32/$large_icon";
 	$page['small_icon'] = (file_exists($small_icon_override)) ? $small_icon_override : "/images/icons/16x16/$small_icon";
 
-	require(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/summary.inc");
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/summary.inc");
 
 	if (WEBCONFIG_CONSOLE)
 		echo "<hr>";
@@ -554,7 +554,7 @@ function WebDialogBox($class, $title, $icon, $blurb)
 	// MS Internet Explorer bug... sigh.
 	$icon = WebReplacePngTags($icon);
 
-	require(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/dialog.inc");
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/dialog.inc");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -563,14 +563,14 @@ function WebDialogBox($class, $title, $icon, $blurb)
 
 function WebChartLegend($title, $rows, $headers = "", $width = "100%")
 {
-	require(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chartlegend.inc");
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chartlegend.inc");
 
 	return $legend;
 }
 
 function WebChart($title, $type, $width, $height, $data, $series_color, $bgcolor, $explode, $url='')
 {
-	require(ClearOsFramework::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chart.inc");
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chart.inc");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -608,8 +608,8 @@ function WebHeader($title, $layout = 'default', $customhead = "", $onload = "")
 
 ";
 
-	if (file_exists(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.inc'))
-		require(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.inc');
+	if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.inc'))
+		require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.inc');
 
 	echo "\n	<!-- Page-specific Headers -->\n";
 
@@ -623,20 +623,20 @@ function WebHeader($title, $layout = 'default', $customhead = "", $onload = "")
 	$segments = explode('/', $_SERVER['PHP_SELF']);
 	$app = $segments[2];
 
-	if (isset(ClearOsFramework::$clearos_devel_versions['app'][$app]))
-		$app_version = ClearOsFramework::$clearos_devel_versions['app'][$app] . '/';
-	else if (isset(ClearOsFramework::$clearos_devel_versions['app']['default']))
-		$app_version = ClearOsFramework::$clearos_devel_versions['app']['default'] . '/';
+	if (isset(ClearOsConfig::$clearos_devel_versions['app'][$app]))
+		$app_version = ClearOsConfig::$clearos_devel_versions['app'][$app] . '/';
+	else if (isset(ClearOsConfig::$clearos_devel_versions['app']['default']))
+		$app_version = ClearOsConfig::$clearos_devel_versions['app']['default'] . '/';
 	else
 		$app_version = "";
 
 	$js_path = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.js.php';
 	$css_path = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.css';
 
-	if (file_exists(ClearOsFramework::$apps_path . '/' . $js_path))
+	if (file_exists(ClearOsConfig::$apps_path . '/' . $js_path))
 		echo "	<script type='text/javascript' src='/modules" . $js_path . "'></script>\n";
 
-	if (file_exists(ClearOsFramework::$apps_path . '/' . $css_path))
+	if (file_exists(ClearOsConfig::$apps_path . '/' . $css_path))
 		echo "	<link type='text/css' rel='stylesheet' href='/modules" . $css_path ."'>";
 
 	echo "</head>\n";
@@ -664,14 +664,14 @@ function WebHeaderLayout($layout)
 		";
 
 	} else if ($layout == 'default') {
-		if (file_exists(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_default.inc"))
-			require(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_default.inc");
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_default.inc"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_default.inc");
 	} else if ($layout == 'splash') {
-		if (file_exists(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_splash.inc"))
-			require(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_splash.inc");
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_splash.inc"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_splash.inc");
 	} else if ($layout == 'wizard') {
-		if (file_exists(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_wizard.inc"))
-			require(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_wizard.inc");
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_wizard.inc"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_wizard.inc");
 	}
 }
 
@@ -689,14 +689,14 @@ function WebFooter($layout = 'default', $copyright = '')
 	if (WEBCONFIG_CONSOLE) {
 		echo "<br /></td></tr></table></body></html>";
 	} else if ($layout == 'default') {
-		if (file_exists(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_default.inc"))
-			require(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_default.inc");
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_default.inc"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_default.inc");
 	} else if ($layout == 'splash') {
-		if (file_exists(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_splash.inc"))
-			require(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_splash.inc");
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_splash.inc"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_splash.inc");
 	} else if ($layout == 'wizard') {
-		if (file_exists(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_wizard.inc"))
-			require(ClearOsFramework::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_wizard.inc");
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_wizard.inc"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_wizard.inc");
 	}
 }
 
@@ -888,8 +888,8 @@ function WebAuthenticateDisplayLogin($username, $password, $warning = null)
 	WebHeaderLayout("splash");
 
 
-	if (file_exists(ClearOsFramework::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.inc")) {
-		require(ClearOsFramework::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.inc");
+	if (file_exists(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.inc")) {
+		require(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.inc");
 	} else {
 		if (! empty($warning))
 			WebDialogWarning($warning);
@@ -1275,7 +1275,7 @@ function WebMenuFetch()
 
 function WebMenuWizard($menuitems, $highlight)
 {
-	require(ClearOsFramework::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/wizard.inc");
+	require(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/wizard.inc");
 }
 
 function WebWizardNavigation($action, $previous, $next, $overridenext = null)
@@ -1333,10 +1333,10 @@ function WebReplacePngTags($png, $alt = "")
 	if (!isset($_SERVER['HTTP_USER_AGENT']) || preg_match("/opera/i", $_SERVER['HTTP_USER_AGENT']))
 		return "<img src='$png' alt='$alt' align='top' />";
 
-	if (!file_exists(ClearOsFramework::$htdocs_path . "/$png"))
+	if (!file_exists(ClearOsConfig::$htdocs_path . "/$png"))
 		return "<img src='/images/icon-intro.png' alt='$alt' align='middle' />";
 
-	list($width, $height, $type, $attr) = getimagesize(ClearOsFramework::$htdocs_path . "/$png");
+	list($width, $height, $type, $attr) = getimagesize(ClearOsConfig::$htdocs_path . "/$png");
 
 	$png = "<img alt='$alt' align='top' src='/templates/base/images/transparent.png' style='width: $width" . "px; height: $height" . "px; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src=$png, sizingMethod=scale)' />";
 
