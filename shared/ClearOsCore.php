@@ -48,16 +48,16 @@ require_once('ClearOsLogger.php');
 // C O N F I G U R A T I O N
 ///////////////////////////////////////////////////////////////////////////////
 
-// The default framework configuration/environment is defined in 
-// ClearOsConfig.php.  If you are in development mode, a file defined by the 
-// CLEAROS_CONFIG environment variable can be used to override the defaults.
+// Configuration is handled by the bootstrap.php process.
 
-if (isset($_ENV['CLEAROS_CONFIG'])) {
-	if (!file_exists($_ENV['CLEAROS_CONFIG']))
-		die('You have defined a CLEAROS_CONFIG file, but the file is missing: ' . $_ENV['CLEAROS_CONFIG'] . '\n');
-	else
-		require_once($_ENV['CLEAROS_CONFIG']);
-}
+// FIXME: COMMON_CORE_DIR remove references to this
+define('COMMON_CORE_DIR', ClearOsConfig::$framework_path . '/application/libraries');
+
+// FIXME: move to ClearOsConfig if still required
+define("COMMON_TEMP_DIR", "/usr/webconfig/tmp");
+
+// FIXME - transition only... remove
+define('COMMON_DEBUG_MODE', true);
 
 ///////////////////////////////////////////////////////////////////////////////
 // T I M E  Z O N E
@@ -76,11 +76,11 @@ if (isset($_ENV['CLEAROS_CONFIG'])) {
 // FIXME: this might be a temporary hack... test it
 @ini_set('include_path', '.');
 
-if (ClearOsFramework::$debug_mode) {
+if (ClearOsConfig::$debug_mode) {
 	@ini_set('display_errors', TRUE); 
 	@ini_set('display_startup_error', TRUE);
 	@ini_set('log_errors', TRUE);
-	@ini_set('error_log', ClearOsFramework::$debug_log_path . '/framework_log');
+	@ini_set('error_log', ClearOsConfig::$debug_log_path . '/framework_log');
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ function clearos_load_language($langfile)
 	if (isset($clearos_lang)) {
 		$clearos_lang->load($langfile);
 	} else {
-		require_once(ClearOsFramework::$framework_path . '/system/core/CodeIgniter.php');
+		require_once(ClearOsConfig::$framework_path . '/system/core/CodeIgniter.php');
 		$codeigniter =& get_instance();
 		$codeigniter->lang->load($langfile);
 	}
@@ -136,14 +136,14 @@ function clearos_load_library($fulllibrary) {
 	list($app, $library) = split('/', $fulllibrary);
 
 	// FIXME: point to online document on what's going on here
-	if (!empty(ClearOsFramework::$clearos_devel_versions['app'][$app]))
-		$version = ClearOsFramework::$clearos_devel_versions['app'][$app];
-	else if (!empty(ClearOsFramework::$clearos_devel_versions['app']['default']))
-		$version = ClearOsFramework::$clearos_devel_versions['app']['default'];
+	if (!empty(ClearOsConfig::$clearos_devel_versions['app'][$app]))
+		$version = ClearOsConfig::$clearos_devel_versions['app'][$app];
+	else if (!empty(ClearOsConfig::$clearos_devel_versions['app']['default']))
+		$version = ClearOsConfig::$clearos_devel_versions['app']['default'];
 	else
 		$version = '';
 
-	require_once(ClearOsFramework::$apps_path . '/' . $app . '/' . $version . '/libraries/' . $library . '.php');
+	require_once(ClearOsConfig::$apps_path . '/' . $app . '/' . $version . '/libraries/' . $library . '.php');
 }
 
 ///////////////////////////////////////////////////////////////////////////////
