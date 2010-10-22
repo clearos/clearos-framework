@@ -13,6 +13,13 @@
  * @filesource
  */
 
+///////////////////////////////////////////////////////////////////////////////
+// B O O T S T R A P 
+///////////////////////////////////////////////////////////////////////////////
+
+$bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
+require_once($bootstrap . '/bootstrap.php');
+
 // ------------------------------------------------------------------------
 
 /**
@@ -87,8 +94,6 @@ class CI_Log {
 		}
 
 		// Pull in ClearOS logging infrastructure
-		require_once('/usr/clearos/framework/config.php');
-
 		if (!ClearOsConfig::$debug_mode) 
 			return FALSE;
 

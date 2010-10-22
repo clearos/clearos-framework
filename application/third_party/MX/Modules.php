@@ -1,7 +1,11 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
-/* Pull in ClearOS configuration */
-require_once('/usr/clearos/framework/config.php');
+///////////////////////////////////////////////////////////////////////////////
+// B O O T S T R A P
+///////////////////////////////////////////////////////////////////////////////
+    
+$bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
+require_once($bootstrap . '/bootstrap.php');
 
 // The router needs the relative path to the "apps" directory. 
 // Counting the number of slashes in the paths should work.
