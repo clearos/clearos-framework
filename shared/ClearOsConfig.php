@@ -83,7 +83,7 @@ class ClearOsConfig {
 	 * @var string debug log path
 	 */
 
-	public static $debug_log_path = '/var/log/webconfig/';
+	public static $debug_log = '/var/log/webconfig/framework_log';
 
 	/**
 	 * @var array version handler for app developers

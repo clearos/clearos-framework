@@ -60,8 +60,7 @@ if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
 
 	// Debug mode
 	ClearOsConfig::$debug_mode = TRUE;
-// FIXME: change this to a log file
-	ClearOsConfig::$debug_log_path = '/tmp';
+	ClearOsConfig::$debug_log = '/tmp/clearos_framework_' . $_ENV['USER'] . '_log';
 
 	// Versioning for development and testing
 // FIXME: auto-detect default version based on dirname(__FILE__);

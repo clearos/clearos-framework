@@ -80,7 +80,7 @@ if (ClearOsConfig::$debug_mode) {
 	@ini_set('display_errors', TRUE); 
 	@ini_set('display_startup_error', TRUE);
 	@ini_set('log_errors', TRUE);
-	@ini_set('error_log', ClearOsConfig::$debug_log_path . '/framework_log');
+	@ini_set('error_log', ClearOsConfig::$debug_log);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
