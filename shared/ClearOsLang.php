@@ -59,19 +59,26 @@ class ClearOsLang {
 	/**
 	 * Loads a language file.
 	 *
-	 * @param string $app application name
+	 * @param string $langtarget application language target
 	 * @return true if load was successful
 	 */
-	function load($app = '')
+	function load($langtarget = '')
 	{
-		$langfile = $app . "_lang.php";
-
-		if (in_array($langfile, $this->is_loaded, TRUE))
+		if (in_array($langtarget, $this->is_loaded, TRUE))
 			return;
 
-		// FIXME - pull in language
-		// $deft_lang = ( ! isset($config['language'])) ? 'english' : $config['language'];
-		// $idiom = ($deft_lang == '') ? 'english' : $deft_lang;
+		// Support short form as well as full path
+		// - load('date') -- which is equivalent to load('date/date')
+		// - load('base/daemon')
+
+		if (preg_match('/\//', $langtarget)) {
+			list($app, $langfile) = preg_split('/\//', $langtarget, 2);
+		} else {
+			$app = $langtarget;
+			$langfile = $langtarget;
+		}
+
+		$langfile .= '_lang.php';
 
 		// Grab the development version 
 		if (!empty(ClearOsConfig::$clearos_devel_versions['app'][$app]))
@@ -81,16 +88,21 @@ class ClearOsLang {
 		else
 			$version = '';
 
+		// FIXME - pull in language
+		// $deft_lang = ( ! isset($config['language'])) ? 'english' : $config['language'];
+		// $idiom = ($deft_lang == '') ? 'english' : $deft_lang;
+		$language = 'en_US';
+
 		// Load the language file
-		$langpath = ClearOsConfig::$apps_path . '/' . $app . '/' . $version . "/language/en_US/$langfile";
+		$langpath = ClearOsConfig::$apps_path . '/' . $app . '/' . $version . "/language/$language/$langfile";
 
 		if (file_exists($langpath)) {
-			include(ClearOsConfig::$apps_path . '/' . $app . '/' . $version . "/language/en_US/$langfile");
+			include($langpath);
 		} else {
 			// FIXME?
 		}
 
-		$this->is_loaded[] = $langfile;
+		$this->is_loaded[] = $langtarget;
 		$this->language = array_merge($this->language, $lang);
 
 		unset($lang);
