@@ -20,6 +20,17 @@
  * @copyright Copyright 2008 - 2010 EllisLab, Inc., 2010 ClearFoundation
  */
 
+///////////////////////////////////////////////////////////////////////////////
+// B O O T S T R A P
+///////////////////////////////////////////////////////////////////////////////
+
+$bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
+require_once($bootstrap . '/bootstrap.php');
+
+///////////////////////////////////////////////////////////////////////////////
+// C L A S S
+///////////////////////////////////////////////////////////////////////////////
+
 /**
  * ClearOS language handling class. 
  *
@@ -48,12 +59,12 @@ class ClearOsLang {
 	/**
 	 * Loads a language file.
 	 *
-	 * @param string $langfile language file
+	 * @param string $app application name
 	 * @return true if load was successful
 	 */
-	function load($langfile = '')
+	function load($app = '')
 	{
-		$langfile = $langfile . "_lang.php";
+		$langfile = $app . "_lang.php";
 
 		if (in_array($langfile, $this->is_loaded, TRUE))
 			return;
@@ -62,21 +73,28 @@ class ClearOsLang {
 		// $deft_lang = ( ! isset($config['language'])) ? 'english' : $config['language'];
 		// $idiom = ($deft_lang == '') ? 'english' : $deft_lang;
 
+		// Grab the development version 
+		if (!empty(ClearOsConfig::$clearos_devel_versions['app'][$app]))
+			$version = ClearOsConfig::$clearos_devel_versions['app'][$app];
+		else if (!empty(ClearOsConfig::$clearos_devel_versions['app']['default']))
+			$version = ClearOsConfig::$clearos_devel_versions['app']['default'];
+		else
+			$version = '';
+
 		// Load the language file
-//		if (file_exists(APPPATH.'language/'.$idiom.'/'.$langfile)) {
-	//		include(APPPATH.'language/'.$idiom.'/'.$langfile);
-			include("/home/peter/devel/clearos/apps/date/trunk/language/english/$langfile");
-//		} else {
-			// FIXME
-//		}
+		$langpath = ClearOsConfig::$apps_path . '/' . $app . '/' . $version . "/language/en_US/$langfile";
+
+		if (file_exists($langpath)) {
+			include(ClearOsConfig::$apps_path . '/' . $app . '/' . $version . "/language/en_US/$langfile");
+		} else {
+			// FIXME?
+		}
 
 		$this->is_loaded[] = $langfile;
 		$this->language = array_merge($this->language, $lang);
 
 		unset($lang);
 	}
-
-	// --------------------------------------------------------------------
 
 	/**
 	 * Fetch a single line of text from the language array
