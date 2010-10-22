@@ -54,7 +54,7 @@ if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
 	// Paths
 	$basedir = preg_replace('/\/framework\/.*/', '', dirname(__FILE__));
 	ClearOsConfig::$apps_path = $basedir . '/apps';
-	ClearOsConfig::$framework_path = $basedir . '/framework/trunk';
+	ClearOsConfig::$framework_path = $basedir . '/framework';
 	ClearOsConfig::$htdocs_path = $basedir . '/framework/trunk/htdocs';
 	ClearOsConfig::$themes_path = $basedir . '/themes';
 
@@ -65,6 +65,7 @@ if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
 	// Versioning for development and testing
 // FIXME: auto-detect default version based on dirname(__FILE__);
 	ClearOsConfig::$clearos_devel_versions['app']['default'] = 'trunk';
+	ClearOsConfig::$clearos_devel_versions['framework'] = 'trunk';
 }
 
 

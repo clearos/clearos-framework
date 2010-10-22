@@ -7,10 +7,17 @@
 $bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
 require_once($bootstrap . '/bootstrap.php');
 
+// Whoa... this is non-intuitive.
+//
 // The router needs the relative path to the "apps" directory. 
 // Counting the number of slashes in the paths should work.
 // Then we add 3 directories to get from here down to the framework root.
-$relative_count = substr_count(ClearOsConfig::$framework_path, '/') - substr_count(ClearOsConfig::$apps_path, '/') + 3;
+
+$framework_path = ClearOsConfig::$framework_path;
+if (!empty(ClearOsConfig::$clearos_devel_versions['framework']))
+	$framework_path .= '/trunk';
+
+$relative_count = substr_count($framework_path, '/') - substr_count(ClearOsConfig::$apps_path, '/') + 3;
 $apps_path_name = preg_replace('/.*\//', "", ClearOsConfig::$apps_path);
 $relative_path = str_repeat('../', $relative_count) . $apps_path_name . '/';
 
