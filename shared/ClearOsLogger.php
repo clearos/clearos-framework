@@ -99,6 +99,10 @@ class ClearOsLogger
 		// Specify log line format
 		$logline = sprintf("$typestring: %s: %s (%d): %s", $errstring, preg_replace("/.*\//", "", $file), $line, $errmsg);
 
+		// FIXME -- ignore strict errors coming out of CodeIgniter for now.
+		if (($errno === E_STRICT) && preg_match('/\/framework\//', $file))
+			return;
+
 		// Perform extra goodness in debug mode
 		if (COMMON_DEBUG_MODE) {
 			// Append timestamp to log line
