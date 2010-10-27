@@ -13,7 +13,7 @@
 */
 
 $config['base_url'] = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http");
-$config['base_url'] .= "://".$_SERVER['HTTP_HOST'] . "/admin/";
+$config['base_url'] .= "://".$_SERVER['HTTP_HOST'] . "/app/";
 
 /*
 |--------------------------------------------------------------------------
