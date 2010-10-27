@@ -1,4 +1,20 @@
 <?php
+/*
+ *---------------------------------------------------------------
+/* ClearOS BOOTSTRAP 
+ *---------------------------------------------------------------
+ *
+ * This is a bit ugly, but it allows developers to easily change
+ * their version environment fairly easily.  The command line
+ * libraries use the standard Linux environment variables.  For
+ * security reasons, we can't count on these being set in the
+ * Apache/PHP engine.  Instead, the SetEnv parameter in the
+ * Apache virtual host configlet is used.  We map this to the 
+ * standard $_ENV global in PHP.
+ */
+
+if (isset($_SERVER['CLEAROS_BOOTSTRAP']))
+	$_ENV['CLEAROS_BOOTSTRAP'] = '/home/peter/clearos/webconfig/framework/trunk/shared';
 
 /*
  *---------------------------------------------------------------
