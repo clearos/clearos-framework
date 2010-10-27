@@ -51,19 +51,37 @@ require_once('ClearOsConfig.php');
 //------------------------------------------------------------------------
 
 if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
+
+	// Find a unique debug name to avoid log collisions.  Base on path.
+	//----------------------------------------------------------------
+
+	$debugname = preg_replace('/\/webconfig\/.*/', '', dirname(__FILE__));
+	// Remove "home" and "clearos" paths if they exist
+	$debugname = preg_replace('/(home)|(clearos)/', '', $debugname);
+	// Remove slashes
+	$debugname = preg_replace('/\//', '', $debugname);
+
 	// Paths
+	//----------------------------------------------------------------
+	// FIXME: trunk should not be hardcoded.
+
 	$basedir = preg_replace('/\/framework\/.*/', '', dirname(__FILE__));
+
 	ClearOsConfig::$apps_path = $basedir . '/apps';
 	ClearOsConfig::$framework_path = $basedir . '/framework';
 	ClearOsConfig::$htdocs_path = $basedir . '/framework/trunk/htdocs';
 	ClearOsConfig::$themes_path = $basedir . '/themes';
 
 	// Debug mode
+	//----------------------------------------------------------------
+
 	ClearOsConfig::$debug_mode = TRUE;
-	ClearOsConfig::$debug_log = '/tmp/clearos_framework_' . $_ENV['USER'] . '_log';
+	ClearOsConfig::$debug_log = '/tmp/clearos_framework_' . $debugname . '_log';
 
 	// Versioning for development and testing
-// FIXME: auto-detect default version based on dirname(__FILE__);
+	//----------------------------------------------------------------
+	// FIXME: auto-detect default version based on dirname(__FILE__);
+
 	ClearOsConfig::$clearos_devel_versions['app']['default'] = 'trunk';
 	ClearOsConfig::$clearos_devel_versions['framework'] = 'trunk';
 }
