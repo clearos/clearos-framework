@@ -4,21 +4,20 @@
 //
 // Copyright 2002-2010 ClearFoundation
 //
-///////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////
 //
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// as published by the Free Software Foundation; either version 2
-// of the License, or (at your option) any later version.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
 //
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
+// GNU Lesser General Public License for more details.
 //
-// You should have received a copy of the GNU General Public License
-// along with this program; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+// You should have received a copy of the GNU Lesser General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -27,10 +26,10 @@
  *
  * Webconfig is used to give the web-interface a consistent look and feel.
  *
- * @author {@link http://www.pointclark.net/ Point Clark Networks}
- * @license http://www.gnu.org/copyleft/gpl.html GNU Public License
- * @package Webconfig
- * @copyright Copyright 2003-2006, Point Clark Networks
+ * @package Framework
+ * @author {@link http://www.foundation.com/ ClearFoundation}
+ * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @copyright Copyright 2010 ClearFoundation
  */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -46,7 +45,135 @@ require_once($bootstrap . '/bootstrap.php');
 
 clearos_load_library('base/Webconfig');
 
-// require_once(ClearOsConfig::$framework_path . '/application/libraries/Webconfig.php');
+///////////////////////////////////////////////////////////////////////////////
+// H E A D E R  /  F O O T E R
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Returns the HTML head section.
+ *
+ * @param string $title page title
+ * @return string HTML head section
+ */
+
+function clearos_html_head($title)
+{
+	// Adding hostname to the title is handy when managing multiple systems
+	//---------------------------------------------------------------------
+
+	if ($_SESSION['system_hostname'])
+		$title = $_SESSION['system_hostname'] . " - " . $title;
+
+	// Add page-specific head links.  For example, 
+	// To support different versions running in parallel, determine the app
+	// version e.g. /app/dhcp/htdocs, /app/dhcp/tags/5.1/htdocs, etc.
+	//-------------------------------------------------------------------------
+
+	// FIXME: move the versioning stuff to ClearOSCore
+	$theme_path = "/themes/clearos6x/trunk";
+
+	// FIXME: move the versioning stuff to ClearOSCore
+
+	$page_head = '';
+
+	$segments = explode('/', $_SERVER['PHP_SELF']);
+	$app = $segments[2];
+
+	if (isset(ClearOsConfig::$clearos_devel_versions['app'][$app]))
+		$app_version = ClearOsConfig::$clearos_devel_versions['app'][$app] . '/';
+	else if (isset(ClearOsConfig::$clearos_devel_versions['app']['default']))
+		$app_version = ClearOsConfig::$clearos_devel_versions['app']['default'] . '/';
+	else
+		$app_version = "";
+
+	$js_path = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.js.php';
+	$css_path = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.css';
+
+	if (file_exists(ClearOsConfig::$apps_path . '/' . $js_path))
+		$page_head .= "<script type='text/javascript' src='/approot" . $js_path . "'></script>\n";
+
+	if (file_exists(ClearOsConfig::$apps_path . '/' . $css_path))
+		$page_head .= "<link type='text/css' href='/approot" . $css_path ."' rel='stylesheet'>";
+
+	// Write out the head
+	//-------------------
+
+	echo "
+<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>
+<html dir='" . $_SESSION['system_textdir'] . "'>
+
+<!-- HEAD START -->
+<head>
+
+<!-- Basic Head Information -->
+<title>$title</title>
+<meta http-equiv='Content-Type' content='text/html; charset=" . $_SESSION['system_charset'] . "'>
+
+<!-- Jquery Head-->
+<script type='text/javascript' src='/js/jquery-1.4.2.min.js'></script>
+<script type='text/javascript' src='/js/jquery-ui-1.8.5.custom.min.js'></script>
+
+<!-- Template Head -->
+";
+
+	if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.php'))
+		require_once(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.php');
+
+echo "
+<!-- Page-specific Head -->
+$page_head
+</head>
+<!-- HEAD END -->
+
+";
+}
+
+/**
+ * Returns the page header.
+ *
+ * @param string $layout page layout
+ * @return string HTML head section
+ */
+
+function clearos_header($layout)
+{
+	// FIXME: move the versioning stuff to ClearOSCore
+	$theme_path = "/themes/clearos6x/trunk";
+
+	if ($layout == 'default') {
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/header_default.php"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/header_default.php");
+	} else if ($layout == 'splash') {
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/header_splash.php"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/header_splash.php");
+	}
+}
+
+/**
+ * Returns the page footer
+ *
+ * @param string $layout page layout
+ * @return string HTML head section
+ */
+
+function clearos_footer($layout = 'default')
+{
+	if ($layout == 'default') {
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/footer_default.php"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/footer_default.php");
+	} else if ($layout == 'splash') {
+		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/footer_splash.php"))
+			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/footer_splash.php");
+	}
+}
+
+
+
+
+
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 // C O N S T A N T S
@@ -65,6 +192,9 @@ session_start();
 
 if (!isset($_SESSION['system_session_started']))
 	WebSetSession();
+
+// FIXME:
+$_SESSION['system_template'] = 'clearos6x/trunk';
 
 // Pull in global locale
 // require_once(GlobalGetLanguageTemplate(COMMON_CORE_DIR . '/api/Locale.class.php'));
@@ -210,11 +340,11 @@ function WebButton($name, $text, $image, $options = null)
 	if (empty($options['type']))
 		$optionlist .= " type='submit'";
 
-	if (file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.inc")) {
-		include(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.inc");
+	if (file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.php")) {
+		include(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.php");
 		return $button;
-	} else if (file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.inc")) {
-		include(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.inc");
+	} else if (file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.php")) {
+		include(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.php");
 		return $button;
 	} else {
 		return "$image <input class='button' name='$name' value=\"". $text . "\" $optionlist />\n";
@@ -364,7 +494,7 @@ function WebButtonNext($name, $step = null, $options = null)
 
 function WebTab($tabtitle, $tabinfo, $active)
 {
-	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/tabs.inc");
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/tabs.php");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -421,7 +551,7 @@ function WebDialogIntro($title, $icon, $summary)
 			break;
 	}
 
-	$basename = preg_replace("/\/admin\//", "", $_SERVER['PHP_SELF']);
+	$basename = preg_replace("/\/app\//", "", $_SERVER['PHP_SELF']);
 	$basename = preg_replace("/\.php/", "", $basename);
 
 	$page['section'] = $info['section'];
@@ -440,7 +570,7 @@ function WebDialogIntro($title, $icon, $summary)
 	$page['large_icon'] = (file_exists($large_icon_override)) ? $large_icon_override : "/images/icons/32x32/$large_icon";
 	$page['small_icon'] = (file_exists($small_icon_override)) ? $small_icon_override : "/images/icons/16x16/$small_icon";
 
-	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/summary.inc");
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/summary.php");
 
 	if (WEBCONFIG_CONSOLE)
 		echo "<hr>";
@@ -559,7 +689,7 @@ function WebDialogBox($class, $title, $icon, $blurb)
 	// MS Internet Explorer bug... sigh.
 	$icon = WebReplacePngTags($icon);
 
-	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/dialog.inc");
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/dialog.php");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -568,146 +698,14 @@ function WebDialogBox($class, $title, $icon, $blurb)
 
 function WebChartLegend($title, $rows, $headers = "", $width = "100%")
 {
-	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chartlegend.inc");
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chartlegend.php");
 
 	return $legend;
 }
 
 function WebChart($title, $type, $width, $height, $data, $series_color, $bgcolor, $explode, $url='')
 {
-	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chart.inc");
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// H E A D E R  /  F O O T E R
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// Header -- prints out the web headers and layout
-//
-///////////////////////////////////////////////////////////////////////////////
-
-function WebHeader($title, $layout = 'default', $customhead = "", $onload = "")
-{
-	// <head> section
-	//---------------
-
-	if ($_SESSION['system_hostname'])
-		$title = $_SESSION['system_hostname'] . " - " . $title;
-
-	// Write out our head
-	//-------------------
-
-	echo "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>
-<html dir='" . $_SESSION['system_textdir'] . "'>
-
-<!-- Head -->
-<head>
-	<!-- Basic Header Information -->
-	<title>$title</title>
-	<meta http-equiv='Content-Type' content='text/html; charset=" . $_SESSION['system_charset'] . "'>
-
-	<!-- Style Sheets -->
-	<link type='text/css' rel='stylesheet' href='/themes/" . $_SESSION['system_template'] . "/css/theme.css'>
-
-";
-
-	if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.inc'))
-		require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.inc');
-
-	echo "\n	<!-- Page-specific Headers -->\n";
-
-	if ($customhead != "")
-		echo "	$customhead\n";
-
-	// To support different versions running in parallel, determine the app
-	// version e.g. /app/dhcp/htdocs, /app/dhcp/tags/5.1/htdocs, etc.
-	//-------------------------------------------------------------------------
-
-	$segments = explode('/', $_SERVER['PHP_SELF']);
-	$app = $segments[2];
-
-	if (isset(ClearOsConfig::$clearos_devel_versions['app'][$app]))
-		$app_version = ClearOsConfig::$clearos_devel_versions['app'][$app] . '/';
-	else if (isset(ClearOsConfig::$clearos_devel_versions['app']['default']))
-		$app_version = ClearOsConfig::$clearos_devel_versions['app']['default'] . '/';
-	else
-		$app_version = "";
-
-	$js_path = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.js.php';
-	$css_path = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.css';
-
-	if (file_exists(ClearOsConfig::$apps_path . '/' . $js_path))
-		echo "	<script type='text/javascript' src='/modules" . $js_path . "'></script>\n";
-
-	if (file_exists(ClearOsConfig::$apps_path . '/' . $css_path))
-		echo "	<link type='text/css' rel='stylesheet' href='/modules" . $css_path ."'>";
-
-	echo "</head>\n";
-
-	WebHeaderLayout($layout);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// HeaderLayout -- prints out the layout
-//
-///////////////////////////////////////////////////////////////////////////////
-
-function WebHeaderLayout($layout)
-{
-	// TODO: this can be cleaned up when we remove support for old template file names
-
-	if (WEBCONFIG_CONSOLE) {
-		echo "
-		<body>
-		<table style='height: 100%' width='550' border='0' cellspacing='0' cellpadding='0' align='center'>
-		<tr>
-		<td class='content' width='100%' valign='middle'>
-		<p>&#160; </p>
-		";
-
-	} else if ($layout == 'default') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_default.inc"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_default.inc");
-	} else if ($layout == 'splash') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_splash.inc"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_splash.inc");
-	} else if ($layout == 'wizard') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_wizard.inc"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_header_wizard.inc");
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// Footer -- prints out the page footer.
-//
-///////////////////////////////////////////////////////////////////////////////
-
-function WebFooter($layout = 'default', $copyright = '')
-{
-	// TODO: the copyright hack is a bad one.  Fix it in 6.0 please.
-
-	// TODO: this can be cleaned up when we remove support for old template file names
-	if (WEBCONFIG_CONSOLE) {
-		echo "<br /></td></tr></table></body></html>";
-	} else if ($layout == 'default') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_default.inc"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_default.inc");
-	} else if ($layout == 'splash') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_splash.inc"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_splash.inc");
-	} else if ($layout == 'wizard') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_wizard.inc"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/layout_footer_wizard.inc");
-	}
-}
-
-function WebUrlJump($url, $description)
-{
-	return "<a href='$url'>$description " . WEBCONFIG_ICON_CONTINUE . "</a>";
+	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chart.php");
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -733,12 +731,12 @@ function WebAuthenticate()
 	//--------------------------------
 
 	if (file_exists(Webconfig::FILE_SETUP_FLAG) && 
-		!preg_match("/\/admin\/setup\..*/", $_SERVER['PHP_SELF']) &&
+		!preg_match("/\/app\/setup\..*/", $_SERVER['PHP_SELF']) &&
 		!(WEBCONFIG_CONSOLE)
 		) {
 		// TODO: not very clean... the wizard needs to pull in Ajax helper pages
 		if (!(preg_match("/\.js\./", $_SERVER['PHP_SELF']) || preg_match("/\.xml\./", $_SERVER['PHP_SELF']))) {
-			WebForwardPage("/admin/setup.php");
+			WebForwardPage("/app/setup.php");
 			exit;
 		}
 	}
@@ -893,8 +891,8 @@ function WebAuthenticateDisplayLogin($username, $password, $warning = null)
 	WebHeaderLayout("splash");
 
 
-	if (file_exists(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.inc")) {
-		require(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.inc");
+	if (file_exists(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.php")) {
+		require(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.php");
 	} else {
 		if (! empty($warning))
 			WebDialogWarning($warning);
@@ -1110,7 +1108,7 @@ function WebSetSession()
 	// Template
 	//---------
 
-	$template = "standard-5.1";
+	$template = "clearos6x";
 
 	if (file_exists(COMMON_CORE_DIR . "/api/Webconfig.php")) {
 		require_once(COMMON_CORE_DIR . "/api/Webconfig.php");
@@ -1226,6 +1224,11 @@ function WebForwardPage($page)
 		header("Location: $page");
 }
 
+function WebUrlJump($url, $description)
+{
+	return "<a href='$url'>$description " . WEBCONFIG_ICON_CONTINUE . "</a>";
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // M E N U  S Y S T E M
 ///////////////////////////////////////////////////////////////////////////////
@@ -1241,28 +1244,28 @@ function WebMenuFetch()
 	$webconfig = new Webconfig();
 
 	$dhcp = array(
-		'section' => 'Section',
-		'subsection' => 'Subsection',
-		'title' => 'DHCP',
-		'url' => '/admin/dhcp',
+		'section' => 'Developer',
+		'subsection' => 'Tools',
+		'title' => 'Theme',
+		'url' => '/app/devel',
 		'type' => 'configuration',
 		'priority' => '2001'
 	);
 
 	$date = array(
-		'section' => 'Section',
-		'subsection' => 'Subsection',
+		'section' => 'System',
+		'subsection' => 'Settings',
 		'title' => 'Date',
-		'url' => '/admin/date',
+		'url' => '/app/date',
 		'type' => 'configuration',
 		'priority' => '2001'
 	);
 
 	$dashboard = array(
-		'section' => 'Section',
-		'subsection' => 'Subsection',
+		'section' => 'Reports',
+		'subsection' => 'Overview',
 		'title' => 'Dashboard',
-		'url' => '/admin/dashboard',
+		'url' => '/app/dashboard',
 		'type' => 'configuration',
 		'priority' => '2001'
 	);
@@ -1280,7 +1283,7 @@ function WebMenuFetch()
 
 function WebMenuWizard($menuitems, $highlight)
 {
-	require(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/wizard.inc");
+	require(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/wizard.php");
 }
 
 function WebWizardNavigation($action, $previous, $next, $overridenext = null)
@@ -1517,6 +1520,11 @@ function WebCheckRegistration()
 		exit();
 	}
 }
+
+
+///////////////////////////////////////////////////////////////////////////////
+// U T I L I T I E S
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Converts a simple array into a hash array
