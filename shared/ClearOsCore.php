@@ -122,8 +122,8 @@ function clearos_load_language($langfile)
 
 		// FIXME: review this hack
 //		require_once(ClearOsConfig::$framework_path . '/' . $version . '/system/core/CodeIgniter.php');
-		require_once(ClearOsConfig::$framework_path . '/' . $version . '/application/third_party/MX/Base.php');
-		$codeigniter =& get_instance();
+//		require_once(ClearOsConfig::$framework_path . '/' . $version . '/application/third_party/MX/Base.php');
+//		$codeigniter =& get_instance();
 //		$codeigniter->lang->load($langfile);
 	}
 }
