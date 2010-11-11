@@ -44,6 +44,7 @@ require_once($bootstrap . '/bootstrap.php');
 ///////////////////////////////////////////////////////////////////////////////
 
 clearos_load_library('base/Webconfig');
+clearos_load_language('base/base');
 
 ///////////////////////////////////////////////////////////////////////////////
 // H E A D E R  /  F O O T E R
@@ -70,7 +71,7 @@ function clearos_html_head($title)
 	//-------------------------------------------------------------------------
 
 	// FIXME: move the versioning stuff to ClearOSCore
-	$theme_path = "/themes/clearos6x/trunk";
+	$theme_path = "/themes/" . $_SESSION['system_template'];
 
 	// FIXME: move the versioning stuff to ClearOSCore
 
@@ -98,6 +99,15 @@ function clearos_html_head($title)
 	// Write out the head
 	//-------------------
 
+// FIXME - DOCTYPE must be theme-able
+// <!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>
+// <!DOCTYPE html> 
+
+// FIXME - No JqueryUI?
+// <script type='text/javascript' src='/js/jquery-ui-1.8.5.custom.min.js'></script>
+// FIXME - Jquery versioning with mobile
+// <script type='text/javascript' src='/js/jquery-1.4.2.min.js'></script>
+
 	echo "
 <!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>
 <html dir='" . $_SESSION['system_textdir'] . "'>
@@ -110,8 +120,6 @@ function clearos_html_head($title)
 <meta http-equiv='Content-Type' content='text/html; charset=" . $_SESSION['system_charset'] . "'>
 
 <!-- Jquery Head-->
-<script type='text/javascript' src='/js/jquery-1.4.2.min.js'></script>
-<script type='text/javascript' src='/js/jquery-ui-1.8.5.custom.min.js'></script>
 
 <!-- Template Head -->
 ";
@@ -180,8 +188,8 @@ function clearos_footer($layout = 'default')
 ///////////////////////////////////////////////////////////////////////////////
 
 // FIXME: move to session
-define('WEBCONFIG_CONSOLE', intval((substr(getenv("HTTP_USER_AGENT"),0,4) == "Lynx")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
-define('WEBCONFIG_GUI', intval((substr(getenv("HTTP_USER_AGENT"),91,12) == "GranParadiso")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
+define('BCONFIG_CONSOLE', intval((substr(getenv("HTTP_USER_AGENT"),0,4) == "Lynx")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
+define('BCONFIG_GUI', intval((substr(getenv("HTTP_USER_AGENT"),91,12) == "GranParadiso")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
 
 ///////////////////////////////////////////////////////////////////////////////
 // S E S S I O N
@@ -193,89 +201,83 @@ session_start();
 if (!isset($_SESSION['system_session_started']))
 	WebSetSession();
 
-// FIXME:
+// FIXME
+$_SESSION['system_template'] = 'clearos6xmobile/trunk';
 $_SESSION['system_template'] = 'clearos6x/trunk';
-
-// Pull in global locale
-// require_once(GlobalGetLanguageTemplate(COMMON_CORE_DIR . '/api/Locale.class.php'));
-
-// Dialog box counter for fancy Javascript solutions
-$dialogbox_count = 0;
-$button_count = 0;
 
 ///////////////////////////////////////////////////////////////////////////////
 // G R A P H I C S
 ///////////////////////////////////////////////////////////////////////////////
 
 // General icons
-define('WEBCONFIG_ICON_ADD', WebSetIcon("icon-add.png"));
-define('WEBCONFIG_ICON_ARROWRIGHT', WebSetIcon("icon-arrowright.png"));
-define('WEBCONFIG_ICON_BACK', WebSetIcon("icon-back.png"));
-define('WEBCONFIG_ICON_CALENDAR', WebSetIcon("icon-calendar.png"));
-define('WEBCONFIG_ICON_CANCEL', WebSetIcon("icon-cancel.png"));
-define('WEBCONFIG_ICON_CHECKMARK', WebSetIcon("icon-checkmark.png"));
-define('WEBCONFIG_ICON_CONFIGURE', WebSetIcon("icon-configure.png"));
-define('WEBCONFIG_ICON_CONTINUE', WebSetIcon("icon-continue.png"));
-define('WEBCONFIG_ICON_DELETE', WebSetIcon("icon-delete.png"));
-define('WEBCONFIG_ICON_DISABLED', WebSetIcon("icon-disabled.png"));
-define('WEBCONFIG_ICON_DOWNLOAD', WebSetIcon("icon-download.png"));
-define('WEBCONFIG_ICON_EDIT', WebSetIcon("icon-edit.png"));
-define('WEBCONFIG_ICON_ENABLED', WebSetIcon("icon-enabled.png"));
-define('WEBCONFIG_ICON_EXTERNAL_LINK', WebSetIcon("icon-external-link.png"));
-define('WEBCONFIG_ICON_FILTER', WebSetIcon("icon-filter.png"));
-define('WEBCONFIG_ICON_GO', WebSetIcon("icon-go.png"));
-define('WEBCONFIG_ICON_HELP', WebSetIcon("icon-help.png"));
-define('WEBCONFIG_ICON_INFO', WebSetIcon("icon-info.png"));
-define('WEBCONFIG_ICON_LOGIN', WebSetIcon("icon-login.png"));
-define('WEBCONFIG_ICON_MINUS', WebSetIcon("icon-minus.png"));
-define('WEBCONFIG_ICON_NEXT', WebSetIcon("icon-next.png"));
-define('WEBCONFIG_ICON_OK', WebSetIcon("icon-ok.png"));
-define('WEBCONFIG_ICON_PLUS', WebSetIcon("icon-plus.png"));
-define('WEBCONFIG_ICON_PREVIOUS', WebSetIcon("icon-previous.png"));
-define('WEBCONFIG_ICON_RENEW', WebSetIcon("icon-renew.png"));
-define('WEBCONFIG_ICON_REPORT', WebSetIcon("icon-report.png"));
-define('WEBCONFIG_ICON_SAVE', WebSetIcon("icon-save.png"));
-define('WEBCONFIG_ICON_SEARCH', WebSetIcon("icon-search.png"));
-define('WEBCONFIG_ICON_STATUS', WebSetIcon("icon-status.png"));
-define('WEBCONFIG_ICON_SUPPORT', WebSetIcon("icon-support.png"));
-define('WEBCONFIG_ICON_TOGGLE', WebSetIcon("icon-toggle.png"));
-define('WEBCONFIG_ICON_UPDATE', WebSetIcon("icon-update.png"));
-define('WEBCONFIG_ICON_USERGUIDE', WebSetIcon("icon-userguide.png"));
-define('WEBCONFIG_ICON_VIEW', WebSetIcon("icon-view.png"));
-define('WEBCONFIG_ICON_WARNING', WebSetIcon("icon-warning.png"));
-define('WEBCONFIG_ICON_XMARK', WebSetIcon("icon-xmark.png"));
+define('BCONFIG_ICON_ADD', WebSetIcon("icon-add.png"));
+define('BCONFIG_ICON_ARROWRIGHT', WebSetIcon("icon-arrowright.png"));
+define('BCONFIG_ICON_BACK', WebSetIcon("icon-back.png"));
+define('BCONFIG_ICON_CALENDAR', WebSetIcon("icon-calendar.png"));
+define('BCONFIG_ICON_CANCEL', WebSetIcon("icon-cancel.png"));
+define('BCONFIG_ICON_CHECKMARK', WebSetIcon("icon-checkmark.png"));
+define('BCONFIG_ICON_CONFIGURE', WebSetIcon("icon-configure.png"));
+define('BCONFIG_ICON_CONTINUE', WebSetIcon("icon-continue.png"));
+define('BCONFIG_ICON_DELETE', WebSetIcon("icon-delete.png"));
+define('BCONFIG_ICON_DISABLED', WebSetIcon("icon-disabled.png"));
+define('BCONFIG_ICON_DOWNLOAD', WebSetIcon("icon-download.png"));
+define('BCONFIG_ICON_EDIT', WebSetIcon("icon-edit.png"));
+define('BCONFIG_ICON_ENABLED', WebSetIcon("icon-enabled.png"));
+define('BCONFIG_ICON_EXTERNAL_LINK', WebSetIcon("icon-external-link.png"));
+define('BCONFIG_ICON_FILTER', WebSetIcon("icon-filter.png"));
+define('BCONFIG_ICON_GO', WebSetIcon("icon-go.png"));
+define('BCONFIG_ICON_HELP', WebSetIcon("icon-help.png"));
+define('BCONFIG_ICON_INFO', WebSetIcon("icon-info.png"));
+define('BCONFIG_ICON_LOGIN', WebSetIcon("icon-login.png"));
+define('BCONFIG_ICON_MINUS', WebSetIcon("icon-minus.png"));
+define('BCONFIG_ICON_NEXT', WebSetIcon("icon-next.png"));
+define('BCONFIG_ICON_OK', WebSetIcon("icon-ok.png"));
+define('BCONFIG_ICON_PLUS', WebSetIcon("icon-plus.png"));
+define('BCONFIG_ICON_PREVIOUS', WebSetIcon("icon-previous.png"));
+define('BCONFIG_ICON_RENEW', WebSetIcon("icon-renew.png"));
+define('BCONFIG_ICON_REPORT', WebSetIcon("icon-report.png"));
+define('BCONFIG_ICON_SAVE', WebSetIcon("icon-save.png"));
+define('BCONFIG_ICON_SEARCH', WebSetIcon("icon-search.png"));
+define('BCONFIG_ICON_STATUS', WebSetIcon("icon-status.png"));
+define('BCONFIG_ICON_SUPPORT', WebSetIcon("icon-support.png"));
+define('BCONFIG_ICON_TOGGLE', WebSetIcon("icon-toggle.png"));
+define('BCONFIG_ICON_UPDATE', WebSetIcon("icon-update.png"));
+define('BCONFIG_ICON_USERGUIDE', WebSetIcon("icon-userguide.png"));
+define('BCONFIG_ICON_VIEW', WebSetIcon("icon-view.png"));
+define('BCONFIG_ICON_WARNING', WebSetIcon("icon-warning.png"));
+define('BCONFIG_ICON_XMARK', WebSetIcon("icon-xmark.png"));
 
 // Ajax loading whirlgig
-define('WEBCONFIG_ICON_LOADING', WebSetIcon("icon-loading.gif"));
+define('BCONFIG_ICON_LOADING', WebSetIcon("icon-loading.gif"));
 
 // TODO -- need to revisit these 4 icons
-define('WEBCONFIG_ICON_INBOUND', WebSetIcon("icon-inbound.png"));
-define('WEBCONFIG_ICON_OUTBOUND', WebSetIcon("icon-outbound.png"));
-define('WEBCONFIG_ICON_UP', WebSetIcon("icon-plus.png"));
-define('WEBCONFIG_ICON_DOWN', WebSetIcon("icon-minus.png"));
+define('BCONFIG_ICON_INBOUND', WebSetIcon("icon-inbound.png"));
+define('BCONFIG_ICON_OUTBOUND', WebSetIcon("icon-outbound.png"));
+define('BCONFIG_ICON_UP', WebSetIcon("icon-plus.png"));
+define('BCONFIG_ICON_DOWN', WebSetIcon("icon-minus.png"));
 
 // Common applications
 // TODO: these need to be pluginable
-define('WEBCONFIG_ICON_EMAIL', WebSetIcon("icon-email.png"));
-define('WEBCONFIG_ICON_GOOGLE_APPS', WebSetIcon("icon-google-apps.gif"));
-define('WEBCONFIG_ICON_FTP', WebSetIcon("icon-ftp.png"));
-define('WEBCONFIG_ICON_OPENVPN', WebSetIcon("icon-openvpn.png"));
-define('WEBCONFIG_ICON_PPTP', WebSetIcon("icon-pptpd.png"));
-define('WEBCONFIG_ICON_PROXY', WebSetIcon("icon-proxy.png"));
-define('WEBCONFIG_ICON_SAMBA', WebSetIcon("icon-samba.png"));
-define('WEBCONFIG_ICON_WEB', WebSetIcon("icon-web.png"));
+define('BCONFIG_ICON_EMAIL', WebSetIcon("icon-email.png"));
+define('BCONFIG_ICON_GOOGLE_APPS', WebSetIcon("icon-google-apps.gif"));
+define('BCONFIG_ICON_FTP', WebSetIcon("icon-ftp.png"));
+define('BCONFIG_ICON_OPENVPN', WebSetIcon("icon-openvpn.png"));
+define('BCONFIG_ICON_PPTP', WebSetIcon("icon-pptpd.png"));
+define('BCONFIG_ICON_PROXY', WebSetIcon("icon-proxy.png"));
+define('BCONFIG_ICON_SAMBA', WebSetIcon("icon-samba.png"));
+define('BCONFIG_ICON_WEB', WebSetIcon("icon-web.png"));
 
 // FIXME -- need to create these 2 icons
-define('WEBCONFIG_ICON_SHELL', WebSetIcon("icon-shell.png"));
-define('WEBCONFIG_ICON_PBX', WebSetIcon("icon-pbx.png"));
+define('BCONFIG_ICON_SHELL', WebSetIcon("icon-shell.png"));
+define('BCONFIG_ICON_PBX', WebSetIcon("icon-pbx.png"));
 
 // Dialog box icons
 // FIXME -- change these out -- sitting in webconfig/htdocs/templates/base/images/icons/16x16
-define('WEBCONFIG_DIALOG_ICON_DAEMON', WebSetIcon('dialog_icon_daemon.png', false));
-define('WEBCONFIG_DIALOG_ICON_INFO', WebSetIcon('dialog_icon_info.png', false));
-define('WEBCONFIG_DIALOG_ICON_REPORTS', WebSetIcon('dialog_icon_reports.png', false));
-define('WEBCONFIG_DIALOG_ICON_SAVED', WebSetIcon('dialog_icon_saved.png', false));
-define('WEBCONFIG_DIALOG_ICON_WARNING', WebSetIcon('dialog_icon_warning.png', false));
+define('BCONFIG_DIALOG_ICON_DAEMON', WebSetIcon('dialog_icon_daemon.png', false));
+define('BCONFIG_DIALOG_ICON_INFO', WebSetIcon('dialog_icon_info.png', false));
+define('BCONFIG_DIALOG_ICON_REPORTS', WebSetIcon('dialog_icon_reports.png', false));
+define('BCONFIG_DIALOG_ICON_SAVED', WebSetIcon('dialog_icon_saved.png', false));
+define('BCONFIG_DIALOG_ICON_WARNING', WebSetIcon('dialog_icon_warning.png', false));
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -300,190 +302,252 @@ function WebSetIcon($icon, $is_imgtag = true)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// A N C H O R S
+///////////////////////////////////////////////////////////////////////////////
+
+function _anchor_generic($url, $text, $class, $id = null)
+{
+	$id = isset($id) ? " id='$id'" : '';
+	
+//	return "<a href='$url' class='anchor $class' $id>$text</a>";
+
+	// FIXME: Mobile
+	return "<a href='$url' class='anchor $class' $id data-role='button' data-inline='true'>$text</a>";
+}
+
+function anchor_custom($url, $id, $text, $class = 'anchor-generic')
+{
+	return _anchor_generic($url, $text, $class, $id);
+}
+
+function anchor_add($url, $id)
+{
+	return _anchor_generic($url, lang('base_add'), 'anchor-add', $id);
+}
+
+function anchor_update($url)
+{
+	return _anchor_generic($url, lang('base_update'), 'anchor-update');
+}
+
+function anchor_delete($url)
+{
+	return _anchor_generic($url, lang('base_delete'), 'anchor-delete');
+}
+
+function anchor_previous($url)
+{
+	return _anchor_generic($url, lang('base_previous'), 'anchor-previous');
+}
+
+function anchor_next($url)
+{
+	return _anchor_generic($url, lang('base_next'), 'anchor-next');
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
 // B U T T O N S
 ///////////////////////////////////////////////////////////////////////////////
 
+function form_radio_set_open($class, $orientation)
+{
+// return "<div data-role='fieldcontain'>
+//    <fieldset data-role='controlgroup' data-type='horizontal'>
+//";
+	return "<div class='$class'>\n";
+}
+
+function form_radio_set_item($id, $name, $label, $checked = FALSE)
+{
+	return "<input type='radio' id='$id' name='$name' /><label for='$id'>$label</label>\n";
+//	return "<input type='radio' id='$id' name='$name' /><label for='$id'>$label</label>\n";
+}
+
+function form_radio_set_close()
+{
+//	return "   </fieldset>
+// </div>";
+	return "</div>\n";
+}
+
+
 ///////////////////////////////////////////////////////////////////////////////
 //
-// WebButton -- displays a form button.
+// button -- displays a form button.
 //
 // name:   the button name
 // value:  the button value
 // image:  the button image
-// options: 
-//   type:   the button type
-//   onclick: onclick action
 //
 // Developer note: to keep backwards compatibility, this function is now ugly.
 // Sorry about that.
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-function WebButton($name, $text, $image, $options = null)
+function form_button_generic($name, $text, $class, $id = null, $options = null)
 {
-	global $button_count;
-
-	$button_count++;
-
 	$optionlist = '';
 
 	if (! empty($options)) {
-
-		foreach ($options as $key => $value) {
-			if ($key == 'onclick')
-				$optionlist .= " $key=\"$value\"";
-			else
-				$optionlist .= " $key='$value'";
-		}
+		foreach ($options as $key => $value)
+			$optionlist .= " $key='$value'";
 	}
 
 	if (empty($options['type']))
 		$optionlist .= " type='submit'";
 
-	if (file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.php")) {
-		include(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/button.php");
-		return $button;
-	} else if (file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.php")) {
-		include(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/html/button.php");
+	if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/button.php")) {
+		require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/button.php");
 		return $button;
 	} else {
-		return "$image <input class='button' name='$name' value=\"". $text . "\" $optionlist />\n";
+		return "<div>button widget has not been defined</div>";
 	}
 }
 
-function WebButtonAdd($name, $options = null)
+function form_button_add($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_ADD, WEBCONFIG_ICON_ADD, $options);
+	return form_button_generic($name, lang('base_add'), 'form-button-add', $options);
 }
 
-function WebButtonBack($name, $options = null)
+function form_button_delete($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_BACK, WEBCONFIG_ICON_BACK, $options);
+	return form_button_generic($name, lang('base_delete'), 'form-button-delete', $options);
+}
+
+function form_button_update($name, $step = null, $options = null)
+{
+	return form_button_generic($name, lang('base_update'), 'form-button-update', $options);
+}
+
+function form_button_previous($name, $options = null)
+{
+	return form_button_generic($name, lang('base_previous'), 'form-button-previous', $options);
+}
+
+function form_button_next($name, $step = null, $options = null)
+{
+	return form_button_generic($name, lang('base_next'), 'form-button-next', $options);
+}
+
+function form_button_disable($name, $step = null, $options = null)
+{
+	return form_button_generic($name, lang('base_disable'), 'form-button-disable', $options);
 }
 
 function WebButtonCreate($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_CREATE, WEBCONFIG_ICON_ADD, $options);
+	return form_button_generic($name, LOCALE_LANG_CREATE, BCONFIG_ICON_ADD, $options);
 }
 
 function WebButtonDelete($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_DELETE, WEBCONFIG_ICON_DELETE, $options);
+	return form_button_generic($name, LOCALE_LANG_DELETE, BCONFIG_ICON_DELETE, $options);
 }
 
 function WebButtonDownload($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_DOWNLOAD, WEBCONFIG_ICON_DOWNLOAD, $options);
+	return form_button_generic($name, LOCALE_LANG_DOWNLOAD, BCONFIG_ICON_DOWNLOAD, $options);
 }
 
 function WebButtonGenerate($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_GENERATE, WEBCONFIG_ICON_UPDATE, $options);
+	return form_button_generic($name, LOCALE_LANG_GENERATE, BCONFIG_ICON_UPDATE, $options);
 }
 
 function WebButtonEdit($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_EDIT, WEBCONFIG_ICON_EDIT, $options);
+	return form_button_generic($name, LOCALE_LANG_EDIT, BCONFIG_ICON_EDIT, $options);
 }
 
 function WebButtonGo($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_GO, WEBCONFIG_ICON_GO, $options);
+	return form_button_generic($name, LOCALE_LANG_GO, BCONFIG_ICON_GO, $options);
 }
 
 function WebButtonToggle($name, $text, $options = null)
 {
-	return WebButton($name, $text, WEBCONFIG_ICON_TOGGLE, $options);
+	return form_button_generic($name, $text, BCONFIG_ICON_TOGGLE, $options);
 }
 
 function WebButtonRefresh($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_REFRESH, WEBCONFIG_ICON_UPDATE, $options);
+	return form_button_generic($name, LOCALE_LANG_REFRESH, BCONFIG_ICON_UPDATE, $options);
 }
 
 function WebButtonReset($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_RESET, WEBCONFIG_ICON_TOGGLE, $options);
+	return form_button_generic($name, LOCALE_LANG_RESET, BCONFIG_ICON_TOGGLE, $options);
 }
 
 function WebButtonSelect($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_SELECT, WEBCONFIG_ICON_CONTINUE, $options);
+	return form_button_generic($name, LOCALE_LANG_SELECT, BCONFIG_ICON_CONTINUE, $options);
 }
 
 function WebButtonShowFullReport($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_SHOW_FULL_REPORT, WEBCONFIG_ICON_CONTINUE, $options);
+	return form_button_generic($name, LOCALE_LANG_SHOW_FULL_REPORT, BCONFIG_ICON_CONTINUE, $options);
 }
 
 function WebButtonUpdate($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_UPDATE, WEBCONFIG_ICON_UPDATE, $options);
+	return form_button_generic($name, LOCALE_LANG_UPDATE, BCONFIG_ICON_UPDATE, $options);
 }
 
 function WebButtonConfirm($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_CONFIRM, WEBCONFIG_ICON_CHECKMARK, $options);
+	return form_button_generic($name, LOCALE_LANG_CONFIRM, BCONFIG_ICON_CHECKMARK, $options);
 }
 
 function WebButtonContinue($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_CONTINUE, WEBCONFIG_ICON_CONTINUE, $options);
+	return form_button_generic($name, LOCALE_LANG_CONTINUE, BCONFIG_ICON_CONTINUE, $options);
 }
 
 function WebButtonCancel($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_CANCEL, WEBCONFIG_ICON_CANCEL, $options);
+	return form_button_generic($name, LOCALE_LANG_CANCEL, BCONFIG_ICON_CANCEL, $options);
 }
 
 function WebButtonLogin($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_LOGIN, WEBCONFIG_ICON_LOGIN, $options);
+	return form_button_generic($name, LOCALE_LANG_LOGIN, BCONFIG_ICON_LOGIN, $options);
 }
 
 function WebButtonView($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_VIEW, WEBCONFIG_ICON_VIEW, $options);
+	return form_button_generic($name, LOCALE_LANG_VIEW, BCONFIG_ICON_VIEW, $options);
 }
 
 function WebButtonConfigure($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_CONFIGURE, WEBCONFIG_ICON_CONFIGURE, $options);
+	return form_button_generic($name, LOCALE_LANG_CONFIGURE, BCONFIG_ICON_CONFIGURE, $options);
 }
 
 function WebButtonSave($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_SAVE, WEBCONFIG_ICON_SAVE, $options);
+	return form_button_generic($name, LOCALE_LANG_SAVE, BCONFIG_ICON_SAVE, $options);
 }
 
 function WebButtonRenew($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_RENEW, WEBCONFIG_ICON_RENEW, $options);
+	return form_button_generic($name, LOCALE_LANG_RENEW, BCONFIG_ICON_RENEW, $options);
 }
 
 function WebButtonSearch($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_SEARCH, WEBCONFIG_ICON_SEARCH, $options);
+	return form_button_generic($name, LOCALE_LANG_SEARCH, BCONFIG_ICON_SEARCH, $options);
 }
 
 function WebButtonFilter($name, $options = null)
 {
-	return WebButton($name, LOCALE_LANG_FILTER, WEBCONFIG_ICON_FILTER, $options);
-}
-
-function WebButtonPrevious($name, $step = null, $options = null)
-{
-	return WebButton($name, LOCALE_LANG_PREVIOUS . (isset($step) ? ' ' . $step : ''), WEBCONFIG_ICON_PREVIOUS, $options);
-}
-
-function WebButtonNext($name, $step = null, $options = null)
-{
-	return WebButton($name, LOCALE_LANG_NEXT . (isset($step) ? ' ' . $step : ''), WEBCONFIG_ICON_NEXT, $options);
+	return form_button_generic($name, LOCALE_LANG_FILTER, BCONFIG_ICON_FILTER, $options);
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
-// W I D G E T S
+// T A B S
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -498,40 +562,111 @@ function WebTab($tabtitle, $tabinfo, $active)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// D I A L O G  B O X E S
+// P R O G R E S S  B A R
 ///////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// WebDialogWarning -- prints out the "warning" dialog box.
-//
-///////////////////////////////////////////////////////////////////////////////
-
-function WebDialogWarning($message)
+function progress_bar($id)
 {
-	if (empty($message))
-		return;
-
-	if (is_array($message) && count($message) != 0) {
-		$multiple = "<ul>\n";
-		foreach ($message as $error)
-			$multiple .= "<li>$error</li>\n";
-		$multiple .= "</ul>\n";
-		WebDialogBox("dialogwarning", WEBCONFIG_LANG_WARNING, WEBCONFIG_DIALOG_ICON_WARNING, $multiple);
-	} else {
-		WebDialogBox("dialogwarning", WEBCONFIG_LANG_WARNING, WEBCONFIG_DIALOG_ICON_WARNING, $message);
-	}
+	// Jquery mobile progress bar was not in alpha, but expected in 1.0 
+	return "<div class='progressbar' id='$id'></div>";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// S E L E C T  M E N U
+///////////////////////////////////////////////////////////////////////////////
+
+function cos_form_dropdown($name, $options)
+{
+	// Jquery mobile
+	return form_dropdown($name, $options);
+/*
+	return "
+		<div data-role='fieldcontain'>
+			<label for='select-choice-1' class='select'>Choose shipping method:</label>
+			<select name='select-choice-1' id='select-choice-1'>
+				<option value='standard'>Standard: 7 day</option>
+				<option value='rush'>Rush: 3 days</option>
+				<option value='express'>Express: next day</option>
+				<option value='overnight'>Overnight</option>
+			</select>
+		</div>
+	";
+*/
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// I N F O  B O X E S
+///////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////////////////////
 //
-// WebDialogInfo -- prints out the "info" dialog box.
+// infobox -- generic dialog box routine.
+//
+// Note: do not be tempted to make this one table -- browsers do not behave!
+//
+// class:  the CSS class (intro, warning, info)
+// title:  the title to put in the box
+// icon:   the icon to display on the left hand side of the box
+// blurb:  blurb to display in dialog box
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-function WebDialogInfo($message)
+function infobox($type, $message)
 {
-	WebDialogBox("dialoginfo", WEBCONFIG_LANG_INFO, WEBCONFIG_DIALOG_ICON_INFO, $message);
+	if ($type == 'critical') {
+		$class = 'ui-state-error';
+		$iconclass = 'ui-icon-alert';
+	} else if ($type == 'warning') {
+		$class = 'ui-state-highlight';
+		$iconclass = 'ui-icon-info';
+	} else if ($type == 'highlight') {
+		$class = 'ui-state-default';
+		$iconclass = 'ui-icon-info';
+	} else if ($type == 'help') {
+		$class = 'ui-state-default';
+		$iconclass = 'ui-icon-help';
+	}
+
+	echo "
+		<div class='ui-widget'>
+			<div class='ui-corner-all $class' style='margin-top: 20px; padding: 0 .7em;'>
+				<p><span class='ui-icon $iconclass' style='float: left; margin-right: .3em;'></span>$message</p>
+			</div>
+		</div>
+	";
+}
+
+function infobox_critical($message)
+{
+	infobox('critical', $message);
+}
+
+function infobox_warning($message)
+{
+	infobox('warning', $message);
+}
+
+function infobox_highlight($message)
+{
+	infobox('highlight', $message);
+}
+
+function helpbox($message)
+{
+	// FIXME - make this a standalone widget
+	infobox('help', $message);
+}
+
+
+function dialogbox($id, $title, $message)
+{
+	$dialog = "
+<div class='dialogbox' id='$id' title='$title'>
+    <p>$message</p>
+</div>
+";
+
+	return $dialog;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -572,7 +707,7 @@ function WebDialogIntro($title, $icon, $summary)
 
 	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/summary.php");
 
-	if (WEBCONFIG_CONSOLE)
+	if (BCONFIG_CONSOLE)
 		echo "<hr>";
 
 	// Flush the buffers here
@@ -606,7 +741,7 @@ function WebDialogDaemon($initd, $show_onboot = true)
 		$status = $daemon->GetRunningState();
 		$onboot = $daemon->GetBootState();
 	} catch (Exception $e) {
-		WebDialogWarning($e->GetMessage());
+		infobox_warning($e->GetMessage());
 		return;
 	}
 
@@ -664,32 +799,7 @@ function WebDialogDaemon($initd, $show_onboot = true)
 	// Use the standard dialog-box
 	//----------------------------
 
-	WebDialogBox("dialogdaemon", WEBCONFIG_LANG_SERVER_STATUS, WEBCONFIG_DIALOG_ICON_DAEMON, $content);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// WebDialogBox -- generic dialog box routine.
-//
-// Note: do not be tempted to make this one table -- browsers do not behave!
-//
-// class:  the CSS class (intro, warning, info)
-// title:  the title to put in the box
-// icon:   the icon to display on the left hand side of the box
-// blurb:  blurb to display in dialog box
-//
-///////////////////////////////////////////////////////////////////////////////
-
-function WebDialogBox($class, $title, $icon, $blurb)
-{
-	global $dialogbox_count;
-
-	$dialogbox_count++;
-
-	// MS Internet Explorer bug... sigh.
-	$icon = WebReplacePngTags($icon);
-
-	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/dialog.php");
+	infobox("dialogdaemon", BCONFIG_LANG_SERVER_STATUS, WEBCONFIG_DIALOG_ICON_DAEMON, $content);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -732,7 +842,7 @@ function WebAuthenticate()
 
 	if (file_exists(Webconfig::FILE_SETUP_FLAG) && 
 		!preg_match("/\/app\/setup\..*/", $_SERVER['PHP_SELF']) &&
-		!(WEBCONFIG_CONSOLE)
+		!(BCONFIG_CONSOLE)
 		) {
 		// TODO: not very clean... the wizard needs to pull in Ajax helper pages
 		if (!(preg_match("/\.js\./", $_SERVER['PHP_SELF']) || preg_match("/\.xml\./", $_SERVER['PHP_SELF']))) {
@@ -826,7 +936,7 @@ function WebAuthenticate()
 					$passwordok = $user->CheckPassword($password);
 				} catch (Exception $e) {
 					WebHeader("", false);
-					WebDialogWarning($e->GetMessage());
+					infobox_warning($e->GetMessage());
 					Webfooter();
 					exit();
 				}
@@ -841,7 +951,7 @@ function WebAuthenticate()
 						$passwordok = $user->CheckPassword($password, 'pcnWebconfigPassword');
 				} catch (Exception $e) {
 					WebHeader("", false);
-					WebDialogWarning($e->GetMessage());
+					infobox_warning($e->GetMessage());
 					Webfooter();
 					exit();
 				}
@@ -869,7 +979,7 @@ function WebAuthenticate()
 				ClearOsLoggerSysLog("webconfig", "login - $username login failed");
 
 				WebHeader($_SESSION['system_osname'], false);
-				WebAuthenticateDisplayLogin($username, $password, WEBCONFIG_LANG_ERRMSG_LOGIN_FAILED);
+				WebAuthenticateDisplayLogin($username, $password, BCONFIG_LANG_ERRMSG_LOGIN_FAILED);
 				WebFooter(false);
 				exit;
 			}
@@ -883,7 +993,7 @@ function WebAuthenticate()
 
 function WebAuthenticateDisplayLogin($username, $password, $warning = null)
 {
-	if (WEBCONFIG_CONSOLE)
+	if (BCONFIG_CONSOLE)
 		$login = "root <input type='hidden' name='reserved_username' value='root' />";
 	else
 		$login = "<input type='text' name='reserved_username' value='$username' />";
@@ -895,10 +1005,10 @@ function WebAuthenticateDisplayLogin($username, $password, $warning = null)
 		require(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.php");
 	} else {
 		if (! empty($warning))
-			WebDialogWarning($warning);
+			infobox_warning($warning);
 
 		WebFormOpen();
-		WebTableOpen(WEBCONFIG_LANG_LOGIN, "450");
+		WebTableOpen(BCONFIG_LANG_LOGIN, "450");
 		echo "
 			<tr>
 				<td width='150' nowrap class='mytablesubheader'>" . LOCALE_LANG_USERNAME . "</td>
@@ -952,7 +1062,7 @@ function WebAuthenticateCheckAcl($username, $page)
 		}
 	} catch (Exception $e) {
 		WebHeader("", false);
-		WebDialogWarning($e->GetMessage());
+		infobox_warning($e->GetMessage());
 		WebFooter();
 		exit();
 	}
@@ -975,16 +1085,16 @@ function WebAuthenticateCheckAcl($username, $page)
 	if (! $isvalid) {
 		if (isset($validregular[0])) {
 			WebHeader("", false);
-			WebDialogWarning(
+			infobox_warning(
 				LOCALE_LANG_ACCESS_DENIED . "<br><br>" .
 				"<a href=https://" . $_SERVER["HTTP_HOST"] . $validregular[0] . ">" .
-				WEBCONFIG_LANG_USE_THIS_PAGE_INSTEAD . "</a>"
+				BCONFIG_LANG_USE_THIS_PAGE_INSTEAD . "</a>"
 			);
 			WebFooter(false);
 			exit();
 		} else {
 			WebHeader("", false);
-			WebDialogWarning(LOCALE_LANG_ACCESS_DENIED);
+			infobox_warning(LOCALE_LANG_ACCESS_DENIED);
 			WebFooter(false);
 			exit();
 		}
@@ -1218,7 +1328,7 @@ function WebSetSessionAuthenticated()
 
 function WebForwardPage($page)
 {
-	if (WEBCONFIG_CONSOLE)
+	if (BCONFIG_CONSOLE)
 		header("Location: http://127.0.0.1:82/$page");
 	else
 		header("Location: $page");
@@ -1226,7 +1336,7 @@ function WebForwardPage($page)
 
 function WebUrlJump($url, $description)
 {
-	return "<a href='$url'>$description " . WEBCONFIG_ICON_CONTINUE . "</a>";
+	return "<a href='$url'>$description " . BCONFIG_ICON_CONTINUE . "</a>";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1298,7 +1408,7 @@ function WebWizardNavigation($action, $previous, $next, $overridenext = null)
 		if (is_null($overridenext))
 			echo WebButtonNext("GoToNextStep[$next]");
 		else
-			echo WebButton("GoToNextStep[$next]", $overridenext . (isset($step) ? ' ' . $step : ''), WEBCONFIG_ICON_NEXT);
+			echo form_button_generic("GoToNextStep[$next]", $overridenext . (isset($step) ? ' ' . $step : ''), BCONFIG_ICON_NEXT);
 	}
 
 	echo "</p>";
@@ -1418,7 +1528,7 @@ function WebCheckCertificates()
 		return;
 
 	if (!file_exists(COMMON_CORE_DIR . '/api/Organization.php')) {
-		WebDialogInfo(LOCALE_LANG_ERRMSG_WEIRD . " - Organization class is missing");
+		infobox_highlight(LOCALE_LANG_ERRMSG_IRD . " - Organization class is missing");
 		WebFooter();
 		exit();
 	}
@@ -1442,13 +1552,13 @@ function WebCheckCertificates()
 		$city = $organization->GetCity();
 		$country = $organization->GetCountry();
 	} catch (Exception $e) {
-		WebDialogWarning($e->GetMessage());
+		infobox_warning($e->GetMessage());
 	}
 
 	$org_exists = (!empty($domain) && !empty($orgname) && !empty($street) && !empty($city) && !empty($country));
 
 	if (!$ca_exists || !$org_exists) {
-		WebDialogInfo(LOCALE_LANG_ORGANIZATION_NOT_CONFIGURED . " &#160; " . WebUrlJump("organization.php", LOCALE_LANG_CONFIGURE));
+		infobox_highlight(LOCALE_LANG_ORGANIZATION_NOT_CONFIGURED . " &#160; " . WebUrlJump("organization.php", LOCALE_LANG_CONFIGURE));
 		WebFooter();
 		exit();
 	}
@@ -1481,12 +1591,12 @@ function WebCheckUserDatabase()
 			sleep(1);
 		}
 	} catch (Exception $e) {
-		WebDialogWarning($e->GetMessage());
+		infobox_warning($e->GetMessage());
 		return;
 	}
 
 	if (! $running) {
-		WebDialogWarning(LOCALE_LANG_USER_ENGINE_NOT_RUNNING . " &#160; " . WebUrlJump("ldap.php", LOCALE_LANG_CONTINUE));
+		infobox_warning(LOCALE_LANG_USER_ENGINE_NOT_RUNNING . " &#160; " . WebUrlJump("ldap.php", LOCALE_LANG_CONTINUE));
 		WebFooter();
 		exit();
 	} else {
@@ -1494,12 +1604,12 @@ function WebCheckUserDatabase()
 			$directory = new ClearDirectory();
 			$isinitialized = $directory->IsInitialized();
 		} catch (Exception $e) {
-			WebDialogWarning($e->GetMessage());
+			infobox_warning($e->GetMessage());
 			return;
 		}
 
 		if (! $isinitialized) {
-			WebDialogInfo(LOCALE_LANG_LDAP_NOT_CONFIGURED . " &#160; " . WebUrlJump("ldap.php", LOCALE_LANG_CONFIGURE));
+			infobox_highlight(LOCALE_LANG_LDAP_NOT_CONFIGURED . " &#160; " . WebUrlJump("ldap.php", LOCALE_LANG_CONFIGURE));
 			WebFooter();
 			exit();
 		}
@@ -1515,7 +1625,7 @@ function WebCheckUserDatabase()
 function WebCheckRegistration()
 {
 	if (empty($_SESSION['system_registered'])) {
-		WebDialogWarning(LOCALE_LANG_SYSTEM_REGISTRATION_REQUIRED . " - " . WebUrlJump("register.php", LOCALE_LANG_REGISTER));
+		infobox_warning(LOCALE_LANG_SYSTEM_REGISTRATION_REQUIRED . " - " . WebUrlJump("register.php", LOCALE_LANG_REGISTER));
 		WebFooter();
 		exit();
 	}
