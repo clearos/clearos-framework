@@ -14,7 +14,7 @@
  */
 
 if (isset($_SERVER['CLEAROS_BOOTSTRAP']))
-	$_ENV['CLEAROS_BOOTSTRAP'] = '/home/peter/clearos/webconfig/framework/trunk/shared';
+	$_ENV['CLEAROS_BOOTSTRAP'] = $_SERVER['CLEAROS_BOOTSTRAP'];
 
 /*
  *---------------------------------------------------------------
