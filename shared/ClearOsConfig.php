@@ -25,7 +25,7 @@
  * ClearOS framework configuration.
  *
  * @package Framework
- * @author {@link http://www.foundation.com/ ClearFoundation}
+ * @author {@link http://www.clearfoundation.com/ ClearFoundation}
  * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @copyright Copyright 2010 ClearFoundation
  */
@@ -34,7 +34,7 @@
  * ClearOS framework configuration class.
  *
  * @package Framework
- * @author {@link http://www.foundation.com/ ClearFoundation}
+ * @author {@link http://www.clearfoundation.com/ ClearFoundation}
  * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @copyright Copyright 2010 ClearFoundation
  */
