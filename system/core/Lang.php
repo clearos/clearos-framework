@@ -51,6 +51,10 @@ class CI_Lang {
 	 */
 	function load($langfile = '', $idiom = '', $return = FALSE, $add_suffix = TRUE, $alt_path = '')
 	{
+// ClearFoundation FIXME - what the...
+		if ($langfile == 'form_validation')
+			return;
+
 		$langfile = str_replace(EXT, '', $langfile);
 
 		if ($add_suffix == TRUE)
