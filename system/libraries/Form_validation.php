@@ -489,7 +489,8 @@ class CI_Form_validation {
 		if ( ! in_array('required', $rules) AND is_null($postdata))
 		{
 			// Before we bail out, does the rule contain a callback?
-			if (preg_match("/(callback_\w+)/", implode(' ', $rules), $match))
+			// ClearFoundation add api_ callback
+			if (preg_match("/((callback|api)_\w+)/", implode(' ', $rules), $match))
 			{
 				$callback = TRUE;
 				$rules = (array('1' => $match[1]));
@@ -542,6 +543,9 @@ class CI_Form_validation {
 		// Cycle through each rule and run it
 		foreach ($rules As $rule)
 		{
+			// ClearFoundation - add callback type
+			$callback_type = '';
+			
 			$_in_array = FALSE;
 
 			// We set the $postdata variable with the current data in our master array so that
@@ -566,11 +570,19 @@ class CI_Form_validation {
 			// --------------------------------------------------------------------
 
 			// Is the rule a callback?
+			// ClearFoundation add api_ callback
 			$callback = FALSE;
 			if (substr($rule, 0, 9) == 'callback_')
 			{
 				$rule = substr($rule, 9);
 				$callback = TRUE;
+				$callback_type = 'normal';
+			}
+			else if (substr($rule, 0, 4) == 'api_')
+			{
+				$rule = substr($rule, 4);
+				$callback = TRUE;
+				$callback_type = 'api';
 			}
 
 			// Strip the parameter (if exists) from the rule
@@ -585,13 +597,40 @@ class CI_Form_validation {
 			// Call the function that corresponds to the rule
 			if ($callback === TRUE)
 			{
-				if ( ! method_exists($this->CI, $rule))
+				// ClearFoundation - add api callback
+				if ($callback_type === 'api')
 				{
-					continue;
-				}
+					$matches = array();
 
-				// Run the function and grab the result
-				$result = $this->CI->$rule($postdata, $param);
+					preg_match("/(\w+)_(\w+)_(\w+)/", $rule, $matches);
+					$clear_app = $matches[1];
+					$clear_library = $matches[2];
+					$clear_method = $matches[3];
+
+					$this->CI->load->library($clear_app.'/'.$clear_library);
+
+					$clear_object = strtolower($clear_library);
+					if ( ! method_exists($this->CI->$clear_object, $clear_method))
+					{ 		
+						continue;
+					}
+
+					$error_message = $this->CI->$clear_object->$clear_method($postdata);
+
+					$result = ($error_message) ? FALSE : TRUE;	
+
+					$this->CI->form_validation->set_message($rule, $error_message);
+				}
+				else 
+				{
+					if ( ! method_exists($this->CI, $rule))
+					{
+						continue;
+					}
+
+					// Run the function and grab the result
+					$result = $this->CI->$rule($postdata, $param);
+				}
 
 				// Re-assign the result to the master data array
 				if ($_in_array == TRUE)
