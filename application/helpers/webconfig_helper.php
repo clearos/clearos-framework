@@ -1353,7 +1353,7 @@ function WebMenuFetch()
 {
 	$webconfig = new Webconfig();
 
-	$dhcp = array(
+	$devel = array(
 		'section' => 'Developer',
 		'subsection' => 'Tools',
 		'title' => 'Theme',
@@ -1371,6 +1371,15 @@ function WebMenuFetch()
 		'priority' => '2001'
 	);
 
+	$dhcp = array(
+		'section' => 'System',
+		'subsection' => 'Settings',
+		'title' => 'DHCP',
+		'url' => '/app/dhcp',
+		'type' => 'configuration',
+		'priority' => '2001'
+	);
+
 	$dashboard = array(
 		'section' => 'Reports',
 		'subsection' => 'Overview',
@@ -1380,7 +1389,7 @@ function WebMenuFetch()
 		'priority' => '2001'
 	);
 
-	$pagedata = array($dhcp, $date, $dashboard);
+	$pagedata = array($devel, $dhcp, $date, $dashboard);
 
 	return $pagedata;
 }
