@@ -40,6 +40,14 @@ if (CI_VERSION < 2) {
 class MX_Lang extends CI_Lang
 {
 	public function load($langfile, $lang = '', $return = FALSE, $_module = NULL)	{
+		// ClearFoundation
+		// Support short form as well as full path
+		// - load('date') -- which is equivalent to load('date/date')
+		// - load('base/daemon')
+
+		if (!preg_match('/\//', $langfile))
+			$langfile .= "/$langfile";
+
 		if (is_array($langfile)) 
 			return $this->load_many($langfile);
 			
