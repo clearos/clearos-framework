@@ -132,7 +132,10 @@ class Modules
 		if (strstr($class, 'CI_') OR strstr($class, config_item('subclass_prefix'))) return;
 
 		/* autoload Modular Extensions MX core classes */
-		if (strstr($class, 'MX_') AND is_file($location = dirname(__FILE__).'/'.substr($class, 3).EXT)) {
+		// ClearFoundation - change MX_Controller to ClearOS_Controller.
+		// Purely cosmetic for developer documentation (what's MX?).
+		// if (strstr($class, 'mX_') AND is_file($location = dirname(__FILE__).'/'.substr($class, 3).EXT)) {
+		if (strstr($class, 'ClearOS_') AND is_file($location = dirname(__FILE__).'/'.substr($class, 8).EXT)) {
 			include_once $location;
 			return;
 		}

@@ -36,14 +36,14 @@ require dirname(__FILE__).'/Base.php';
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **/
-class MX_Controller 
+class ClearOS_Controller 
 {
 	public $autoload = array();
 	
 	public function __construct() 
 	{
 		$class = str_replace(CI::$APP->config->item('controller_suffix'), '', get_class($this));
-		log_message('debug', $class." MX_Controller Initialized");	
+		log_message('debug', $class." ClearOS_Controller Initialized");	
 		
 		/* copy a loader instance and initialize */
 		$this->load = clone load_class('Loader');
