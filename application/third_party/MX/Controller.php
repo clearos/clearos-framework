@@ -51,6 +51,9 @@ class ClearOS_Controller
 		
 		/* autoload module items */
 		$this->load->_autoloader($this->autoload);
+
+		/* ClearFoundation - autoload base language */
+		$this->lang->load('base');
 	}
 	
 	public function __get($class) {
