@@ -1,9 +1,5 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
-if (CI_VERSION < 2) {
-	class CI_Lang extends CI_Language {}
-}
-
 /**
  * Modular Extensions - HMVC
  *
@@ -16,8 +12,8 @@ if (CI_VERSION < 2) {
  *
  * Install this file as application/third_party/MX/Lang.php
  *
- * @copyright	Copyright (c) Wiredesignz 2010-09-09
- * @version 	5.3.4
+ * @copyright	Copyright (c) Wiredesignz 2010-11-12
+ * @version 	5.3.5
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -37,6 +33,10 @@ if (CI_VERSION < 2) {
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  **/
+if (CI_VERSION < 2) {
+	class CI_Lang extends CI_Language {}
+}
+
 class MX_Lang extends CI_Lang
 {
 	public function load($langfile, $lang = '', $return = FALSE, $_module = NULL)	{
@@ -49,7 +49,7 @@ class MX_Lang extends CI_Lang
 		if (in_array($langfile.'_lang', $this->is_loaded, TRUE))
 			return $this->language;
 	
-		$_module || $_module = CI::$APP->router->fetch_module();
+		$_module OR $_module = CI::$APP->router->fetch_module();
 		list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/'.$idiom.'/');
 
 		if ($path === FALSE) {

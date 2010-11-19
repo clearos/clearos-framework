@@ -8,7 +8,7 @@ $bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/
 require_once($bootstrap . '/bootstrap.php');
 
 /* load the MX core module class */
-require 'Modules.php';
+require dirname(__FILE__).'/Modules.php';
 
 /**
  * Modular Extensions - HMVC
@@ -21,8 +21,8 @@ require 'Modules.php';
  *
  * Install this file as application/third_party/MX/Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2010-09-09
- * @version 	5.3.4
+ * @copyright	Copyright (c) Wiredesignz 2010-11-12
+ * @version 	5.3.5
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -57,6 +57,11 @@ class MX_Router extends CI_Router
 		
 		/* use a default 404 controller */
 		if (isset($this->routes['404']) AND $segments = explode('/', $this->routes['404'])) {
+			if ($located = $this->locate($segments)) return $located;
+		}	
+			
+		/* use a default 404_override controller CI 2.0 */
+		if (isset($this->routes['404_override']) AND $segments = explode('/', $this->routes['404_override'])) {
 			if ($located = $this->locate($segments)) return $located;
 		}
 		
@@ -132,6 +137,12 @@ class MX_Router extends CI_Router
 		if(is_file(APPPATH.'controllers/'.$module.'/'.$directory.$ext)) {
 			$this->directory = $module.'/';
 			return array_slice($segments, 1);
+		}
+
+		/* application sub-directory default controller exists? */
+		if(is_file(APPPATH.'controllers/'.$module.'/'.$this->default_controller.$ext)) {
+			$this->directory = $module.'/';
+			return array($this->default_controller);
 		}
 	}
 	
