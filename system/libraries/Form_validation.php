@@ -601,6 +601,9 @@ class CI_Form_validation {
 				// ClearFoundation - add api callback
 				if ($callback_type === 'api')
 				{
+					if (empty($postdata) && ( ! in_array('required', $rules, TRUE) ))
+						continue;
+
 					$matches = array();
 
 					preg_match("/(\w+)_(\w+)_(\w+)/", $rule, $matches);
