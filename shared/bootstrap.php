@@ -61,6 +61,14 @@ if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
 	// Remove slashes
 	$debugname = preg_replace('/\//', '', $debugname);
 
+	// Versioning for development and testing
+	//----------------------------------------------------------------
+	// FIXME: auto-detect default version based on dirname(__FILE__);
+
+	ClearOsConfig::$clearos_devel_versions['app']['default'] = 'trunk';
+	ClearOsConfig::$clearos_devel_versions['theme']['default'] = 'trunk';
+	ClearOsConfig::$clearos_devel_versions['framework'] = 'trunk';
+
 	// Paths
 	//----------------------------------------------------------------
 	// FIXME: trunk should not be hardcoded.
@@ -77,13 +85,6 @@ if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
 
 	ClearOsConfig::$debug_mode = TRUE;
 	ClearOsConfig::$debug_log = '/tmp/clearos_framework_' . $debugname . '_log';
-
-	// Versioning for development and testing
-	//----------------------------------------------------------------
-	// FIXME: auto-detect default version based on dirname(__FILE__);
-
-	ClearOsConfig::$clearos_devel_versions['app']['default'] = 'trunk';
-	ClearOsConfig::$clearos_devel_versions['framework'] = 'trunk';
 }
 
 
