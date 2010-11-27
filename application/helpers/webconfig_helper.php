@@ -27,7 +27,7 @@
  * Webconfig is used to give the web-interface a consistent look and feel.
  *
  * @package Framework
- * @author {@link http://www.foundation.com/ ClearFoundation}
+ * @author {@link http://www.clearfoundation.com/ ClearFoundation}
  * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @copyright Copyright 2010 ClearFoundation
  */
@@ -35,7 +35,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 // B O O T S T R A P
 ///////////////////////////////////////////////////////////////////////////////
-    
+
 $bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
 require_once($bootstrap . '/bootstrap.php');
 
@@ -43,10 +43,12 @@ require_once($bootstrap . '/bootstrap.php');
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
-clearos_load_library('base/Webconfig');
-clearos_load_language('base/base');
+clearos_load_language('base');
 
-///////////////////////////////////////////////////////////////////////////////
+// FIXME
+define('CLEAROS_MOBILE', 'mobile');
+
+//////////////////////////////////////////////////////////////////////////////
 // H E A D E R  /  F O O T E R
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -59,23 +61,18 @@ clearos_load_language('base/base');
 
 function clearos_html_head($title)
 {
+	ClearOsLogger::Profile(__METHOD__, __LINE__);
+
+	$framework =& get_instance();
+
 	// Adding hostname to the title is handy when managing multiple systems
 	//---------------------------------------------------------------------
 
-	if ($_SESSION['system_hostname'])
-		$title = $_SESSION['system_hostname'] . " - " . $title;
+	if ($framework->session->userdata('hostname'))
+		$title = $framework->session->userdata('hostname') . " - " . $title;
 
-	// Add page-specific head links.  For example, 
-	// To support different versions running in parallel, determine the app
-	// version e.g. /app/dhcp/htdocs, /app/dhcp/tags/5.1/htdocs, etc.
-	//-------------------------------------------------------------------------
-
-	// FIXME: move the versioning stuff to ClearOSCore
-	$theme_path = "/themes/" . $_SESSION['system_template'];
-
-	// FIXME: move the versioning stuff to ClearOSCore
-
-	$page_head = '';
+	// Determine the version to use (trunk, 6.0, etc)
+	//-----------------------------------------------
 
 	$segments = explode('/', $_SERVER['PHP_SELF']);
 	$app = $segments[2];
@@ -87,51 +84,55 @@ function clearos_html_head($title)
 	else
 		$app_version = "";
 
-	$js_path = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.js.php';
-	$css_path = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.css';
+	// Add page-specific head links.  For example, 
+	// To support different versions running in parallel, determine the app
+	// version e.g. /app/dhcp/htdocs, /app/dhcp/tags/5.1/htdocs, etc.
+	//-------------------------------------------------------------------------
 
-	if (file_exists(ClearOsConfig::$apps_path . '/' . $js_path))
-		$page_head .= "<script type='text/javascript' src='/approot" . $js_path . "'></script>\n";
+	$js = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.js.php';
+	$css = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.css';
+	$theme_path = '/themes/' . $framework->session->userdata('theme') . '/' . $app_version;
+	$theme_basepath = ClearOsConfig::$themes_path . '/' . $framework->session->userdata('theme') . '/' . $app_version;
 
-	if (file_exists(ClearOsConfig::$apps_path . '/' . $css_path))
-		$page_head .= "<link type='text/css' href='/approot" . $css_path ."' rel='stylesheet'>";
+	$page_head = '';
+
+	if (file_exists(ClearOsConfig::$apps_path . '/' . $js))
+		$page_head .= "<script type='text/javascript' src='/approot" . $js . "'></script>\n";
+
+	if (file_exists(ClearOsConfig::$apps_path . '/' . $css))
+		$page_head .= "<link type='text/css' href='/approot" . $css ."' rel='stylesheet'>";
 
 	// Write out the head
 	//-------------------
 
-// FIXME - DOCTYPE must be theme-able
-// <!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>
-// <!DOCTYPE html> 
-
-// FIXME - No JqueryUI?
-// <script type='text/javascript' src='/js/jquery-ui-1.8.5.custom.min.js'></script>
-// FIXME - Jquery versioning with mobile
-// <script type='text/javascript' src='/js/jquery-1.4.2.min.js'></script>
+	if (file_exists($theme_basepath . '/widgets/doctype.php'))
+		require_once($theme_basepath . '/widgets/doctype.php');
+	else
+		echo "<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>\n";
 
 	echo "
-<!DOCTYPE HTML PUBLIC '-//W3C//DTD HTML 4.01 Transitional//EN'>
-<html dir='" . $_SESSION['system_textdir'] . "'>
+<html dir='" . $framework->session->userdata('textdir') . "'>
 
-<!-- HEAD START -->
+<!-- Head Start -->
 <head>
 
 <!-- Basic Head Information -->
 <title>$title</title>
-<meta http-equiv='Content-Type' content='text/html; charset=" . $_SESSION['system_charset'] . "'>
+<meta http-equiv='Content-Type' content='text/html; charset=" . $framework->session->userdata('charset') . "'>
 
-<!-- Jquery Head-->
+<!-- Jquery -->
+<script type='text/javascript' src='/js/jquery-1.4.4.min.js'></script>
 
-<!-- Template Head -->
 ";
 
-	if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.php'))
-		require_once(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template']. '/widgets/head.php');
+	if (file_exists($theme_basepath . '/widgets/head.php'))
+		require_once($theme_basepath . '/widgets/head.php');
 
 echo "
 <!-- Page-specific Head -->
 $page_head
 </head>
-<!-- HEAD END -->
+<!-- Head end -->
 
 ";
 }
@@ -143,17 +144,30 @@ $page_head
  * @return string HTML head section
  */
 
-function clearos_header($layout)
+function clearos_header($layout, $data)
 {
-	// FIXME: move the versioning stuff to ClearOSCore
-	$theme_path = "/themes/clearos6x/trunk";
+	ClearOsLogger::Profile(__METHOD__, __LINE__);
+
+	$framework =& get_instance();
+
+	$theme_path = ClearOsConfig::GetThemePath($framework->session->userdata('theme'));
+
+	/// FIXME - pass parameters properly
+	$title = $data['title'];
 
 	if ($layout == 'default') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/header_default.php"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/header_default.php");
+
+		$default_file = $theme_path . '/widgets/header_default.php';
+
+		if (file_exists($default_file))
+			require($default_file);
+
 	} else if ($layout == 'splash') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/header_splash.php"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/header_splash.php");
+
+		$splash_file = $theme_path . '/widgets/header_splash.php';
+
+		if (file_exists($splash_file))
+			require($splash_file);
 	}
 }
 
@@ -166,188 +180,147 @@ function clearos_header($layout)
 
 function clearos_footer($layout = 'default')
 {
+	ClearOsLogger::Profile(__METHOD__, __LINE__);
+
+	$framework =& get_instance();
+
+	$theme_path = ClearOsConfig::GetThemePath($framework->session->userdata('theme'));
+
 	if ($layout == 'default') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/footer_default.php"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/footer_default.php");
+
+		$default_file = $theme_path . '/widgets/footer_default.php';
+
+		if (file_exists($default_file))
+			require($default_file);
+
 	} else if ($layout == 'splash') {
-		if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/footer_splash.php"))
-			require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/footer_splash.php");
+
+		$default_file = $theme_path . '/widgets/footer_splash.php';
+
+		if (file_exists($default_file))
+			require($default_file);
 	}
 }
 
-
-
-
-
 ///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
+// S U M M A R Y  V I E W
 ///////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////
-// C O N S T A N T S
-///////////////////////////////////////////////////////////////////////////////
-
-// FIXME: move to session
-define('BCONFIG_CONSOLE', intval((substr(getenv("HTTP_USER_AGENT"),0,4) == "Lynx")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
-define('BCONFIG_GUI', intval((substr(getenv("HTTP_USER_AGENT"),91,12) == "GranParadiso")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
-
-///////////////////////////////////////////////////////////////////////////////
-// S E S S I O N
-///////////////////////////////////////////////////////////////////////////////
-
-session_cache_expire(30);
-session_start();
-
-if (!isset($_SESSION['system_session_started']))
-	WebSetSession();
-
-// FIXME
-$_SESSION['system_template'] = 'clearos6xmobile/trunk';
-$_SESSION['system_template'] = 'clearos6x/trunk';
-
-///////////////////////////////////////////////////////////////////////////////
-// G R A P H I C S
-///////////////////////////////////////////////////////////////////////////////
-
-// General icons
-define('BCONFIG_ICON_ADD', WebSetIcon("icon-add.png"));
-define('BCONFIG_ICON_ARROWRIGHT', WebSetIcon("icon-arrowright.png"));
-define('BCONFIG_ICON_BACK', WebSetIcon("icon-back.png"));
-define('BCONFIG_ICON_CALENDAR', WebSetIcon("icon-calendar.png"));
-define('BCONFIG_ICON_CANCEL', WebSetIcon("icon-cancel.png"));
-define('BCONFIG_ICON_CHECKMARK', WebSetIcon("icon-checkmark.png"));
-define('BCONFIG_ICON_CONFIGURE', WebSetIcon("icon-configure.png"));
-define('BCONFIG_ICON_CONTINUE', WebSetIcon("icon-continue.png"));
-define('BCONFIG_ICON_DELETE', WebSetIcon("icon-delete.png"));
-define('BCONFIG_ICON_DISABLED', WebSetIcon("icon-disabled.png"));
-define('BCONFIG_ICON_DOWNLOAD', WebSetIcon("icon-download.png"));
-define('BCONFIG_ICON_EDIT', WebSetIcon("icon-edit.png"));
-define('BCONFIG_ICON_ENABLED', WebSetIcon("icon-enabled.png"));
-define('BCONFIG_ICON_EXTERNAL_LINK', WebSetIcon("icon-external-link.png"));
-define('BCONFIG_ICON_FILTER', WebSetIcon("icon-filter.png"));
-define('BCONFIG_ICON_GO', WebSetIcon("icon-go.png"));
-define('BCONFIG_ICON_HELP', WebSetIcon("icon-help.png"));
-define('BCONFIG_ICON_INFO', WebSetIcon("icon-info.png"));
-define('BCONFIG_ICON_LOGIN', WebSetIcon("icon-login.png"));
-define('BCONFIG_ICON_MINUS', WebSetIcon("icon-minus.png"));
-define('BCONFIG_ICON_NEXT', WebSetIcon("icon-next.png"));
-define('BCONFIG_ICON_OK', WebSetIcon("icon-ok.png"));
-define('BCONFIG_ICON_PLUS', WebSetIcon("icon-plus.png"));
-define('BCONFIG_ICON_PREVIOUS', WebSetIcon("icon-previous.png"));
-define('BCONFIG_ICON_RENEW', WebSetIcon("icon-renew.png"));
-define('BCONFIG_ICON_REPORT', WebSetIcon("icon-report.png"));
-define('BCONFIG_ICON_SAVE', WebSetIcon("icon-save.png"));
-define('BCONFIG_ICON_SEARCH', WebSetIcon("icon-search.png"));
-define('BCONFIG_ICON_STATUS', WebSetIcon("icon-status.png"));
-define('BCONFIG_ICON_SUPPORT', WebSetIcon("icon-support.png"));
-define('BCONFIG_ICON_TOGGLE', WebSetIcon("icon-toggle.png"));
-define('BCONFIG_ICON_UPDATE', WebSetIcon("icon-update.png"));
-define('BCONFIG_ICON_USERGUIDE', WebSetIcon("icon-userguide.png"));
-define('BCONFIG_ICON_VIEW', WebSetIcon("icon-view.png"));
-define('BCONFIG_ICON_WARNING', WebSetIcon("icon-warning.png"));
-define('BCONFIG_ICON_XMARK', WebSetIcon("icon-xmark.png"));
-
-// Ajax loading whirlgig
-define('BCONFIG_ICON_LOADING', WebSetIcon("icon-loading.gif"));
-
-// TODO -- need to revisit these 4 icons
-define('BCONFIG_ICON_INBOUND', WebSetIcon("icon-inbound.png"));
-define('BCONFIG_ICON_OUTBOUND', WebSetIcon("icon-outbound.png"));
-define('BCONFIG_ICON_UP', WebSetIcon("icon-plus.png"));
-define('BCONFIG_ICON_DOWN', WebSetIcon("icon-minus.png"));
-
-// Common applications
-// TODO: these need to be pluginable
-define('BCONFIG_ICON_EMAIL', WebSetIcon("icon-email.png"));
-define('BCONFIG_ICON_GOOGLE_APPS', WebSetIcon("icon-google-apps.gif"));
-define('BCONFIG_ICON_FTP', WebSetIcon("icon-ftp.png"));
-define('BCONFIG_ICON_OPENVPN', WebSetIcon("icon-openvpn.png"));
-define('BCONFIG_ICON_PPTP', WebSetIcon("icon-pptpd.png"));
-define('BCONFIG_ICON_PROXY', WebSetIcon("icon-proxy.png"));
-define('BCONFIG_ICON_SAMBA', WebSetIcon("icon-samba.png"));
-define('BCONFIG_ICON_WEB', WebSetIcon("icon-web.png"));
-
-// FIXME -- need to create these 2 icons
-define('BCONFIG_ICON_SHELL', WebSetIcon("icon-shell.png"));
-define('BCONFIG_ICON_PBX', WebSetIcon("icon-pbx.png"));
-
-// Dialog box icons
-// FIXME -- change these out -- sitting in webconfig/htdocs/templates/base/images/icons/16x16
-define('BCONFIG_DIALOG_ICON_DAEMON', WebSetIcon('dialog_icon_daemon.png', false));
-define('BCONFIG_DIALOG_ICON_INFO', WebSetIcon('dialog_icon_info.png', false));
-define('BCONFIG_DIALOG_ICON_REPORTS', WebSetIcon('dialog_icon_reports.png', false));
-define('BCONFIG_DIALOG_ICON_SAVED', WebSetIcon('dialog_icon_saved.png', false));
-define('BCONFIG_DIALOG_ICON_WARNING', WebSetIcon('dialog_icon_warning.png', false));
-
-
-///////////////////////////////////////////////////////////////////////////////
-// I C O N S
-///////////////////////////////////////////////////////////////////////////////
-
-/**
- * A function to set the path for the img tag for icons.
- */
-
-function WebSetIcon($icon, $is_imgtag = true)
-{
-	if (isset($_SESSION['system_template']) && file_exists(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/images/icons/16x16/$icon"))
-		$template = $_SESSION['system_template'];
-	else
-		$template = "base";
-
-	if ($is_imgtag)
-		return WebReplacePngTags("/templates/$template/images/icons/16x16/$icon");
-	else
-		return "/templates/$template/images/icons/16x16/$icon";
+function clearos_summary_page($links) {
+	echo _clearos_summary_page($links);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // A N C H O R S
 ///////////////////////////////////////////////////////////////////////////////
 
-function _anchor_generic($url, $text, $class, $id = null)
+function anchor_custom($url, $id = NULL, $text)
 {
-	$id = isset($id) ? " id='$id'" : '';
-	
-//	return "<a href='$url' class='anchor $class' $id>$text</a>";
-
-	// FIXME: Mobile
-	return "<a href='$url' class='anchor $class' $id data-role='button' data-inline='true'>$text</a>";
+	return _anchor_theme($url, $id, $text, 'anchor-custom');
 }
 
-function anchor_custom($url, $id, $text, $class = 'anchor-generic')
+function anchor_add($url, $id = NULL)
 {
-	return _anchor_generic($url, $text, $class, $id);
+	return _anchor_theme($url, $id, lang('base_add'), 'anchor-add');
 }
 
-function anchor_add($url, $id)
+function anchor_edit($url, $id = NULL)
 {
-	return _anchor_generic($url, lang('base_add'), 'anchor-add', $id);
+	return _anchor_theme($url, $id, lang('base_edit'), 'anchor-edit');
 }
 
-function anchor_update($url)
+function anchor_cancel($url, $id = NULL)
 {
-	return _anchor_generic($url, lang('base_update'), 'anchor-update');
+	return _anchor_theme($url, $id, lang('base_cancel'), 'anchor-cancel');
 }
 
-function anchor_delete($url)
+function anchor_home($url, $id = NULL)
 {
-	return _anchor_generic($url, lang('base_delete'), 'anchor-delete');
+	return _anchor_theme($url, $id, lang('base_home'), 'anchor-home');
 }
 
-function anchor_previous($url)
+function anchor_update($url, $id = NULL)
 {
-	return _anchor_generic($url, lang('base_previous'), 'anchor-previous');
+	return _anchor_theme($url, $id, lang('base_update'), 'anchor-update');
 }
 
-function anchor_next($url)
+function anchor_delete($url, $id = NULL)
 {
-	return _anchor_generic($url, lang('base_next'), 'anchor-next');
+	return _anchor_theme($url, $id, lang('base_delete'), 'anchor-delete');
 }
 
+function anchor_previous($url, $id = NULL)
+{
+	return _anchor_theme($url, $id, lang('base_previous'), 'anchor-previous');
+}
+
+function anchor_next($url, $id = NULL)
+{
+	return _anchor_theme($url, $id, lang('base_next'), 'anchor-next');
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // B U T T O N S
+///////////////////////////////////////////////////////////////////////////////
+
+function form_submit_add($name, $id = NULL)
+{
+	return _form_submit_theme($name, $id, lang('base_add'), 'form-button-add');
+}
+
+function form_submit_delete($name, $id = NULL)
+{
+	return _form_submit_theme($name, $id, lang('base_delete'), 'form-button-delete');
+}
+
+function form_submit_update($name, $id = NULL)
+{
+	return _form_submit_theme($name, $id, lang('base_update'), 'form-button-update');
+}
+
+function form_submit_previous($name, $id = NULL)
+{
+	return _form_submit_theme($name, $id, lang('base_previous'), 'form-button-previous');
+}
+
+function form_submit_next($name, $id = NULL)
+{
+	return _form_submit_theme($name, $id, lang('base_next'), 'form-button-next');
+}
+
+function form_submit_disable($name, $id = NULL)
+{
+	return _form_submit_theme($name, $id, lang('base_disable'), 'form-button-disable');
+}
+
+function form_submit_custom($name, $id, $text)
+{
+	return _form_submit_theme($name, $id, $text, 'form-button-custom');
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// B U T T O N  S E T S
+///////////////////////////////////////////////////////////////////////////////
+
+function cos_button_set($buttons)
+{
+	$html = _button_set_open() . $buttons . _button_set_close();
+
+	return $html;
+}
+
+function button_set_open()
+{
+	return _button_set_open();
+}
+
+function button_set_close()
+{
+	return _button_set_close();
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// R A D I O  S E T S
 ///////////////////////////////////////////////////////////////////////////////
 
 function form_radio_set_open($class, $orientation)
@@ -371,180 +344,97 @@ function form_radio_set_close()
 	return "</div>\n";
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////
-//
-// button -- displays a form button.
-//
-// name:   the button name
-// value:  the button value
-// image:  the button image
-//
-// Developer note: to keep backwards compatibility, this function is now ugly.
-// Sorry about that.
-//
+// S E L E C T  B O X E S
 ///////////////////////////////////////////////////////////////////////////////
 
-function form_button_generic($name, $text, $class, $id = null, $options = null)
+function cos_form_dropdown($name, $options, $selected, $label)
 {
-	$optionlist = '';
+	return _cos_form_dropdown($name, $options, $selected, $label);
+}
 
-	if (! empty($options)) {
-		foreach ($options as $key => $value)
-			$optionlist .= " $key='$value'";
-	}
+function cos_form_toggle_enable($name, $default, $label)
+{
+	$options = array(
+		'0' => lang('base_disabled'),
+		'1' => lang('base_enabled')
+	);
 
-	if (empty($options['type']))
-		$optionlist .= " type='submit'";
+	$selected = set_value($name, $default);
 
-	if (file_exists(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/button.php")) {
-		require(ClearOsConfig::$themes_path . '/' . $_SESSION['system_template'] . "/widgets/button.php");
-		return $button;
+	return _cos_form_toggle($name, $options, $selected, $label);
+} 
+
+///////////////////////////////////////////////////////////////////////////////
+// I N P U T  B O X E S
+///////////////////////////////////////////////////////////////////////////////
+
+function cos_form_input($name, $default, $label, $readonly = FALSE)
+{
+	// FIXME - allow theming
+	if ($readonly) {
+		$html = "<div>" . form_label($label, $name) . " <span id='$name'>" . $default . "</span></div>";
 	} else {
-		return "<div>button widget has not been defined</div>";
+		$html = "
+			<div>" .
+				form_label($label, $name) . 
+				form_input($name, set_value($name, $default)) . " " .
+				form_error($name). "
+			</div>";
 	}
-}
 
-function form_button_add($name, $options = null)
+	return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
+// S U M M A R Y  T A B L E S
+///////////////////////////////////////////////////////////////////////////////
+
+function summary_table_start($title)
 {
-	return form_button_generic($name, lang('base_add'), 'form-button-add', $options);
+	return _summary_table_start($title);
 }
 
-function form_button_delete($name, $options = null)
+function summary_table_header($headers)
 {
-	return form_button_generic($name, lang('base_delete'), 'form-button-delete', $options);
+	return  _summary_table_header($headers);
 }
 
-function form_button_update($name, $step = null, $options = null)
+function summary_table_items($items)
 {
-	return form_button_generic($name, lang('base_update'), 'form-button-update', $options);
+	return _summary_table_items($items);
 }
 
-function form_button_previous($name, $options = null)
+function summary_table_end()
 {
-	return form_button_generic($name, lang('base_previous'), 'form-button-previous', $options);
+	return _summary_table_end();
 }
 
-function form_button_next($name, $step = null, $options = null)
+//////////////////////////////////////////////////////////////////////////////
+// C O N F I R M A T I O N  D I A L O G B O X
+///////////////////////////////////////////////////////////////////////////////
+
+function dialogbox_confirm($message, $ok_anchor, $cancel_anchor)
 {
-	return form_button_generic($name, lang('base_next'), 'form-button-next', $options);
+	return _dialogbox_confirm($message, $ok_anchor, $cancel_anchor);
 }
 
-function form_button_disable($name, $step = null, $options = null)
-{
-	return form_button_generic($name, lang('base_disable'), 'form-button-disable', $options);
-}
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 
-function WebButtonCreate($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_CREATE, BCONFIG_ICON_ADD, $options);
-}
+///////////////////////////////////////////////////////////////////////////////
+// C O N S T A N T S
+///////////////////////////////////////////////////////////////////////////////
 
-function WebButtonDelete($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_DELETE, BCONFIG_ICON_DELETE, $options);
-}
+// FIXME: move to session
+define('BCONFIG_CONSOLE', intval((substr(getenv("HTTP_USER_AGENT"),0,4) == "Lynx")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
+define('BCONFIG_GUI', intval((substr(getenv("HTTP_USER_AGENT"),91,12) == "GranParadiso")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
 
-function WebButtonDownload($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_DOWNLOAD, BCONFIG_ICON_DOWNLOAD, $options);
-}
 
-function WebButtonGenerate($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_GENERATE, BCONFIG_ICON_UPDATE, $options);
-}
-
-function WebButtonEdit($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_EDIT, BCONFIG_ICON_EDIT, $options);
-}
-
-function WebButtonGo($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_GO, BCONFIG_ICON_GO, $options);
-}
-
-function WebButtonToggle($name, $text, $options = null)
-{
-	return form_button_generic($name, $text, BCONFIG_ICON_TOGGLE, $options);
-}
-
-function WebButtonRefresh($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_REFRESH, BCONFIG_ICON_UPDATE, $options);
-}
-
-function WebButtonReset($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_RESET, BCONFIG_ICON_TOGGLE, $options);
-}
-
-function WebButtonSelect($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_SELECT, BCONFIG_ICON_CONTINUE, $options);
-}
-
-function WebButtonShowFullReport($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_SHOW_FULL_REPORT, BCONFIG_ICON_CONTINUE, $options);
-}
-
-function WebButtonUpdate($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_UPDATE, BCONFIG_ICON_UPDATE, $options);
-}
-
-function WebButtonConfirm($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_CONFIRM, BCONFIG_ICON_CHECKMARK, $options);
-}
-
-function WebButtonContinue($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_CONTINUE, BCONFIG_ICON_CONTINUE, $options);
-}
-
-function WebButtonCancel($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_CANCEL, BCONFIG_ICON_CANCEL, $options);
-}
-
-function WebButtonLogin($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_LOGIN, BCONFIG_ICON_LOGIN, $options);
-}
-
-function WebButtonView($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_VIEW, BCONFIG_ICON_VIEW, $options);
-}
-
-function WebButtonConfigure($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_CONFIGURE, BCONFIG_ICON_CONFIGURE, $options);
-}
-
-function WebButtonSave($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_SAVE, BCONFIG_ICON_SAVE, $options);
-}
-
-function WebButtonRenew($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_RENEW, BCONFIG_ICON_RENEW, $options);
-}
-
-function WebButtonSearch($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_SEARCH, BCONFIG_ICON_SEARCH, $options);
-}
-
-function WebButtonFilter($name, $options = null)
-{
-	return form_button_generic($name, LOCALE_LANG_FILTER, BCONFIG_ICON_FILTER, $options);
-}
-
+///////////////////////////////////////////////////////////////////////////////
+// I C O N S
+///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 // T A B S
@@ -569,29 +459,6 @@ function progress_bar($id)
 {
 	// Jquery mobile progress bar was not in alpha, but expected in 1.0 
 	return "<div class='progressbar' id='$id'></div>";
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// S E L E C T  M E N U
-///////////////////////////////////////////////////////////////////////////////
-
-function cos_form_dropdown($name, $options)
-{
-	// Jquery mobile
-	return form_dropdown($name, $options);
-/*
-	return "
-		<div data-role='fieldcontain'>
-			<label for='select-choice-1' class='select'>Choose shipping method:</label>
-			<select name='select-choice-1' id='select-choice-1'>
-				<option value='standard'>Standard: 7 day</option>
-				<option value='rush'>Rush: 3 days</option>
-				<option value='express'>Express: next day</option>
-				<option value='overnight'>Overnight</option>
-			</select>
-		</div>
-	";
-*/
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -650,6 +517,7 @@ function infobox_highlight($message)
 {
 	infobox('highlight', $message);
 }
+
 
 function helpbox($message)
 {
@@ -806,539 +674,6 @@ function WebDialogDaemon($initd, $show_onboot = true)
 // C H A R T S
 ///////////////////////////////////////////////////////////////////////////////
 
-function WebChartLegend($title, $rows, $headers = "", $width = "100%")
-{
-	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chartlegend.php");
-
-	return $legend;
-}
-
-function WebChart($title, $type, $width, $height, $data, $series_color, $bgcolor, $explode, $url='')
-{
-	require(ClearOsConfig::$htdocs_path . "/templates/" . $_SESSION['system_template'] . "/widgets/chart.php");
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// A U T H E N T I C A T I O N  A N D  S E S S I O N
-///////////////////////////////////////////////////////////////////////////////
-
-/**
- * Authentication for web pages.
- *
- * The security model is simple - all protected pages start with a call to
- * WebAuthenticate().  The function does one of three things:
- *
- *  - 1) Returns (quietly) on success
- *  - 2) Returns a "login failed" username/password web form
- *  - 3) Returns an "access denied" page if user is accessing an unauthorized page
- *
- * @return  void
- */
-
-function WebAuthenticate()
-{
-	// Forward to wizard when required
-	//--------------------------------
-
-	if (file_exists(Webconfig::FILE_SETUP_FLAG) && 
-		!preg_match("/\/app\/setup\..*/", $_SERVER['PHP_SELF']) &&
-		!(BCONFIG_CONSOLE)
-		) {
-		// TODO: not very clean... the wizard needs to pull in Ajax helper pages
-		if (!(preg_match("/\.js\./", $_SERVER['PHP_SELF']) || preg_match("/\.xml\./", $_SERVER['PHP_SELF']))) {
-			WebForwardPage("/app/setup.php");
-			exit;
-		}
-	}
-
-	// Logout requested
-	//-----------------
-
-	if (isset($_REQUEST['reserved_logout']))  {
-		// We need the session data for formatting, so don't destroy the
-		// session before grabbing our "you have been logged out" HTML.
-
-		ob_start();
-		WebHeader($_SESSION['system_osname'], false);
-		WebAuthenticateDisplayLogin("", "");
-		WebFooter(false);
-		$html = ob_get_contents();
-		ob_end_clean();
-
-		session_destroy();
-		unset($_SESSION);
-
-		echo $html;
-
-		exit;
-
-	// Already logged in as root - return ok right away
-	//-------------------------------------------------
-
-	} else if (isset($_SESSION['system_login'])) {
-		return;
-
-	// Already logged in as user/subadmin - check if this page is allowed
-	//-------------------------------------------------------------------
-
-	} else if (isset($_SESSION['user_login']))  {
-		WebAuthenticateCheckAcl($_SESSION['user_login'], $_SERVER['PHP_SELF']);
-
-	// Kill X if requested
-	//--------------------
-	} else if (isset($_REQUEST['ExitConsole']))  {
-		require_once(COMMON_CORE_DIR . '/api/ShellExec.php');
-		$shell = new ShellExec();
-		$shell->Execute(Webconfig::CMD_KILLALL, 'X', true);
-		exit;
-
-	
-	// Setup wizard required
-	//----------------------
-
-	// Not logged in
-	//--------------
-
-	} else {
-		$username = isset($_POST['reserved_username']) ? $_POST['reserved_username'] : "";
-		$password = isset($_POST['reserved_password']) ? $_POST['reserved_password'] : "";
-
-		// No credentials sent, so show a helpful login screen
-		//----------------------------------------------------
-
-		if (!($username && $password)) {
-			WebHeader($_SESSION['system_osname'], false);
-			WebAuthenticateDisplayLogin("", "");
-			WebFooter(false);
-			exit;
-
-		// Credentials sent, so try to authenticate
-		//------------------------------------------
-
-		} else {
-			sleep(2); // a small delay for brute force attacks
-
-			// For the root user, check /etc/passwd
-			// For other users, check LDAP
-
-			$passwordok = false;
-			$allowadmins = false;
-			$allowusers = true;
-
-			if ($username == "root") {
-				if (! file_exists(COMMON_CORE_DIR . '/api/PosixUser.php'))
-					exit();
-
-				require_once(COMMON_CORE_DIR . '/api/PosixUser.php');
-
-				try {
-					$user = new PosixUser($username);
-					$passwordok = $user->CheckPassword($password);
-				} catch (Exception $e) {
-					WebHeader("", false);
-					infobox_warning($e->GetMessage());
-					Webfooter();
-					exit();
-				}
-			} else {
-				if (! file_exists(COMMON_CORE_DIR . '/api/User.php'))
-					exit();
-
-					require_once(COMMON_CORE_DIR . '/api/User.php');
-
-					try {
-						$user = new User($username);
-						$passwordok = $user->CheckPassword($password, 'pcnWebconfigPassword');
-				} catch (Exception $e) {
-					WebHeader("", false);
-					infobox_warning($e->GetMessage());
-					Webfooter();
-					exit();
-				}
-			}
-
-			if (($username == "root") && $passwordok) {
-				ClearOsLoggerSysLog("webconfig", "login - root login successful");
-				$_SESSION['system_login'] = "root";
-				$_SESSION['user_login'] = "root";
-				WebSetSessionAuthenticated();
-
-			} else if ($allowadmins && $passwordok && in_array($username, $validadmins)) {
-				ClearOsLoggerSysLog("webconfig", "login - $username sub-admin login successful");
-				$_SESSION['user_login'] = $username;
-				WebSetSessionAuthenticated();
-				WebAuthenticateCheckAcl($username, $_SERVER['PHP_SELF']);
-
-			} else if ($allowusers && $passwordok) {
-				ClearOsLoggerSysLog("webconfig", "login - $username user login successful");
-				$_SESSION['user_login'] = $username;
-				WebSetSessionAuthenticated();
-				WebAuthenticateCheckAcl($username, $_SERVER['PHP_SELF']);
-
-			} else {
-				ClearOsLoggerSysLog("webconfig", "login - $username login failed");
-
-				WebHeader($_SESSION['system_osname'], false);
-				WebAuthenticateDisplayLogin($username, $password, BCONFIG_LANG_ERRMSG_LOGIN_FAILED);
-				WebFooter(false);
-				exit;
-			}
-		}
-	}
-}
-
-/**
- * Displays a login web page form.
- */
-
-function WebAuthenticateDisplayLogin($username, $password, $warning = null)
-{
-	if (BCONFIG_CONSOLE)
-		$login = "root <input type='hidden' name='reserved_username' value='root' />";
-	else
-		$login = "<input type='text' name='reserved_username' value='$username' />";
-
-	WebHeaderLayout("splash");
-
-
-	if (file_exists(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.php")) {
-		require(ClearOsConfig::$htdocs_path . "/themes/" . $_SESSION['system_template'] . "/widgets/login.php");
-	} else {
-		if (! empty($warning))
-			infobox_warning($warning);
-
-		WebFormOpen();
-		WebTableOpen(BCONFIG_LANG_LOGIN, "450");
-		echo "
-			<tr>
-				<td width='150' nowrap class='mytablesubheader'>" . LOCALE_LANG_USERNAME . "</td>
-				<td>$login</td>
-			</tr>
-			<tr>
-				<td nowrap class='mytablesubheader'>" . LOCALE_LANG_PASSWORD . "</td>
-				<td><input type='password' name='reserved_password' value='$password' /></td>
-			</tr>
-			<tr>
-				<td class='mytablesubheader'>&nbsp; </td>
-				<td>" . WebButtonContinue("Login") . "</td>
-			</tr>
-		";
-		WebTableClose("450");
-		WebFormClose();
-	}
-
-	WebFooter("splash");
-}
-
-/**
- * Checks to see if given username is allowed to view given page.
- * If page is not allowed, a redirect to the first valid page is attempted.
- */
-
-function WebAuthenticateCheckAcl($username, $page)
-{
-	$webconfig = new Webconfig();
-
-	// Allow helper pages (for example, data.xml.php and date.js.php)
-	$authpage = preg_replace("/\.(inc|js|xml)\.php$/", ".php", $page);
-
-	try {
-		if (isset($_SESSION['system_valid_pages_regular'])) {
-			$validregular = explode("|", $_SESSION['system_valid_pages_regular']);
-			$validadmin = explode("|", $_SESSION['system_valid_pages_admin']);
-			$allowusers = (bool) $_SESSION['system_allow_users'];
-			$allowadmins = (bool) $_SESSION['system_allow_admins'];
-		} else {
-			$allowusers = $webconfig->GetUserAccessState();
-			$allowadmins = $webconfig->GetAdminAccessState();
-			$validpages = $webconfig->GetValidPages($username);
-			$validregular = $validpages[Webconfig::TYPE_USER_REGULAR];
-			$validadmin = $validpages[Webconfig::TYPE_USER_ADMIN];
-			
-			$_SESSION['system_valid_pages_regular'] = implode("|", $validregular);
-			$_SESSION['system_valid_pages_admin'] = implode("|", $validadmin);
-			$_SESSION['system_allow_users'] = $webconfig->GetUserAccessState();
-			$_SESSION['system_allow_admins'] = $webconfig->GetAdminAccessState();
-		}
-	} catch (Exception $e) {
-		WebHeader("", false);
-		infobox_warning($e->GetMessage());
-		WebFooter();
-		exit();
-	}
-
-	if ($allowadmins && in_array($authpage, $validadmin)) {
-		ClearOsLoggerSysLog("webconfig", "access control - $username user accessed $page");
-		$isvalid = true;
-	} else if ($allowusers && in_array($authpage, $validregular)) {
-		ClearOsLoggerSysLog("webconfig", "access control - $username user accessed $page");
-		$isvalid = true;
-	} else if (preg_match("/^\/index.php$/", $page) && isset($validregular[0])) {
-		// Forward user logins on document root to first valid page
-		WebForwardPage($validregular[0]);
-		exit;
-	} else {
-		ClearOsLoggerSysLog("webconfig", "access control - $username denied access to $page");
-		$isvalid = false;
-	}
-
-	if (! $isvalid) {
-		if (isset($validregular[0])) {
-			WebHeader("", false);
-			infobox_warning(
-				LOCALE_LANG_ACCESS_DENIED . "<br><br>" .
-				"<a href=https://" . $_SERVER["HTTP_HOST"] . $validregular[0] . ">" .
-				BCONFIG_LANG_USE_THIS_PAGE_INSTEAD . "</a>"
-			);
-			WebFooter(false);
-			exit();
-		} else {
-			WebHeader("", false);
-			infobox_warning(LOCALE_LANG_ACCESS_DENIED);
-			WebFooter(false);
-			exit();
-		}
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// Session functions
-//
-///////////////////////////////////////////////////////////////////////////////
-
-/**
- * Sets session variables.
- */
-
-function WebSetSession()
-{
-	$webconfig = new Webconfig();
-
-	// Hostname
-	//---------
-
-	$realhostname = "";
-
-	if (file_exists(COMMON_CORE_DIR . "/api/Hostname.php")) {
-		require_once(COMMON_CORE_DIR . "/api/Hostname.php");
-
-		try {
-			$hostname = new Hostname();
-			$realhostname = $hostname->Get();
-		} catch (Exception $e) {
-			// Use default
-		}
-	}
-
-	// Check registration
-	//-------------------
-
-	$registered = false;
-
-	if (file_exists(COMMON_CORE_DIR . "/api/Register.php")) {
-		require_once(COMMON_CORE_DIR . "/api/Register.php");
-
-		try {
-			$register = new Register();
-			$registered = $register->GetStatus();
-		} catch (Exception $e) {
-			// Use default
-		}
-	}
-
-	// Language
-	//---------
-
-	$code = "en_US";
-	$charset = 'utf-8';
-	$textdir = 'LTR';
-
-	if (file_exists(COMMON_CORE_DIR . "/api/Locale.php")) {
-		require_once(COMMON_CORE_DIR . "/api/Locale.php");
-
-		try {
-			$locale = new Locale();
-			$code = $locale->GetLanguageCode();
-			$charset = $locale->GetCharacterSet();
-			$textdir = $locale->GetTextDirection();
-		} catch (Exception $e) {
-			// Use default
-		}
-	}
-
-	setlocale(LC_ALL, $code);
-
-	// Product Info
-	//-------------
-
-	$osname = "Linux";
-	$osversion = "2.6";
-	$redirect = "";
-
-	if (file_exists(COMMON_CORE_DIR . "/api/Product.php")) {
-		require_once(COMMON_CORE_DIR . "/api/Product.php");
-
-		try {
-			$product = new Product();
-			$osname = $product->GetName();
-			$osversion = $product->GetVersion();
-			$redirect = $product->GetRedirectUrl() . "/" . preg_replace("/ /", "_", $osname) . "/" . $osversion;
-		} catch (Exception $e) {
-			// Use default
-		}
-	} else if (file_exists(COMMON_CORE_DIR . "/api/Os.php")) {
-		require_once(COMMON_CORE_DIR . "/api/Os.php");
-
-		try {
-			$os = new Os();
-			$osname = $os->GetName();
-			$osversion = $os->GetVersion();
-		} catch (Exception $e) {
-			// Use default
-		}
-	}
-
-	// Hostkey
-	//--------
-
-	$hostkey = "hostkey";
-
-	if (file_exists(COMMON_CORE_DIR . "/api/Suva.php")) {
-		require_once(COMMON_CORE_DIR . "/api/Suva.php");
-
-		try {
-			$suva = new Suva();
-			$hostkey = $suva->GetHostkey();
-		} catch (Exception $e) {
-			// Use default
-		}
-	}
-
-	// Template
-	//---------
-
-	$template = "clearos6x";
-
-	if (file_exists(COMMON_CORE_DIR . "/api/Webconfig.php")) {
-		require_once(COMMON_CORE_DIR . "/api/Webconfig.php");
-
-		try {
-			// $template = $webconfig->GetTemplate();
-		} catch (Exception $e) {
-			// Use default
-		}
-	}
-
-	$sdnredirect = "https://secure.clearcenter.com/redirect";
-
-	// Set the session
-	//----------------
-
-	if (isset($_SESSION['system_session_started'])) {
-		$_SESSION['system_registered'] = $registered;
-		$_SESSION['system_online_help'] = $redirect . "/userguide";
-		$_SESSION['system_redirect'] = $redirect;
-		$_SESSION['system_sdn_redirect'] = $sdnredirect;
-		$_SESSION['system_hostkey'] = $hostkey;
-		$_SESSION['system_template'] = $template;
-		$_SESSION['system_locale'] = $code;
-		$_SESSION['system_charset'] = $charset;
-		$_SESSION['system_textdir'] = $textdir;
-		$_SESSION['system_osname'] = $osname;
-		$_SESSION['system_osversion'] = $osversion;
-		$_SESSION['system_hostname'] = $realhostname;
-	} else {
-		$_SESSION = array(
-				'system_session_started' => true,
-				'system_registered' => $registered,
-				'system_online_help' => $redirect . "/userguide",
-				'system_redirect' => $redirect,
-				'system_sdn_redirect' => $sdnredirect,
-				'system_hostkey' => $hostkey,
-				'system_template' => $template,
-				'system_locale' => $code,
-				'system_charset' => $charset,
-				'system_textdir' => $textdir,
-				'system_osname' => $osname,
-				'system_osversion' => $osversion,
-				'system_hostname' => $realhostname
-		);
-	}
-}
-
-/**
- * Sets session variables when authenticated.
- */
-
-function WebSetSessionAuthenticated()
-{
-	$webconfig = new Webconfig();
-
-	// Organization
-	//-------------
-
-	$orgname = "";
-
-	if (file_exists(COMMON_CORE_DIR . "/api/Organization.php")) {
-		require_once(COMMON_CORE_DIR . "/api/Organization.php");
-
-		try {
-			$organization = new Organization();
-			$orgname = $organization->GetName();
-		} catch (Exception $e) {
-			// Use default
-		}
-	}
-
-	// Full name
-	//----------
-
-	$fullname = "";
-
-	if (file_exists(COMMON_CORE_DIR . "/api/User.php")) {
-		require_once(COMMON_CORE_DIR . "/api/User.php");
-
-		try {
-			if ($_SESSION['user_login'] == "root") {
-				$fullname = LOCALE_LANG_ADMINISTRATOR;
-			} else {
-				$user = new User($_SESSION['user_login']);
-				$userinfo = $user->GetInfo();
-				// TODO: not all cultures use "firstname lastname"
-				$fullname = $userinfo['firstName'] . " " . $userinfo['lastName'];
-			}
-		} catch (Exception $e) {
-			// Use default
-		}
-	}
-
-	$_SESSION['system_fullname'] = $fullname;
-	$_SESSION['system_organization'] = $orgname;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// WebForwardPage
-//
-// Forward a request to a new page -- this must be called before anything
-// is sent to the web browser.
-//
-///////////////////////////////////////////////////////////////////////////////
-
-function WebForwardPage($page)
-{
-	if (BCONFIG_CONSOLE)
-		header("Location: http://127.0.0.1:82/$page");
-	else
-		header("Location: $page");
-}
-
-function WebUrlJump($url, $description)
-{
-	return "<a href='$url'>$description " . BCONFIG_ICON_CONTINUE . "</a>";
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // M E N U  S Y S T E M
 ///////////////////////////////////////////////////////////////////////////////
@@ -1351,7 +686,7 @@ function WebUrlJump($url, $description)
 
 function WebMenuFetch()
 {
-	$webconfig = new Webconfig();
+//	$webconfig = new Webconfig();
 
 	$devel = array(
 		'section' => 'Developer',
@@ -1417,7 +752,7 @@ function WebWizardNavigation($action, $previous, $next, $overridenext = null)
 		if (is_null($overridenext))
 			echo WebButtonNext("GoToNextStep[$next]");
 		else
-			echo form_button_generic("GoToNextStep[$next]", $overridenext . (isset($step) ? ' ' . $step : ''), BCONFIG_ICON_NEXT);
+			echo _form_submit_theme("GoToNextStep[$next]", $overridenext . (isset($step) ? ' ' . $step : ''), BCONFIG_ICON_NEXT);
 	}
 
 	echo "</p>";
