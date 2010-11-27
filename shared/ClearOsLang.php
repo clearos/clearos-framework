@@ -42,7 +42,6 @@ require_once($bootstrap . '/bootstrap.php');
 
 class ClearOsLang {
 
-	var $use_ci = TRUE;
 	var $language = array();
 	var $is_loaded = array();
 
@@ -51,7 +50,7 @@ class ClearOsLang {
 	 *
 	 * @access	public
 	 */
-	function ClearOsLang()
+	function __construct()
 	{}
 
 	// --------------------------------------------------------------------
