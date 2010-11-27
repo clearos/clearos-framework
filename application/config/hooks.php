@@ -10,6 +10,19 @@
 |
 */
 
+$hook['post_controller_constructor'][] = array(
+	'class'    => '',
+	'function' => 'webconfig_session',
+	'filename' => 'webconfig.php',
+	'filepath' => 'hooks'
+);
+
+$hook['post_controller_constructor'][] = array(
+	'class'    => '',
+	'function' => 'webconfig_theme_loader',
+	'filename' => 'webconfig.php',
+	'filepath' => 'hooks'
+);
 
 
 /* End of file hooks.php */
