@@ -42,7 +42,7 @@
 class ClearOsConfig {
 
 	//-----------------------------------------------------------------------
-	// P A T H S
+	// V A R I A B L E S
 	//-----------------------------------------------------------------------
 
 	/**
@@ -69,10 +69,6 @@ class ClearOsConfig {
 
 	public static $themes_path = '/usr/clearos/themes';
 
-	//-----------------------------------------------------------------------
-	// D E V E L O P E R
-	//-----------------------------------------------------------------------
-
 	/**
 	 * @var boolean debug mode flag
 	 */
@@ -90,6 +86,31 @@ class ClearOsConfig {
 	 */
 
 	public static $clearos_devel_versions = array();
+
+	///////////////////////////////////////////////////////////////////////////////
+	// M E T H O D S
+	///////////////////////////////////////////////////////////////////////////////
+
+	/**
+	 * ClearOsConfig constructor.
+	 */
+
+	public function __construct()
+	{
+		ClearOsLogger::Profile(__METHOD__, __LINE__);
+	}
+
+	public static function GetThemePath($theme)
+	{
+		if (isset(ClearOsConfig::$clearos_devel_versions['theme'][$theme]))
+			$theme_version = '/' . ClearOsConfig::$clearos_devel_versions['theme'][$theme];
+		else if (isset(ClearOsConfig::$clearos_devel_versions['theme']['default']))
+			$theme_version = '/' . ClearOsConfig::$clearos_devel_versions['theme']['default'];
+		else
+			$theme_version = "";
+
+		return ClearOsConfig::$themes_path . '/' . $theme . $theme_version;
+	}
 }
 
 // vim: syntax=php ts=4
