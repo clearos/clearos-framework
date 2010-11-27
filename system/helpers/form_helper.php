@@ -167,6 +167,17 @@ if ( ! function_exists('form_input'))
 {
 	function form_input($data = '', $value = '', $extra = '')
 	{
+		/*
+			ClearFoundation - the following line of code is common on web forms:
+				form_label('NTP', 'ntp') .
+				form_input('ntp', set_value('ntp', $ntp));
+
+			To avoid generating an HTML error (reference to non-existent ID), we need to pass in
+			the ID for form_input.  That makes the code messy, so we add it if not specified.
+		*/
+		if (! is_array($data))
+			$data = array('name' => $data, 'id' => $data);
+
 		$defaults = array('type' => 'text', 'name' => (( ! is_array($data)) ? $data : ''), 'value' => $value);
 
 		return "<input "._parse_form_attributes($data, $defaults).$extra." />";
@@ -317,6 +328,10 @@ if ( ! function_exists('form_dropdown'))
 
 		if ($extra != '') $extra = ' '.$extra;
 
+		// ClearFoundation - see form_input
+		if (! preg_match('/id=/', $extra))
+			$extra .= " id='$name'";
+
 		$multiple = (count($selected) > 1 && strpos($extra, 'multiple') === FALSE) ? ' multiple="multiple"' : '';
 
 		$form = '<select name="'.$name.'"'.$extra.$multiple.">\n";
@@ -369,6 +384,10 @@ if ( ! function_exists('form_checkbox'))
 	function form_checkbox($data = '', $value = '', $checked = FALSE, $extra = '')
 	{
 		$defaults = array('type' => 'checkbox', 'name' => (( ! is_array($data)) ? $data : ''), 'value' => $value);
+
+		// ClearFoundation - see form_input
+		if (! is_array($data))
+			$data = array('name' => $data, 'id' => $data);
 
 		if (is_array($data) AND array_key_exists('checked', $data))
 		{
