@@ -22,15 +22,4 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-clearos_html_head($title);
-
-$header = array();
-
-if ($this->session->userdata('status_success')) {
-	$header['status_success'] = $this->session->userdata('status_success');
-	$this->session->unset_userdata('status_success');
-}
-
-$header['title'] = $title;
-
-clearos_header('default', $header);
+clearos_summary_page($links);
