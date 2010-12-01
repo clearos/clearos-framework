@@ -480,7 +480,10 @@ function progress_bar($id)
 
 function infobox($type, $message)
 {
-	if ($type == 'critical') {
+	if ($type == 'exception') {
+		$class = 'ui-state-error';
+		$iconclass = 'ui-icon-alert';
+	} else if ($type == 'critical') {
 		$class = 'ui-state-error';
 		$iconclass = 'ui-icon-alert';
 	} else if ($type == 'warning') {
@@ -501,6 +504,11 @@ function infobox($type, $message)
 			</div>
 		</div>
 	";
+}
+
+function infobox_exception($message)
+{
+	infobox('exception', $message);
 }
 
 function infobox_critical($message)
