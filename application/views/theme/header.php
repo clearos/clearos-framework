@@ -32,5 +32,7 @@ if ($this->session->userdata('status_success')) {
 }
 
 $header['title'] = $title;
+$header['exceptions'] = $exceptions;
+$header['warnings'] = $warnings;
 
 clearos_header('default', $header);
