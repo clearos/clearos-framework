@@ -48,32 +48,12 @@ require_once($bootstrap . '/bootstrap.php');
 clearos_load_library('base/Webconfig');
 
 ///////////////////////////////////////////////////////////////////////////////
-// T H E M E  L O A D E R
-///////////////////////////////////////////////////////////////////////////////
-
-function webconfig_theme_loader()
-{
-	ClearOsLogger::Profile(__METHOD__, __LINE__);
-
-	$framework =& get_instance();
-
-	$theme_file = ClearOsConfig::GetThemePath($framework->session->userdata('theme')) . '/widgets/theme.php';
-
-	if (file_exists($theme_file)) {
-		require_once($theme_file);
-	} else {
-		// FIXME
-		echo "The theme file is missing";
-	}
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // S E S S I O N
 ///////////////////////////////////////////////////////////////////////////////
 
 function webconfig_session()
 {
-	ClearOsLogger::Profile(__METHOD__, __LINE__);
+	ClearOsLogger::ProfileFramework(__METHOD__, __LINE__, 'Webconfig Session Hook');
 
 	$CI =& get_instance();
 
