@@ -60,7 +60,7 @@ clearos_load_library('base/Engine');
  * @return  void
  */
 
-class Authorize extends Engine
+class MY_Authorize extends Engine
 {
 	///////////////////////////////////////////////////////////////////////////////
 	// M E T H O D S
@@ -72,14 +72,14 @@ class Authorize extends Engine
 
 	public function __construct()
 	{
-		ClearOsLogger::Profile(__METHOD__, __LINE__);
+		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__, 'Authorize Class Initialized');
 
 		parent::__construct();
 	}
 
 	function WebAuthenticate()
 	{
-		ClearOsLogger::Profile(__METHOD__, __LINE__);
+		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
 		// Forward to wizard when required
 		//--------------------------------
@@ -237,6 +237,8 @@ class Authorize extends Engine
 
 	function WebAuthenticateDisplayLogin($username, $password, $warning = null)
 	{
+		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+
 		if (BCONFIG_CONSOLE)
 			$login = "root <input type='hidden' name='reserved_username' value='root' />";
 		else
@@ -281,6 +283,8 @@ class Authorize extends Engine
 
 	function WebAuthenticateCheckAcl($username, $page)
 	{
+		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+
 		$webconfig = new Webconfig();
 
 		// Allow helper pages (for example, data.xml.php and date.js.php)
@@ -351,6 +355,8 @@ class Authorize extends Engine
 
 	function WebSetSessionAuthenticated()
 	{
+		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+
 		$webconfig = new Webconfig();
 
 		// Organization
