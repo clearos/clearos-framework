@@ -112,8 +112,13 @@ function clearos_load_language($langfile)
 	// Load the language file
 	//-----------------------
 
-	if (isset($clearos_lang))
+	if (isset($clearos_lang)) {
 		$clearos_lang->load($langfile);
+	} else {
+		require_once(BASEPATH . 'core/CodeIgniter.php');
+		$codeigniter =& get_instance();
+		$codeigniter->lang->load($langfile);
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
