@@ -207,6 +207,32 @@ class ClearOsLogger
 		$error = new ClearOsError(ClearOsError::CODE_DEBUG, $message, $tag, $line, null, ClearOsError::TYPE_PROFILE);
         ClearOsLogger::Log($error);
     }
+
+	/**
+	 * Logs profiling information inside the framework.
+	 *
+	 * To keep the logging inside the framework code consistent with
+	 * CodeIgniter, a different profiling method is used.
+	 *
+	 * @param string $tag prefix for log message
+	 * @param string $line line number
+	 * @param string $message short and informative message
+	 */
+
+	public static function ProfileFramework($tag, $line, $message = '')
+    {
+		// Strip MY_ prefix 
+		$tag = preg_replace('/^MY_/', '', $tag);
+
+		// Create log format: tag(line)
+		$tagline = $tag . '(' . $line . ')';
+
+		// Prefix optional message
+		$full_message = (empty($message)) ? $tagline : $message . ' - ' . $tagline;
+
+		$error = new ClearOsError(ClearOsError::CODE_DEBUG, $full_message, 'Framework', '0', null, ClearOsError::TYPE_PROFILE);
+        ClearOsLogger::Log($error);
+    }
 }
 
 // vim: syntax=php ts=4
