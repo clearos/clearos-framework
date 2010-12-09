@@ -22,17 +22,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-clearos_html_head($title);
+$page['title'] = $title;
+$page['layout'] = empty($layout) ? $this->page->constant_default : $layout;
 
-$header = array();
-
-if ($this->session->userdata('status_success')) {
-	$header['status_success'] = $this->session->userdata('status_success');
-	$this->session->unset_userdata('status_success');
-}
-
-$header['title'] = $title;
-$header['exceptions'] = $exceptions;
-$header['warnings'] = $warnings;
-
-clearos_header('default', $header);
+$this->page->view_header($page);
