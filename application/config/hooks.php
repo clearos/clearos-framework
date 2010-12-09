@@ -18,10 +18,10 @@ $hook['post_controller_constructor'][] = array(
 );
 
 $hook['post_controller_constructor'][] = array(
-	'class'    => '',
-	'function' => 'webconfig_theme_loader',
-	'filename' => 'webconfig.php',
-	'filepath' => 'hooks'
+	'class'    => 'MY_Page',
+	'function' => 'load_theme',
+	'filename' => 'Page.php',
+	'filepath' => 'libraries'
 );
 
 
