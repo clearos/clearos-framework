@@ -162,15 +162,12 @@ class MY_Page extends Engine
 	{
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
-		$theme_files = array('doctype.php', 'head.php', 'header.php', 'footer.php', 'theme.php');
+		$theme_files = array('doctype.php', 'head.php', 'header.php', 'footer.php', 'widgets.php');
 		$path = ClearOsConfig::GetThemePath($this->framework->session->userdata('theme'));
-
-// FIXME: "widgets" path should be changed to something else?
-// FIXME: "theme.php" should be changed to widgets.php?
 
 		foreach ($theme_files as $file) {
 			ClearOsLogger::ProfileFramework(__METHOD__, __LINE__, "Loading theme file $file");
-			$full_path = $path . '/widgets/' . $file;
+			$full_path = $path . '/core/' . $file;
 
 			if (file_exists($full_path))
 				require($full_path);
@@ -267,23 +264,14 @@ class MY_Page extends Engine
 		$segments = explode('/', $_SERVER['PHP_SELF']);
 		$app = $segments[2];
 
-		if (isset(ClearOsConfig::$clearos_devel_versions['app'][$app]))
-			$app_version = ClearOsConfig::$clearos_devel_versions['app'][$app] . '/';
-		else if (isset(ClearOsConfig::$clearos_devel_versions['app']['default']))
-			$app_version = ClearOsConfig::$clearos_devel_versions['app']['default'] . '/';
-		else
-			$app_version = "";
+		$app_path = ClearOsConfig::GetAppUrl($app);
+		$theme_path = ClearOsConfig::GetThemeUrl($this->framework->session->userdata('theme'));
 
-		// Add page-specific head links.  For example, 
-		// To support different versions running in parallel, determine the app
-		// version e.g. /app/dhcp/htdocs, /app/dhcp/tags/5.1/htdocs, etc.
-		//-------------------------------------------------------------------------
+		// Add page-specific head links
+		//-----------------------------
 
-		$js = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.js.php';
-		$css = '/' . $app . '/' . $app_version . 'htdocs/' . $app . '.css';
-		// FIXME: should not be using app_version below
-		$theme_path = '/themes/' . $this->framework->session->userdata('theme') . '/' . $app_version;
-		$theme_basepath = ClearOsConfig::$themes_path . '/' . $this->framework->session->userdata('theme') . '/' . $app_version;
+		$js = $app_path . '/' . $app . '.js.php';
+		$css = $app_path . '/' . $app . '.css';
 
 		$page_auto_head = '';
 
@@ -291,17 +279,17 @@ class MY_Page extends Engine
 			$page_auto_head .= "<script type='text/javascript' src='/approot" . $js . "'></script>\n";
 
 		if (file_exists(ClearOsConfig::$apps_path . '/' . $css))
-			$page_auto_head .= "<link type='text/css' href='/approot" . $css ."' rel='stylesheet'>";
+			$page_auto_head .= "<link type='text/css' href='/approot" . $css ."' rel='stylesheet'>\n";
 
 		// <html>
 		//-------------------
 		
 		$head = "<html dir='" . $this->framework->session->userdata('textdir') . "'>\n\n";
 
-		// <head>: page_head is defined in the head.php theme file
-		//--------------------------------------------------------
+		// <head> commom
+		//-------------------
 
-		$head .= "<!-- Head Start -->
+		$head .= "<!-- Head -->
 <head>
 
 <!-- Basic Head Information -->
@@ -312,14 +300,21 @@ class MY_Page extends Engine
 <script type='text/javascript' src='/js/jquery-1.4.4.min.js'></script>
 ";
 
+		// <head> extras defined in theme (head.php)
+		//------------------------------------------
+
 		$head .= page_head($theme_path);
 
-		$head .= "<!-- Page-specific Head -->
-$page_auto_head
-</head>
-<!-- Head end -->
+		// <head> extras defined in app
+		//------------------------------------------
 
-";
+		if ($page_auto_head)
+			$head .= "<!-- Page-specific Head -->\n$page_auto_head\n";
+
+		// </head> all done
+		//------------------------------------------
+
+		$head .= "</head>\n\n";
 
 		return $head;
 	}
@@ -347,6 +342,14 @@ $page_auto_head
 				'section' => 'Network',
 				'subsection' => 'Settings',
 				'title' => 'DHCP Server',
+				'type' => 'configuration',
+				'priority' => '2001'
+			),
+
+			'/app/dns' => array(
+				'section' => 'Network',
+				'subsection' => 'Settings',
+				'title' => 'Local DNS Server',
 				'type' => 'configuration',
 				'priority' => '2001'
 			),
