@@ -62,6 +62,19 @@ class CI_Form_validation {
 
 	// --------------------------------------------------------------------
 
+	// ClearFoundation -- add a function similiar to set_rules
+	function set_policy($field, $rule, $is_required = FALSE)
+	{
+		// Prefix rule to make it possible to identify it in execute()
+		$rules = 'api_' . $rule;
+
+		// Add 
+		if ($is_required)
+			$rules = 'required|' . $rules;
+
+		$this->set_rules($field, '', $rules);
+	}
+
 	/**
 	 * Set Rules
 	 *
