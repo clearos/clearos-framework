@@ -22,7 +22,4 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-$page['title'] = $title;
-$page['layout'] = empty($layout) ? $this->page->constant_default : $layout;
-
-$this->page->view_footer($page);
+$this->page->view_footer();
