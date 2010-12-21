@@ -107,6 +107,12 @@ class MY_Page extends Engine
 
 	protected $framework = NULL;
 
+	/**
+	 * @var array page information
+	 */
+
+	public $data = array();
+
 	///////////////////////////////////////////////////////////////////////////////
 	// M E T H O D S
 	///////////////////////////////////////////////////////////////////////////////
@@ -128,12 +134,13 @@ class MY_Page extends Engine
 	 * Handles a fatal/uncaught exception in a controller.
 	 */
 
+/*
 	public function exception($message, $view = 'page')
 	{
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
 		$data['message'] = $message;
-		$page['title'] = 'Exception'; // FIXME; localize... or maybe not?
+		$page['title'] = 'Ooops'; // Do not localize just in case
 
 		if ($view == 'form') {
 			$this->framework->load->view('theme/exception', $data);
@@ -143,6 +150,7 @@ class MY_Page extends Engine
 			$this->framework->load->view('theme/footer', $page);
 		}
 	}
+*/
 
 	/**
 	 * Loads the required theme files. 
@@ -152,7 +160,7 @@ class MY_Page extends Engine
 	 * - head.php
 	 * - header.php
 	 * - footer.php
-	 * - theme.php  // FIXME:
+	 * - widgets.php
 	 *
 	 * This is called by a CodeIgniter hook instead of the constructor since
 	 * the user session has not been initialized in the constructor.
@@ -177,10 +185,32 @@ class MY_Page extends Engine
 	}
 
 	/**
+	 * Sets the layout for the page.
+	 */
+
+	public function set_layout($layout)
+	{
+		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+
+		$this->data['layout'] = $layout;
+	}
+
+	/**
+	 * Sets the title for the page.
+	 */
+
+	public function set_title($title)
+	{
+		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+
+		$this->data['title'] = $title;
+	}
+
+	/**
 	 * Handles a page success message.
 	 */
 
-	public function success($message)
+	public function set_success($message)
 	{ 
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
@@ -190,35 +220,34 @@ class MY_Page extends Engine
 	/**
 	 * Displays the footer view.
 	 *
-	 * @param array $view_data view data
 	 * @return void
 	 */
 
-	public function view_footer($view_data)
+	public function view_footer()
 	{
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
-		$page_data = $this->_load_page_data($view_data);
+	// FIXME: not necessary since it is done on view_header.  Clean up.
+	//	$this->_load_meta_data();
 
-		echo page_footer($page_data);
+		echo page_footer($this->data);
 	}
 
 	/**
 	 * Displays the header view.
 	 *
-	 * @param array $view_data view data
 	 * @return void
 	 */
 
-	public function view_header($view_data)
+	public function view_header()
 	{
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
-		$page_data = $this->_load_page_data($view_data);
+		$this->_load_meta_data();
 
 		echo page_doctype() . "\n";
-		echo $this->_build_page_head($page_data);
-		echo page_header($page_data);
+		echo $this->_build_page_head($this->data);
+		echo page_header($this->data);
 	}
 
 	/**
@@ -232,7 +261,11 @@ class MY_Page extends Engine
 	{
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
+		$this->data['title'] = 'Exception';
+
+		$this->view_header();
 		echo infobox_critical($message);
+		$this->view_footer();
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -330,6 +363,32 @@ class MY_Page extends Engine
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
 		$menu_data['menus'] = array(
+			'/app/date' => array(
+				'section' => 'Developer',
+				'subsection' => 'Examples',
+				'title' => 'Date (Simple Form)',
+				'type' => 'configuration',
+				'priority' => '2001'
+			),
+
+			'/app/dns' => array(
+				'section' => 'Developer',
+				'subsection' => 'Examples',
+				'title' => 'Local DNS (CRUD)',
+				'type' => 'configuration',
+				'priority' => '2001'
+			),
+
+			'/app/dhcp' => array(
+				'section' => 'Developer',
+				'subsection' => 'Examples',
+				'title' => 'DHCP Server (Advanced)',
+				'type' => 'configuration',
+				'priority' => '2001'
+			),
+		);
+/*
+		$menu_data['menus'] = array(
 			'/app/network' => array(
 				'section' => 'Network',
 				'subsection' => 'Settings',
@@ -394,33 +453,33 @@ class MY_Page extends Engine
 				'priority' => '2001'
 			)
 		);
+*/
 
 		return $menu_data;
 	}
 
 	/**
-	 * Returns page meta data in an array
+	 * Loads the page meta data into the data class variable.
 	 *
-	 * @param array $view_data view data
-	 * @return array page meta data
+	 * @return void
 	 */
 
-	protected function _load_page_data($view_data)
+	protected function _load_meta_data()
 	{
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
+		$view_data = $this->_load_view_data();
 		$menu_data = $this->_load_menu_data();
 		$session_data = $this->_load_session_data();
 
-		$page_data = array_merge($view_data, $session_data, $menu_data);
-
-		return $page_data;
+		$this->data = array_merge($this->data, $view_data, $session_data, $menu_data);
 	}
 
+
 	/**
-	 * Returns session data in an array.
+	 * Returns page session data in an array.
 	 *
-	 * @return array menu meta data
+	 * @return array session meta data
 	 */
 
 	protected function _load_session_data()
@@ -429,18 +488,38 @@ class MY_Page extends Engine
 
 		$session_data = array();
 
-// FIXME
-$session_data['theme_url'] = '/themes/clearos6x/trunk';
+		// Grab all the session values
+		//----------------------------
 
-		// The "status_success" message is passed via the session
-		//-------------------------------------------------------
+		foreach ($this->framework->session->userdata as $key => $value)
+			$session_data[$key] = $value;
 
-		if ($this->framework->session->userdata('status_success')) {
-			$session_data['status_success'] = $this->framework->session->userdata('status_success');
+		// The "status_success" message is a flash value... delete it
+		//-----------------------------------------------------------
+
+		if ($this->framework->session->userdata('status_success'))
 			$this->framework->session->unset_userdata('status_success');
-		}
 
 		return $session_data;
+	}
+
+	/**
+	 * Returns view page data in an array.
+	 *
+	 * @return array view meta data
+	 */
+
+	protected function _load_view_data()
+	{
+		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+
+		$view_data = array();
+
+		// Set layout to 'default'
+		if (empty($this->data['layout']))
+			$view_data['layout'] = 'default';
+
+		return $view_data;
 	}
 }
 
