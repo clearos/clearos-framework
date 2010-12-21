@@ -348,7 +348,7 @@ if ( ! function_exists('form_dropdown'))
 				{
 					$sel = (in_array($optgroup_key, $selected)) ? ' selected="selected"' : '';
 
-					$form .= '<option value="'.$optgroup_key.'"'.$sel.'>'.(string) $optgroup_val."</option>\n";
+					$form .= "\t\t\t\t" . '<option value="'.$optgroup_key.'"'.$sel.'>'.(string) $optgroup_val."</option>\n";
 				}
 
 				$form .= '</optgroup>'."\n";
@@ -357,11 +357,11 @@ if ( ! function_exists('form_dropdown'))
 			{
 				$sel = (in_array($key, $selected)) ? ' selected="selected"' : '';
 
-				$form .= '<option value="'.$key.'"'.$sel.'>'.(string) $val."</option>\n";
+				$form .= "\t\t\t\t" . '<option value="'.$key.'"'.$sel.'>'.(string) $val."</option>\n";
 			}
 		}
 
-		$form .= '</select>';
+		$form .= "\t\t\t" . '</select>';
 
 		return $form;
 	}
@@ -564,7 +564,7 @@ if ( ! function_exists('form_fieldset'))
 {
 	function form_fieldset($legend_text = '', $attributes = array())
 	{
-		$fieldset = "<fieldset";
+		$fieldset = "\n\t" . "<fieldset";
 
 		$fieldset .= _attributes_to_string($attributes, FALSE);
 
@@ -572,7 +572,7 @@ if ( ! function_exists('form_fieldset'))
 
 		if ($legend_text != '')
 		{
-			$fieldset .= "<legend>$legend_text</legend>\n";
+			$fieldset .= "\t\t" . "<legend>$legend_text</legend>\n";
 		}
 
 		return $fieldset;
@@ -592,7 +592,7 @@ if ( ! function_exists('form_fieldset_close'))
 {
 	function form_fieldset_close($extra = '')
 	{
-		return "</fieldset>".$extra;
+		return "\n\t" . "</fieldset>".$extra . "\n";
 	}
 }
 
