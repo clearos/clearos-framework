@@ -111,6 +111,33 @@ class ClearOsConfig {
 
 		return ClearOsConfig::$themes_path . '/' . $theme . $theme_version;
 	}
+
+	public static function GetThemeUrl($theme)
+	{
+		if (isset(ClearOsConfig::$clearos_devel_versions['theme'][$theme]))
+			$theme_version = '/' . ClearOsConfig::$clearos_devel_versions['theme'][$theme];
+		else if (isset(ClearOsConfig::$clearos_devel_versions['theme']['default']))
+			$theme_version = '/' . ClearOsConfig::$clearos_devel_versions['theme']['default'];
+		else
+			$theme_version = "";
+
+		// FIXME: cleanup hard coded value below
+		// FIXME: merge common blocks of code
+		return "/themes/" . $theme . $theme_version;
+	}
+
+	public static function GetAppUrl($app)
+	{
+        if (isset(ClearOsConfig::$clearos_devel_versions['app'][$app]))
+            $app_version = ClearOsConfig::$clearos_devel_versions['app'][$app] . '/';
+        else if (isset(ClearOsConfig::$clearos_devel_versions['app']['default']))
+            $app_version = ClearOsConfig::$clearos_devel_versions['app']['default'] . '/';
+        else
+            $app_version = "";
+
+		// FIXME: cleanup hard coded value below
+		return '/' . $app . '/' . $app_version . 'htdocs';
+	}
 }
 
 // vim: syntax=php ts=4
