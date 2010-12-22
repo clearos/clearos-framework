@@ -79,7 +79,9 @@ class ClearOsConfig {
 	 * @var string debug log path
 	 */
 
-	public static $debug_log = '/var/log/webconfig/framework_log';
+// FIXME -- just for 6.0 preview release
+	// public static $debug_log = '/var/log/webconfig/framework_log';
+	public static $debug_log = '/tmp/clearos6_preview_log';
 
 	/**
 	 * @var array version handler for app developers
