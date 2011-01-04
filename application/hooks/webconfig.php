@@ -55,10 +55,12 @@ function webconfig_session()
 {
 	ClearOsLogger::ProfileFramework(__METHOD__, __LINE__, 'Webconfig Session Hook');
 
-	$CI =& get_instance();
+	$framework =& get_instance();
 
-	if ($CI->session->userdata('session_started'))
+	if ($framework->session->userdata('session_started') == '1')
 		return;
+
+	ClearOsLogger::ProfileFramework(__METHOD__, __LINE__, 'Loading base session data');
 
 	$webconfig = new Webconfig();
 
@@ -191,6 +193,5 @@ function webconfig_session()
 	// Set the session
 	//----------------
 
-	$CI =& get_instance();
-	$CI->session->set_userdata($session);
+	$framework->session->set_userdata($session);
 }

@@ -92,10 +92,10 @@ class MY_Page extends Engine
 	///////////////////////////////////////////////////////////////////////////////
 	// C O N S T A N T S
 	///////////////////////////////////////////////////////////////////////////////
-	// FIXME: constants are not accessible via CodeIgniter calls?  Investigate.
 
-	public $constant_splash = 'splash';
-	public $constant_default = 'default';
+	const COMMAND_FIND = '/usr/bin/find';
+	const TYPE_SPLASH = 'splash';
+	const TYPE_DEFAULT = 'default';
 
 	///////////////////////////////////////////////////////////////////////////////
 	// V A R I A B L E S
@@ -126,8 +126,6 @@ class MY_Page extends Engine
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__, 'Page Class Initialized');
 
 		$this->framework =& get_instance();
-
-		parent::__construct();
 	}
 
 	/**
@@ -362,6 +360,50 @@ class MY_Page extends Engine
 	{
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
+		// Load menu files in app directory
+		//---------------------------------
+
+		exec(MY_Page::COMMAND_FIND . ' ' . ClearOsConfig::$apps_path . " -name menu.php", $menu_list, $retval);
+
+		if ($retval !== 0) {
+			// FIXME: die? 
+		}
+
+		$menu = array();
+
+		foreach ($menu_list as $menu_file)
+			include_once($menu_file);
+
+		// Load menu order preferences
+		//----------------------------
+
+		// $category_order = array();
+
+		// Set ordering
+		//-------------
+
+		$sorted = array();
+
+		foreach ($menu as $url => $detail) {
+			$sorted[$detail['category'] . $detail['subcategory'] . $detail['title']] = $url;
+		}
+
+		ksort($sorted);
+
+		$menu_data = array();
+
+		foreach ($sorted as $sort => $url) {
+			$menu_data[$url] = $menu[$url];
+		}
+
+/*
+echo "menu<pre>";
+	print_r($menu_data);
+	echo "</pre>";
+*/
+
+		return $menu_data;
+
 		$menu_data['menus'] = array(
 			'/app/date' => array(
 				'section' => 'Developer',
@@ -453,9 +495,9 @@ class MY_Page extends Engine
 				'priority' => '2001'
 			)
 		);
-*/
 
-		return $menu_data;
+		return $menu;
+*/
 	}
 
 	/**
@@ -469,7 +511,7 @@ class MY_Page extends Engine
 		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
 
 		$view_data = $this->_load_view_data();
-		$menu_data = $this->_load_menu_data();
+		$menu_data['menus'] = $this->_load_menu_data();
 		$session_data = $this->_load_session_data();
 
 		$this->data = array_merge($this->data, $view_data, $session_data, $menu_data);
@@ -517,7 +559,7 @@ class MY_Page extends Engine
 
 		// Set layout to 'default'
 		if (empty($this->data['layout']))
-			$view_data['layout'] = 'default';
+			$view_data['layout'] = MY_Page::TYPE_DEFAULT;
 
 		return $view_data;
 	}
