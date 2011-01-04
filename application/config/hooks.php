@@ -10,11 +10,25 @@
 |
 */
 
-$hook['post_controller_constructor'][] = array(
+$hook['pre_controller'][] = array(
 	'class'    => '',
 	'function' => 'webconfig_session',
 	'filename' => 'webconfig.php',
 	'filepath' => 'hooks'
+);
+
+$hook['pre_controller'][] = array(
+	'class'    => 'MY_Setup',
+	'function' => 'check',
+	'filename' => 'Setup.php',
+	'filepath' => 'libraries'
+);
+
+$hook['pre_controller'][] = array(
+	'class'    => 'MY_Authorize',
+	'function' => 'check',
+	'filename' => 'Authorize.php',
+	'filepath' => 'libraries'
 );
 
 $hook['post_controller_constructor'][] = array(
