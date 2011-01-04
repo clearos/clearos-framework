@@ -619,7 +619,9 @@ class CI_Form_validation {
 
 					$matches = array();
 
-					preg_match("/(\w+)_(\w+)_(\w+)/", $rule, $matches);
+					if (!preg_match("/(\w+)_(\w+)_(\w+)/", $rule, $matches)) 
+						continue;
+
 					$clear_app = $matches[1];
 					$clear_library = $matches[2];
 					$clear_method = $matches[3];
