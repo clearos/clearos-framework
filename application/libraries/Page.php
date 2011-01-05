@@ -94,8 +94,9 @@ class MY_Page extends Engine
 	///////////////////////////////////////////////////////////////////////////////
 
 	const COMMAND_FIND = '/usr/bin/find';
-	const TYPE_SPLASH = 'splash';
 	const TYPE_DEFAULT = 'default';
+	const TYPE_SPLASH = 'splash';
+	const TYPE_WIZARD = 'wizard';
 
 	///////////////////////////////////////////////////////////////////////////////
 	// V A R I A B L E S
@@ -294,6 +295,7 @@ class MY_Page extends Engine
 
 		$segments = explode('/', $_SERVER['PHP_SELF']);
 		$app = $segments[2];
+		$sub_app = $segments[3];
 
 		$app_path = ClearOsConfig::GetAppUrl($app);
 		$theme_path = ClearOsConfig::GetThemeUrl($this->framework->session->userdata('theme'));
@@ -301,13 +303,17 @@ class MY_Page extends Engine
 		// Add page-specific head links
 		//-----------------------------
 
-		$js = $app_path . '/' . $app . '.js.php';
 		$css = $app_path . '/' . $app . '.css';
+		$js = $app_path . '/' . $app . '.js.php';
+		$js_sub_app = $app_path . '/' . $sub_app . '.js.php';
 
 		$page_auto_head = '';
 
 		if (file_exists(ClearOsConfig::$apps_path . '/' . $js))
 			$page_auto_head .= "<script type='text/javascript' src='/approot" . $js . "'></script>\n";
+
+		if (file_exists(ClearOsConfig::$apps_path . '/' . $js_sub_app))
+			$page_auto_head .= "<script type='text/javascript' src='/approot" . $js_sub_app . "'></script>\n";
 
 		if (file_exists(ClearOsConfig::$apps_path . '/' . $css))
 			$page_auto_head .= "<link type='text/css' href='/approot" . $css ."' rel='stylesheet'>\n";
