@@ -245,6 +245,29 @@ function field_input($name, $default, $label, $readonly = FALSE, $ids = NULL)
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
+// F I E L D  P A S S W O R D
+///////////////////////////////////////////////////////////////////////////////
+// TODO: merge with field_input
+
+function field_password($name, $default, $label, $readonly = FALSE, $ids = NULL)
+{
+	// An input ID is required for the label.  See why @
+	// http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+
+	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+
+	$value = ($readonly) ? $default : set_value($name, $default);
+	$error = form_error($name);
+
+	if ($readonly)
+		$html = theme_field_view($value, $label, $input_id, $ids);
+	else
+		$html = theme_field_password($name, $value, $label, $error, $input_id, $ids);
+
+	return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
 // F I E L D  D R O P D O W N
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -307,6 +330,24 @@ function field_checkbox($name, $default, $label, $readonly = FALSE, $ids = NULL)
 		$html = theme_field_view($value, $label, $input_id, $ids);
 	else
 		$html = theme_field_checkbox($name, $value, $label, $error, $input_id, $ids);
+
+	return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  P R O G R E S S  B A R
+///////////////////////////////////////////////////////////////////////////////
+
+function field_progress_bar($name, $default, $label, $ids = NULL)
+{
+	// An input ID is required for the label.  See why @
+	// http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+
+	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+
+	$value = set_value($name, $default);
+
+	$html = theme_field_progress_bar($value, $label, $input_id, $ids);
 
 	return $html;
 } 
