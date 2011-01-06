@@ -58,7 +58,7 @@ define('CLEAROS_MOBILE', 'mobile');
 
 function _anchor_common($url, $text, $importance, $class, $attributes = NULL)
 {
-	$id = (isset($attributes['id'])) ? $attributes['id'] : 'anchor' . mt_rand();
+	$id = (isset($attributes['id'])) ? $attributes['id'] : 'clearos' . mt_rand();
 
 	// Call theme hook
 	return "\t" . theme_anchor($url, $text, $importance, $class, $id);
@@ -191,7 +191,7 @@ function form_submit_disable($name, $importance = 'low', $attributes = NULL)
 function button_set($buttons, $attributes = NULL)
 {
 	// FIXME
-	$id = (isset($attributes['id'])) ? $attributes['id'] : 'but' . mt_rand();
+	$id = (isset($attributes['id'])) ? $attributes['id'] : 'clearos' . mt_rand();
 
 	$html = theme_button_set($buttons, $id);
 
@@ -223,7 +223,7 @@ function form_radio_set_close()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// I N P U T  B O X E S
+// F I E L D  I N P U T
 ///////////////////////////////////////////////////////////////////////////////
 
 function field_input($name, $default, $label, $readonly = FALSE, $ids = NULL)
@@ -231,8 +231,7 @@ function field_input($name, $default, $label, $readonly = FALSE, $ids = NULL)
 	// An input ID is required for the label.  See why @
 	// http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
 
-	if (! isset($ids['input']))
-		$input_id = $name . mt_rand();
+	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
 	$value = ($readonly) ? $default : set_value($name, $default);
 	$error = form_error($name);
@@ -246,7 +245,7 @@ function field_input($name, $default, $label, $readonly = FALSE, $ids = NULL)
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
-// S E L E C T  B O X E S
+// F I E L D  D R O P D O W N
 ///////////////////////////////////////////////////////////////////////////////
 
 function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $ids = NULL)
@@ -254,8 +253,7 @@ function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $i
 	$selected = ($readonly) ? $default : set_value($name, $default);
 	$error = form_error($name);
 
-	if (! isset($ids['input']))
-		$input_id = $name . mt_rand();
+	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
 	if ($readonly)
 		$html = theme_field_view($value, $label, $input_id, $ids);
@@ -274,8 +272,7 @@ function field_toggle_enable_disable($name, $default, $label, $readonly = FALSE,
 	$selected = ($readonly) ? $default : set_value($name, $default);
 	$error = form_error($name);
 
-	if (! isset($ids['input']))
-		$input_id = $name . mt_rand();
+	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
 	$options = array(
 		'0' => lang('base_disabled'),
@@ -293,6 +290,28 @@ function field_toggle_enable_disable($name, $default, $label, $readonly = FALSE,
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
+// F I E L D  C H E C K B O X E S
+///////////////////////////////////////////////////////////////////////////////
+
+function field_checkbox($name, $default, $label, $readonly = FALSE, $ids = NULL)
+{
+	// An input ID is required for the label.  See why @
+	// http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+
+	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+
+	$value = ($readonly) ? $default : set_value($name, $default);
+	$error = form_error($name);
+
+	if ($readonly)
+		$html = theme_field_view($value, $label, $input_id, $ids);
+	else
+		$html = theme_field_checkbox($name, $value, $label, $error, $input_id, $ids);
+
+	return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
 // S U M M A R Y  T A B L E
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -300,28 +319,6 @@ function summary_table($title, $anchors, $headers, $items, $legend = NULL)
 {
 	return theme_summary_table($title, $anchors, $headers, $items, $legend);
 }
-
-/*
-function summary_table_start($title)
-{
-	return _summary_table_start($title);
-}
-
-function summary_table_header($headers)
-{
-	return  _summary_table_header($headers);
-}
-
-function summary_table_items($items)
-{
-	return _summary_table_items($items);
-}
-
-function summary_table_end()
-{
-	return _summary_table_end();
-}
-*/
 
 ///////////////////////////////////////////////////////////////////////////////
 // S U M M A R Y  V I E W
