@@ -103,6 +103,8 @@ class MY_Authorize extends Engine
 
 		// Return right away if access granted
 		//------------------------------------
+// FIXME: disabled authentication 
+return;
 
 		if ($this->check_acl($username, $_SERVER['PHP_SELF']))
 			return;
