@@ -130,28 +130,6 @@ class MY_Page extends Engine
 	}
 
 	/**
-	 * Handles a fatal/uncaught exception in a controller.
-	 */
-
-/*
-	public function exception($message, $view = 'page')
-	{
-		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
-
-		$data['message'] = $message;
-		$page['title'] = 'Ooops'; // Do not localize just in case
-
-		if ($view == 'form') {
-			$this->framework->load->view('theme/exception', $data);
-		} else {
-			$this->framework->load->view('theme/header', $page);
-			$this->framework->load->view('theme/exception', $data);
-			$this->framework->load->view('theme/footer', $page);
-		}
-	}
-*/
-
-	/**
 	 * Loads the required theme files. 
 	 *
 	 * The theme hooks are loaded after the controller has been initialized.
