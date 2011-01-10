@@ -273,7 +273,7 @@ class MY_Page extends Engine
 
 		$segments = explode('/', $_SERVER['PHP_SELF']);
 		$app = $segments[2];
-		$sub_app = $segments[3];
+		$sub_app = isset($segments[3]) ? $segments['3'] : 'none';
 
 		$app_path = ClearOsConfig::GetAppUrl($app);
 		$theme_path = ClearOsConfig::GetThemeUrl($this->framework->session->userdata('theme'));
@@ -355,8 +355,9 @@ class MY_Page extends Engine
 
 		$menu = array();
 
-		foreach ($menu_list as $menu_file)
+		foreach ($menu_list as $menu_file) {
 			include_once($menu_file);
+		}
 
 		// Load menu order preferences
 		//----------------------------
@@ -380,108 +381,7 @@ class MY_Page extends Engine
 			$menu_data[$url] = $menu[$url];
 		}
 
-/*
-echo "menu<pre>";
-	print_r($menu_data);
-	echo "</pre>";
-*/
-
 		return $menu_data;
-
-		$menu_data['menus'] = array(
-			'/app/date' => array(
-				'section' => 'Developer',
-				'subsection' => 'Examples',
-				'title' => 'Date (Simple Form)',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-
-			'/app/dns' => array(
-				'section' => 'Developer',
-				'subsection' => 'Examples',
-				'title' => 'Local DNS (CRUD)',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-
-			'/app/dhcp' => array(
-				'section' => 'Developer',
-				'subsection' => 'Examples',
-				'title' => 'DHCP Server (Advanced)',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-		);
-/*
-		$menu_data['menus'] = array(
-			'/app/network' => array(
-				'section' => 'Network',
-				'subsection' => 'Settings',
-				'title' => 'IP Settings',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-
-			'/app/dhcp' => array(
-				'section' => 'Network',
-				'subsection' => 'Settings',
-				'title' => 'DHCP Server',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-
-			'/app/dns' => array(
-				'section' => 'Network',
-				'subsection' => 'Settings',
-				'title' => 'Local DNS Server',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-
-			'/app/firewall/incoming' => array(
-				'section' => 'Network',
-				'subsection' => 'Firewall',
-				'title' => 'Incoming',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-
-			'/app/devel' => array(
-				'section' => 'System',
-				'subsection' => 'Developer',
-				'title' => 'Theme',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-
-			'/app/date' => array(
-				'section' => 'System',
-				'subsection' => 'Settings',
-				'title' => 'Date',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-
-			'/app/filescan' => array(
-				'section' => 'Server',
-				'subsection' => 'File and Print ',
-				'title' => 'File Scanner',
-				'type' => 'configuration',
-				'priority' => '2001'
-			),
-
-			'/app/dashboard' => array(
-				'section' => 'Reports',
-				'subsection' => 'Overview',
-				'title' => 'Dashboard',
-				'type' => 'configuration',
-				'priority' => '2001'
-			)
-		);
-
-		return $menu;
-*/
 	}
 
 	/**

@@ -205,7 +205,7 @@ function button_set($buttons, $attributes = NULL)
 function form_radio_set_open($class, $orientation)
 {
 // return "<div data-role='fieldcontain'>
-//    <fieldset data-role='controlgroup' data-type='horizontal'>
+//	<fieldset data-role='controlgroup' data-type='horizontal'>
 //";
 	return "<div class='$class'>\n";
 }
@@ -486,7 +486,7 @@ function dialogbox($id, $title, $message)
 {
 	$dialog = "
 <div class='dialogbox' id='$id' title='$title'>
-    <p>$message</p>
+	<p>$message</p>
 </div>
 ";
 
@@ -521,12 +521,37 @@ function dialogbox($id, $title, $message)
  */
 
 function convert_to_hash($items) {
-    $hash_array = array();
+	$hash_array = array();
 
-    foreach ($items as $item)
-        $hash_array[$item] = $item;
+	foreach ($items as $item)
+		$hash_array[$item] = $item;
 
-    return $hash_array;
+	return $hash_array;
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// M E N U  H E L P E R
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Menu helper.
+ */
+
+function menu($tag)
+{
+	$lang_base = preg_replace('/_.*/', '', $tag);
+
+	clearos_load_language($lang_base);
+
+	$translation = lang($tag);
+
+	if (empty($translation)) {
+		clearos_load_language('base');
+		$translation = lang('base_other');
+	}
+
+	return $translation;
+}
+
+// vim: syntax=php ts=4
 ?>
