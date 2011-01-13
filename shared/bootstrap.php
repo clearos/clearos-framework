@@ -105,4 +105,4 @@ if (!empty(Config::$clearos_devel_versions['framework']))
 else
     $version = '';
 
-require_once Config::$framework_path . '/' . $version . '/shared/Core.php';
+require_once Config::$framework_path . '/' . $version . '/shared/globals.php';
