@@ -1,9 +1,16 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2010 ClearFoundation
-//
+/**
+ * ClearOS framework configuration.
+ *
+ * @category  ClearOS
+ * @package   Framework
+ * @author    ClearFoundation <developer@clearfoundation.com>
+ * @copyright 2010-2011 ClearFoundation
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link      http://www.clearfoundation.com/docs/developer/framework/
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // This program is free software: you can redistribute it and/or modify
@@ -21,125 +28,162 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////
+// N A M E S P A C E
+///////////////////////////////////////////////////////////////////////////////
+
+namespace clearos\framework;
+
+///////////////////////////////////////////////////////////////////////////////
+// D E P E N D E N C I E S
+///////////////////////////////////////////////////////////////////////////////
+
+use \clearos\framework\Logger as Logger;
+
+require_once 'Logger.php';
+
+///////////////////////////////////////////////////////////////////////////////
+// C L A S S
+///////////////////////////////////////////////////////////////////////////////
+
 /**
  * ClearOS framework configuration.
  *
- * @package Framework
- * @author {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @copyright Copyright 2010 ClearFoundation
+ * @category  ClearOS
+ * @package   Framework
+ * @author    ClearFoundation <developer@clearfoundation.com>
+ * @copyright 2010-2011 ClearFoundation
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link      http://www.clearfoundation.com/docs/developer/framework/
  */
 
-/**
- * ClearOS framework configuration class.
- *
- * @package Framework
- * @author {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @copyright Copyright 2010 ClearFoundation
- */
+class Config
+{
+    //-----------------------------------------------------------------------
+    // V A R I A B L E S
+    //-----------------------------------------------------------------------
 
-class ClearOsConfig {
+    /**
+     * @var string base path for apps
+     */
 
-	//-----------------------------------------------------------------------
-	// V A R I A B L E S
-	//-----------------------------------------------------------------------
+    public static $apps_path = '/usr/clearos/apps';
 
-	/**
-	 * @var string base path for apps
-	 */
+    /**
+     * @var string base path for the framework
+     */
 
-	public static $apps_path = '/usr/clearos/apps';
+    public static $framework_path = '/usr/clearos/framework';
 
-	/**
-	 * @var string base path for the framework
-	 */
+    /**
+     * @var string base path for the web server document root
+     */
 
-	public static $framework_path = '/usr/clearos/framework';
+    public static $htdocs_path = '/usr/clearos/framework/htdocs';
 
-	/**
-	 * @var string base path for the web server document root
-	 */
+    /**
+     * @var string base path for themes
+     */
 
-	public static $htdocs_path = '/usr/clearos/framework/htdocs';
+    public static $themes_path = '/usr/clearos/themes';
 
-	/**
-	 * @var string base path for themes
-	 */
+    /**
+     * @var boolean debug mode flag
+     */
 
-	public static $themes_path = '/usr/clearos/themes';
+    public static $debug_mode = FALSE;
 
-	/**
-	 * @var boolean debug mode flag
-	 */
+    /**
+     * @var string debug log path
+     */
 
-	public static $debug_mode = TRUE;
+    public static $debug_log = '/var/log/webconfig/framework_log';
 
-	/**
-	 * @var string debug log path
-	 */
+    /**
+     * @var array version handler for app developers
+     */
 
-// FIXME -- just for 6.0 preview release
-	// public static $debug_log = '/var/log/webconfig/framework_log';
-	public static $debug_log = '/tmp/clearos6_preview_log';
+    public static $clearos_devel_versions = array();
 
-	/**
-	 * @var array version handler for app developers
-	 */
+    ///////////////////////////////////////////////////////////////////////////////
+    // M E T H O D S
+    ///////////////////////////////////////////////////////////////////////////////
 
-	public static $clearos_devel_versions = array();
+    /**
+     * Config constructor.
+     */
 
-	///////////////////////////////////////////////////////////////////////////////
-	// M E T H O D S
-	///////////////////////////////////////////////////////////////////////////////
+    public function __construct()
+    {
+        Logger::profile(__METHOD__, __LINE__);
+    }
 
-	/**
-	 * ClearOsConfig constructor.
-	 */
+    /**
+     * Returns the app URL.
+     *
+     * @param string $app app name
+     *
+     * @return string app URL
+     */
 
-	public function __construct()
-	{
-		ClearOsLogger::Profile(__METHOD__, __LINE__);
-	}
+    public static function get_app_url($app)
+    {
+        Logger::profile(__METHOD__, __LINE__);
 
-	public static function GetThemePath($theme)
-	{
-		if (isset(ClearOsConfig::$clearos_devel_versions['theme'][$theme]))
-			$theme_version = '/' . ClearOsConfig::$clearos_devel_versions['theme'][$theme];
-		else if (isset(ClearOsConfig::$clearos_devel_versions['theme']['default']))
-			$theme_version = '/' . ClearOsConfig::$clearos_devel_versions['theme']['default'];
-		else
-			$theme_version = "";
-
-		return ClearOsConfig::$themes_path . '/' . $theme . $theme_version;
-	}
-
-	public static function GetThemeUrl($theme)
-	{
-		if (isset(ClearOsConfig::$clearos_devel_versions['theme'][$theme]))
-			$theme_version = '/' . ClearOsConfig::$clearos_devel_versions['theme'][$theme];
-		else if (isset(ClearOsConfig::$clearos_devel_versions['theme']['default']))
-			$theme_version = '/' . ClearOsConfig::$clearos_devel_versions['theme']['default'];
-		else
-			$theme_version = "";
-
-		// FIXME: cleanup hard coded value below
-		// FIXME: merge common blocks of code
-		return "/themes/" . $theme . $theme_version;
-	}
-
-	public static function GetAppUrl($app)
-	{
-        if (isset(ClearOsConfig::$clearos_devel_versions['app'][$app]))
-            $app_version = ClearOsConfig::$clearos_devel_versions['app'][$app] . '/';
-        else if (isset(ClearOsConfig::$clearos_devel_versions['app']['default']))
-            $app_version = ClearOsConfig::$clearos_devel_versions['app']['default'] . '/';
+        if (isset(Config::$clearos_devel_versions['app'][$app]))
+            $app_version = Config::$clearos_devel_versions['app'][$app] . '/';
+        else if (isset(Config::$clearos_devel_versions['app']['default']))
+            $app_version = Config::$clearos_devel_versions['app']['default'] . '/';
         else
             $app_version = "";
 
-		// FIXME: cleanup hard coded value below
-		return '/' . $app . '/' . $app_version . 'htdocs';
-	}
-}
+        // FIXME: cleanup hard coded value below
+        return '/' . $app . '/' . $app_version . 'htdocs';
+    }
 
-// vim: syntax=php ts=4
+    /**
+     * Returns the theme path.
+     *
+     * @param string $theme theme name
+     *
+     * @return string theme path
+     */
+
+    public static function get_theme_path($theme)
+    {
+        Logger::profile(__METHOD__, __LINE__);
+
+        if (isset(Config::$clearos_devel_versions['theme'][$theme]))
+            $theme_version = '/' . Config::$clearos_devel_versions['theme'][$theme];
+        else if (isset(Config::$clearos_devel_versions['theme']['default']))
+            $theme_version = '/' . Config::$clearos_devel_versions['theme']['default'];
+        else
+            $theme_version = "";
+
+        return Config::$themes_path . '/' . $theme . $theme_version;
+    }
+
+    /**
+     * Returns the theme URL.
+     *
+     * @param string $theme theme name
+     *
+     * @return string theme URL
+     */
+
+    public static function get_theme_url($theme)
+    {
+        Logger::profile(__METHOD__, __LINE__);
+
+        if (isset(Config::$clearos_devel_versions['theme'][$theme]))
+            $theme_version = '/' . Config::$clearos_devel_versions['theme'][$theme];
+        else if (isset(Config::$clearos_devel_versions['theme']['default']))
+            $theme_version = '/' . Config::$clearos_devel_versions['theme']['default'];
+        else
+            $theme_version = "";
+
+        // FIXME: cleanup hard coded value below
+        // FIXME: merge common blocks of code
+        return "/themes/" . $theme . $theme_version;
+    }
+}

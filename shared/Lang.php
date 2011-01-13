@@ -1,31 +1,31 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2008 - 2010 EllisLab, Inc
-// Copyright 2006, 2010 ClearFoundation
-//
-///////////////////////////////////////////////////////////////////////////////
-//
-// CodeIgniter license
-//
-///////////////////////////////////////////////////////////////////////////////
-
 /**
  * ClearOS language handling class. 
  *
- * @package Framework
- * @author ExpressionEngine Dev Team, {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license	http://codeigniter.com/user_guide/license.html CodeIgniter
- * @copyright Copyright 2008 - 2010 EllisLab, Inc., 2010 ClearFoundation
+ * @category  ClearOS
+ * @package   Framework
+ * @author    ClearFoundation <developer@clearfoundation.com>
+ * @author    EllisLab Inc <info@ellislab.com>
+ * @copyright 2010-2011 ClearFoundation
+ * @copyright 2008-2020 EllisLab, Inc
+ * @license   http://codeigniter.com/user_guide/license.html CodeIgniter
+ * @link      http://www.clearfoundation.com/docs/developer/framework
  */
 
 ///////////////////////////////////////////////////////////////////////////////
-// B O O T S T R A P
+// N A M E S P A C E
 ///////////////////////////////////////////////////////////////////////////////
 
-$bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
-require_once($bootstrap . '/bootstrap.php');
+namespace clearos\framework;
+
+///////////////////////////////////////////////////////////////////////////////
+// D E P E N D E N C I E S
+///////////////////////////////////////////////////////////////////////////////
+
+use \clearos\framework\Config as Config;
+
+require_once 'Config.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -34,89 +34,87 @@ require_once($bootstrap . '/bootstrap.php');
 /**
  * ClearOS language handling class. 
  *
- * @package Framework
- * @author ExpressionEngine Dev Team, {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license	http://codeigniter.com/user_guide/license.html CodeIgniter
- * @copyright Copyright 2008 - 2010 EllisLab, Inc., 2010 ClearFoundation
+ * @category  ClearOS
+ * @package   Framework
+ * @author    ClearFoundation <developer@clearfoundation.com>
+ * @author    EllisLab Inc <info@ellislab.com>
+ * @copyright 2010-2011 ClearFoundation
+ * @copyright 2008-2020 EllisLab, Inc
+ * @license   http://codeigniter.com/user_guide/license.html CodeIgniter
+ * @link      http://www.clearfoundation.com/docs/developer/framework
  */
 
-class ClearOsLang {
+class Lang
+{
+    var $language = array();
+    var $is_loaded = array();
 
-	var $language = array();
-	var $is_loaded = array();
+    /**
+     * Loads a language file.
+     *
+     * @param string $target application language target
+     *
+     * @return TRUE if load was successful
+     */
 
-	/**
-	 * Constructor
-	 *
-	 * @access	public
-	 */
-	function __construct()
-	{}
+    public function load($target = '')
+    {
+        if (in_array($target, $this->is_loaded, TRUE))
+            return;
 
-	// --------------------------------------------------------------------
+        // Support short form as well as full path
+        // - load('date') -- which is equivalent to load('date/date')
+        // - load('base/daemon')
 
-	/**
-	 * Loads a language file.
-	 *
-	 * @param string $langtarget application language target
-	 * @return true if load was successful
-	 */
-	function load($langtarget = '')
-	{
-		if (in_array($langtarget, $this->is_loaded, TRUE))
-			return;
+        if (preg_match('/\//', $target)) {
+            list($app, $langfile) = preg_split('/\//', $target, 2);
+        } else {
+            $app = $target;
+            $langfile = $target;
+        }
 
-		// Support short form as well as full path
-		// - load('date') -- which is equivalent to load('date/date')
-		// - load('base/daemon')
+        $langfile .= '_lang.php';
 
-		if (preg_match('/\//', $langtarget)) {
-			list($app, $langfile) = preg_split('/\//', $langtarget, 2);
-		} else {
-			$app = $langtarget;
-			$langfile = $langtarget;
-		}
+        // Grab the development version 
+        if (!empty(Config::$clearos_devel_versions['app'][$app]))
+            $version = Config::$clearos_devel_versions['app'][$app];
+        else if (!empty(Config::$clearos_devel_versions['app']['default']))
+            $version = Config::$clearos_devel_versions['app']['default'];
+        else
+            $version = '';
 
-		$langfile .= '_lang.php';
+        // FIXME - pull in language
+        // $deft_lang = ( ! isset($config['language'])) ? 'english' : $config['language'];
+        // $idiom = ($deft_lang == '') ? 'english' : $deft_lang;
+        $language = 'en_US';
 
-		// Grab the development version 
-		if (!empty(ClearOsConfig::$clearos_devel_versions['app'][$app]))
-			$version = ClearOsConfig::$clearos_devel_versions['app'][$app];
-		else if (!empty(ClearOsConfig::$clearos_devel_versions['app']['default']))
-			$version = ClearOsConfig::$clearos_devel_versions['app']['default'];
-		else
-			$version = '';
+        // Load the language file
+        $langpath = Config::$apps_path . '/' . $app . '/' . $version . "/language/$language/$langfile";
 
-		// FIXME - pull in language
-		// $deft_lang = ( ! isset($config['language'])) ? 'english' : $config['language'];
-		// $idiom = ($deft_lang == '') ? 'english' : $deft_lang;
-		$language = 'en_US';
+        if (file_exists($langpath)) {
+            include "$langpath";
+        } else {
+            // FIXME?
+        }
 
-		// Load the language file
-		$langpath = ClearOsConfig::$apps_path . '/' . $app . '/' . $version . "/language/$language/$langfile";
+        $this->is_loaded[] = $target;
+        $this->language = array_merge($this->language, $lang);
 
-		if (file_exists($langpath)) {
-			include($langpath);
-		} else {
-			// FIXME?
-		}
+        unset($lang);
+    }
 
-		$this->is_loaded[] = $langtarget;
-		$this->language = array_merge($this->language, $lang);
+    /**
+     * Fetch a single line of text from the language array
+     *
+     * @param string $line language line
+     *
+     * @return string translated string
+     */
 
-		unset($lang);
-	}
+    public function line($line = '')
+    {
+        $line = ($line == '' OR ! isset($this->language[$line])) ? FALSE : $this->language[$line];
 
-	/**
-	 * Fetch a single line of text from the language array
-	 *
-	 * @access	public
-	 * @param	string	$line 	the language line
-	 * @return	string
-	 */
-	function line($line = '')
-	{
-		$line = ($line == '' OR ! isset($this->language[$line])) ? FALSE : $this->language[$line];
-		return $line;
-	}
+        return $line;
+    }
 }

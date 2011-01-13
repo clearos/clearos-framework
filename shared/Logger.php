@@ -38,6 +38,9 @@ namespace clearos\framework;
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
+use \Exception as Exception;
+use \clearos\framework\Error as Error;
+
 require_once 'Error.php';
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -70,20 +73,20 @@ class Logger
         static $basetime = 0;
 
         // Set the log variables
-        $errno = $error->GetCode();
-        $errstring = $error->GetCodeString();
-        $errmsg = $error->GetMessage();
-        $file = $error->GetTag();
-        $line = $error->GetLine();
-        $context = $error->GetContext();
-        $caught = $error->IsCaught();
-        $type = $error->GetType();
-        $typestring = $error->GetTypeString();
+        $errno = $error->get_code();
+        $errstring = $error->get_code_string();
+        $errmsg = $error->get_message();
+        $file = $error->get_tag();
+        $line = $error->get_line();
+        $context = $error->get_context();
+        $caught = $error->is_caught();
+        $type = $error->get_type();
+        $typestring = $error->get_type_string();
 
         // In debug mode, all errors are logged. In production mode, only important
         // messages are logged.
 
-        if (! COMMON_DEBUG_MODE) {
+        if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
             if ($type == Error::TYPE_EXCEPTION) {
                  if ($errno <= Error::CODE_WARNING)
                     return;
@@ -105,7 +108,7 @@ class Logger
             return;
 
         // Perform extra goodness in debug mode
-        if (COMMON_DEBUG_MODE) {
+        if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
             // Append timestamp to log line
             if ($basetime == 0) {
                 $basetime = microtime(TRUE);
@@ -118,9 +121,8 @@ class Logger
             $logline = sprintf("%.4f: %s", round($timestamp, 4),  $logline);
 
             // Log messages to standard out when in command-line mode
-            if (ini_get('display_errors') && preg_match('/cli/', php_sapi_name())) {
+            if (ini_get('display_errors') && preg_match('/cli/', php_sapi_name()))
                 echo "$logline\n";
-            }
 
             // Log messages to custom log file (if set) and standard out on
             if (ini_get('error_log')) {
@@ -128,7 +130,7 @@ class Logger
                 $timestamp = date("M j G:i:s T Y");
                 error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
 
-                foreach ($error->getTrace() as $traceinfo) {
+                foreach ($error->get_trace() as $traceinfo) {
                     // Backtrace log format
                     $alt_filename = preg_replace("/.*\//", "", $traceinfo["file"]);
                     $logline = sprintf(
@@ -146,7 +148,7 @@ class Logger
             syslog(LOG_INFO, $logline);
 
             // Log backtrace
-            foreach ($error->getTrace() as $traceinfo) {
+            foreach ($error->get_trace() as $traceinfo) {
                 // Backtrace log format
                 $logline = sprintf(
                     "$typestring: debug backtrace: %s (%d): %s",
@@ -172,7 +174,7 @@ class Logger
 
     public static function log_exception(Exception $exception, $iscaught = TRUE)
     {
-        ClearOsLogger::Log(
+        Logger::log(
             new Error(
                 $exception->getCode(),
                 $exception->getMessage(),
@@ -215,7 +217,7 @@ class Logger
     public static function profile($tag, $line, $message = 'called')
     {
         $error = new Error(Error::CODE_DEBUG, $message, $tag, $line, NULL, Error::TYPE_PROFILE);
-        ClearOsLogger::Log($error);
+        Logger::log($error);
     }
 
     /**
@@ -242,10 +244,8 @@ class Logger
         // Prefix optional message
         $full_message = (empty($message)) ? $tagline : $message . ' - ' . $tagline;
 
-        $error = new Error(
-            Error::CODE_DEBUG, $full_message, 'Framework', '0', NULL, Error::TYPE_PROFILE
-        );
-        ClearOsLogger::Log($error);
+        $error = new Error(Error::CODE_DEBUG, $full_message, 'Framework', '0', NULL, Error::TYPE_PROFILE);
+        Logger::log($error);
     }
 }
 

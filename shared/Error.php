@@ -130,7 +130,7 @@ class Error
      * @return void
      */
 
-    function __construct($code, $message, $tag, $line, $context, $type, $caught = TRUE, $trace = NULL)
+    public function __construct($code, $message, $tag, $line, $context, $type, $caught = TRUE, $trace = NULL)
     {
         $this->code = $code;
         $this->message = $message;
@@ -148,7 +148,7 @@ class Error
      * @return integer error code
      */
 
-    function get_code()
+    public function get_code()
     {
         return $this->code;
     }
@@ -159,7 +159,7 @@ class Error
      * @return string error code string
      */
 
-    function get_code_string()
+    public function get_code_string()
     {
         if (isset($this->code_map[$this->code]))
             return $this->code_map[$this->code];
@@ -173,7 +173,7 @@ class Error
      * @return array error context
      */
 
-    function get_context()
+    public function get_context()
     {
         return $this->context;
     }
@@ -184,7 +184,7 @@ class Error
      * @return integer line number
      */
 
-    function get_line()
+    public function get_line()
     {
         return $this->line;
     }
@@ -195,7 +195,7 @@ class Error
      * @return string error message
      */
 
-    function get_message()
+    public function get_message()
     {
         return $this->message;
     }
@@ -206,7 +206,7 @@ class Error
      * @return string error tag
      */
 
-    function get_tag()
+    public function get_tag()
     {
         return $this->tag;
     }
@@ -217,7 +217,7 @@ class Error
      * @return array error trace.
      */
 
-    function get_trace()
+    public function get_trace()
     {
         if ($this->trace)
             return $this->trace;
@@ -231,7 +231,7 @@ class Error
      * @return string error type
      */
 
-    function get_type()
+    public function get_type()
     {
         return $this->type;
     }
@@ -242,7 +242,7 @@ class Error
      * @return string error type
      */
 
-    function get_type_string()
+    public function get_type_string()
     {
         if (isset($this->type_map[$this->type]))
             return $this->type_map[$this->type];
@@ -256,7 +256,7 @@ class Error
      * @return boolean TRUE if error was caught by application.
      */
 
-    function is_caught()
+    public function is_caught()
     {
         return $this->caught;
     }

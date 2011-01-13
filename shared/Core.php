@@ -1,10 +1,15 @@
 <?php
 
-//////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2006, 2010 ClearFoundation
-//
-///////////////////////////////////////////////////////////////////////////////
+/**
+ * ClearOS framework core settings and functions.
+ *
+ * @category  ClearOS
+ * @package   Framework
+ * @author    ClearFoundation <developer@clearfoundation.com>
+ * @copyright 2006-2011 ClearFoundation
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link      http://www.clearfoundation.com/docs/developer/framework/
+ */
 
 //////////////////////////////////////////////////////////////////////////////
 //
@@ -32,17 +37,22 @@
  * @package Framework
  * @author {@link http://www.clearfoundation.com/ ClearFoundation}
  * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @copyright Copyright 2006, 2010 ClearFoundation
+ * @copyright Copyright 2006-2011 ClearFoundation
  */
 
 //////////////////////////////////////////////////////////////////////////////
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
-require_once('ClearOsConfig.php');
-require_once('ClearOsError.php');
-require_once("ClearOsLang.php");
-require_once('ClearOsLogger.php');
+use \clearos\framework\Config as Config;
+use \clearos\framework\Error as Error;
+use \clearos\framework\Lang as Lang;
+use \clearos\framework\Logger as Logger;
+
+require_once 'Config.php';
+require_once 'Error.php';
+require_once 'Lang.php';
+require_once 'Logger.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 // C O N F I G U R A T I O N
@@ -51,99 +61,127 @@ require_once('ClearOsLogger.php');
 // Configuration is handled by the bootstrap.php process.
 
 // FIXME: COMMON_CORE_DIR remove references to this
-define('COMMON_CORE_DIR', ClearOsConfig::$framework_path . '/application/libraries');
+define('COMMON_CORE_DIR', Config::$framework_path . '/application/libraries');
 
-// FIXME: move to ClearOsConfig if still required
+// FIXME: move to Config if still required
 define("COMMON_TEMP_DIR", "/usr/webconfig/tmp");
 
-// FIXME - transition only... remove
-define('COMMON_DEBUG_MODE', true);
-
 ///////////////////////////////////////////////////////////////////////////////
-// T I M E  Z O N E
+// G L O B A L  I N I T I A L I Z A T I O N
 ///////////////////////////////////////////////////////////////////////////////
 
-// date_default_timezone_set must be called or the time zone must be set
+// The date_default_timezone_set must be called or the time zone must be set
 // in PHP's configuration when date() functions are called.  On a ClearOS 
 // system, the default time zone for the system is correct.
 
 @date_default_timezone_set(@date_default_timezone_get());
 
-///////////////////////////////////////////////////////////////////////////////
-// L O G G I N G
-///////////////////////////////////////////////////////////////////////////////
+// Set error and exception handlers
+//---------------------------------
+
+set_error_handler("_clearos_error_handler");
+set_exception_handler("_clearos_exception_handler");
+
+// Logging
+//--------
 
 // FIXME: this might be a temporary hack... test it
 @ini_set('include_path', '.');
 
-if (ClearOsConfig::$debug_mode) {
-	@ini_set('display_errors', TRUE); 
-	@ini_set('display_startup_error', TRUE);
-	@ini_set('log_errors', TRUE);
-	@ini_set('error_log', ClearOsConfig::$debug_log);
+if (Config::$debug_mode) {
+    @ini_set('display_errors', TRUE); 
+    @ini_set('display_startup_error', TRUE);
+    @ini_set('log_errors', TRUE);
+    @ini_set('error_log', Config::$debug_log);
 }
 
-///////////////////////////////////////////////////////////////////////////////
-// L A N G U A G E  S U P P O R T
-///////////////////////////////////////////////////////////////////////////////
-//
-// CodeIgniter defines the global lang() function for translations.  If the
-// CodeIgniter framework is already initialized, its lang() framework is used.
-// If the CodeIgniter framework is not in use, then the following provides this 
-// same functionality for the API without having to pull in big chunks of the 
-// CodeIgniter framework.
+// Translation object
+//-------------------
 
-$clearos_lang = new ClearOsLang();
+$clearos_lang = new Lang();
 
-function clearos_load_language($langfile)
+///////////////////////////////////////////////////////////////////////////////
+// G L O B A L  F U N C T I O N S
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * 
+
+function clearos_profile(:wq
+
+/**
+ * Loads a language file.
+ *
+ * CodeIgniter defines the global lang() function for translations.  If the
+ * CodeIgniter framework is already initialized, its lang() framework is used.
+ * If the CodeIgniter framework is not in use, then the following provides this 
+ * same functionality for the API without having to pull in big chunks of the 
+ * CodeIgniter framework.
+ *
+ * @param string $lang_file language file
+ *
+ * @return void
+ */
+
+function clearos_load_language($lang_file)
 {
-	global $clearos_lang;
+    global $clearos_lang;
 
-	// Define the lang() function if it does not exist
-	//------------------------------------------------
+    // Define the lang() function if it does not exist
+    //------------------------------------------------
 
-	if (! function_exists('lang')) {
-		function lang($key) {
-			global $clearos_lang;
-			return $clearos_lang->line($key);
-		}
-	}
+    if (! function_exists('lang')) {
+        /**
+         * Translation lookup
+         *
+         * @param string $key language key
+         *
+         * @return string translation
+         */
 
-	// Load the language file
-	//-----------------------
+        function lang($key)
+        {
+            global $clearos_lang;
+            return $clearos_lang->line($key);
+        }
+    }
 
-	if (isset($clearos_lang)) {
-		$clearos_lang->load($langfile);
-	} else {
-		require_once(BASEPATH . 'core/CodeIgniter.php');
-		$codeigniter =& get_instance();
-		$codeigniter->lang->load($langfile);
-	}
+    // Load the language file
+    //-----------------------
+
+    if (isset($clearos_lang)) {
+        $clearos_lang->load($lang_file);
+    } else {
+        include_once BASEPATH . 'core/CodeIgniter.php';
+        $codeigniter =& get_instance();
+        $codeigniter->lang->load($lang_file);
+    }
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// L I B R A R Y  L O A D E R
-///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Pulls in a library.
  *
  * This function makes it possible to load different library versions -
  * a very useful feature in development environments.
+ *
+ * @param string $library library path
+ *
+ * @return void
  */
 
-function clearos_load_library($fulllibrary) {
-	list($app, $library) = preg_split('/\//', $fulllibrary);
+function clearos_load_library($library)
+{
+    list($app, $library) = preg_split('/\//', $library);
 
-	// FIXME: point to online document on what's going on here
-	if (!empty(ClearOsConfig::$clearos_devel_versions['app'][$app]))
-		$version = ClearOsConfig::$clearos_devel_versions['app'][$app];
-	else if (!empty(ClearOsConfig::$clearos_devel_versions['app']['default']))
-		$version = ClearOsConfig::$clearos_devel_versions['app']['default'];
-	else
-		$version = '';
+    // FIXME: point to online document on what's going on here
+    if (!empty(Config::$clearos_devel_versions['app'][$app]))
+        $version = Config::$clearos_devel_versions['app'][$app];
+    else if (!empty(Config::$clearos_devel_versions['app']['default']))
+        $version = Config::$clearos_devel_versions['app']['default'];
+    else
+        $version = '';
 
-	require_once(ClearOsConfig::$apps_path . '/' . $app . '/' . $version . '/libraries/' . $library . '.php');
+    include_once Config::$apps_path . '/' . $app . '/' . $version . '/libraries/' . $library . '.php';
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -153,66 +191,62 @@ function clearos_load_library($fulllibrary) {
 /** 
  * Error handler used by set_error_handler().
  *
+ * @param integer $errno   error number
+ * @param string  $errmsg  error message
+ * @param string  $file    file name where occurred
+ * @param integer $line    line in file where the error occurred
+ * @param array   $context entire context where error was triggered
+ * 
  * @access private
- * @param integer $errno error number
- * @param string $errmsg error message
- * @param string $file file name where occurred
- * @param integer $line line in file where the error occurred
- * @param array $context entire context where error was triggered
+ * @return void
  */
 
 function _clearos_error_handler($errno, $errmsg, $file, $line, $context)
 {
-	// If the @ symbol was used to suppress errors, bail
-	//--------------------------------------------------
+    // If the @ symbol was used to suppress errors, bail
+    //--------------------------------------------------
 
-	/* FIXME -- revisit this ... it seems to suppress too much.
-	if (error_reporting(0) === 0)
-		return;
-	*/
+    /* FIXME -- revisit this ... it seems to suppress too much.
+    if (error_reporting(0) === 0)
+        return;
+    */
 
-	// Log the error
-	//--------------
+    // Log the error
+    //--------------
 
-	$error = new ClearOsError($errno, $errmsg, $file, $line, $context, ClearOsError::TYPE_ERROR, FALSE);
-	ClearOsLogger::Log($error);
+    $error = new Error($errno, $errmsg, $file, $line, $context, Error::TYPE_ERROR, FALSE);
+    Logger::log($error);
 
-	// Show error on standard out if running from command line
-	//--------------------------------------------------------
+    // Show error on standard out if running from command line
+    //--------------------------------------------------------
 
-	if (preg_match('/cli/', php_sapi_name())) {
-		$errstring = $error->GetCodeString();
-		echo $errstring . ": " . $errmsg . " - $file ($line)\n";
-	}
+    if (preg_match('/cli/', php_sapi_name())) {
+        $errstring = $error->get_code_string();
+        echo $errstring . ": " . $errmsg . " - $file ($line)\n";
+    }
 }
 
 /**
  * Exception handler used by set_exception_handler().
  * 
- * @access private
  * @param Exception $exception exception object
+ *
+ * @access private
+ * @return void
  */
 
 function _clearos_exception_handler(Exception $exception)
 {
-	// Log the exception
-	//------------------
+    // Log the exception
+    //------------------
 
-	ClearOsLogger::LogException($exception, TRUE);
+    Logger::log_exception($exception, TRUE);
 
-	// Show error on standard out if running from command line
-	//--------------------------------------------------------
+    // Show error on standard out if running from command line
+    //--------------------------------------------------------
 
-	if (preg_match('/cli/', php_sapi_name()))
-		echo "Fatal - uncaught exception: " . $exception->getMessage() . "\n";
-	else
-		echo "<div>Ooooops: " . $exception->getMessage() . "</div>";
+    if (preg_match('/cli/', php_sapi_name()))
+        echo "Fatal - uncaught exception: " . $exception->getMessage() . "\n";
+    else
+        echo "<div>Ooooops: " . $exception->getMessage() . "</div>";
 }
-
-// Set error and exception handlers
-//---------------------------------
-
-set_error_handler("_clearos_error_handler");
-set_exception_handler("_clearos_exception_handler");
-
-// vim: syntax=php ts=4
