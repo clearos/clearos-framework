@@ -49,10 +49,10 @@ use \clearos\framework\Error as Error;
 use \clearos\framework\Lang as Lang;
 use \clearos\framework\Logger as Logger;
 
-require_once 'Config.php';
-require_once 'Error.php';
-require_once 'Lang.php';
-require_once 'Logger.php';
+require_once 'libraries/Config.php';
+require_once 'libraries/Error.php';
+require_once 'libraries/Lang.php';
+require_once 'libraries/Logger.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 // C O N F I G U R A T I O N

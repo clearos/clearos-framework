@@ -38,7 +38,7 @@
 
 use \clearos\framework\Config as Config;
 
-require_once 'Config.php';
+require_once 'libraries/Config.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 // C O N F I G U R A T I O N
