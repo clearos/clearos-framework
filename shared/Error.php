@@ -1,9 +1,16 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2006, 2010 ClearFoundation
-//
+/**
+ * ClearOS error class.
+ *
+ * @category  ClearOS
+ * @package   Framework
+ * @author    ClearFoundation <developer@clearfoundation.com>
+ * @copyright 2006-2011 ClearFoundation
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link      http://www.clearfoundation.com/docs/developer/apps/fraemwork/
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // This program is free software: you can redistribute it and/or modify
@@ -21,232 +28,238 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-/**
- * ClearOS error class.
- *
- * @package Framework
- * @author {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @copyright Copyright 2006, 2010 ClearFoundation
- */
+///////////////////////////////////////////////////////////////////////////////
+// N A M E S P A C E
+///////////////////////////////////////////////////////////////////////////////
+
+namespace clearos\framework;
+
+///////////////////////////////////////////////////////////////////////////////
+// C L A S S
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * ClearOS error class.
  *
- * @package Framework
- * @author {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @copyright Copyright 2006, 2010 ClearFoundation
+ * Define error code levels to make logging errors consistent across
+ * PHP uncaught errors, ClearOS defined errors, and CodeIgniter errors.
+ * 
+ * Uncaught errors in PHP generate one of the following error codes:
+ *    1 => error
+ *    2 => warning
+ *    4 => parse error
+ *    8 => notice
+ *   16 => core error
+ *   32 => core warning
+ *   64 => compile error
+ *  128 => compile warning
+ *  256 => user error
+ *  512 => user warning
+ * 1024 => user notice
+ * 2048 => strict
+ *
+ * CodeIgniter defines 3 levels (which get mapped to the CODE_X tags here)
+ *    1 => ERROR
+ *    2 => DEBUG
+ *    3 => INFO
+ *
+ * @category  ClearOS
+ * @package   Framework
+ * @author    ClearFoundation <developer@clearfoundation.com>
+ * @copyright 2006-2011 ClearFoundation
+ * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link      http://www.clearfoundation.com/docs/developer/apps/framework/
  */
 
-class ClearOsError
+class Error
 {
-	protected $code;
-	protected $message;
-	protected $tag;
-	protected $line;
-	protected $context;
-	protected $caught;
-	protected $trace;
-	protected $type;
+    protected $code;
+    protected $message;
+    protected $tag;
+    protected $line;
+    protected $context;
+    protected $caught;
+    protected $trace;
+    protected $type;
 
-	// Types of error
-	//----------------
+    const CODE_ERROR = -1;
+    const CODE_WARNING = -2;
+    const CODE_INFO = -4;
+    const CODE_DEBUG = -8;
+    const TYPE_EXCEPTION = 11;
+    const TYPE_ERROR = 22;
+    const TYPE_PROFILE = 33;
 
-	const TYPE_EXCEPTION = 11;
-	const TYPE_ERROR = 22;
-	const TYPE_PROFILE = 33;
+    protected $type_map = array(
+        Error::TYPE_EXCEPTION => 'exception',
+        Error::TYPE_ERROR => 'error',
+        Error::TYPE_PROFILE => 'profile' 
+    );
 
-	protected $type_map = array(
-		ClearOsError::TYPE_EXCEPTION => 'exception',
-		ClearOsError::TYPE_ERROR => 'error',
-		ClearOsError::TYPE_PROFILE => 'profile' 
-	);
+    protected $code_map = array(
+        Error::CODE_ERROR => 'error',
+        Error::CODE_WARNING => 'warning',
+        Error::CODE_INFO => 'info',
+        Error::CODE_DEBUG => 'debug',
+        E_STRICT => 'PHP strict',   
+        E_ERROR => 'PHP error',
+        E_WARNING => 'PHP warning',
+        E_PARSE => 'PHP parse error',
+        E_NOTICE => 'PHP notice',
+        E_CORE_ERROR => 'PHP core error',
+        E_CORE_WARNING => 'PHP core warning',
+        E_COMPILE_ERROR => 'PHP compile error',
+        E_COMPILE_WARNING => 'PHP compile warning',
+        E_USER_ERROR => 'PHP user error',
+        E_USER_WARNING => 'PHP user warning',
+        E_USER_NOTICE => 'PHP user notice'
+    );
 
-	// ClearOsError codes
-	//------------
+    /**
+     * Error constructor.
+     *
+     * @param integer $code    error code
+     * @param string  $message error message
+     * @param string  $tag     a method name or some other nickname
+     * @param integer $line    line number
+     * @param array   $context error context
+     * @param integer $type    type of error - exception, error, profile
+     * @param boolean $caught  TRUE if error was caught by application
+     * @param array   $trace   error back trace
+     *
+     * @return void
+     */
 
-	// Define error code levels to make logging errors consistent across
-	// PHP uncaught errors, ClearOS defined errors, and CodeIgniter errors.
-	// 
-	// Uncaught errors in PHP generate one of the following error codes:
-	//    1 => error
-	//    2 => warning
-	//    4 => parse error
-	//    8 => notice
-	//   16 => core error
-	//   32 => core warning
-	//   64 => compile error
-	//  128 => compile warning
-	//  256 => user error
-	//  512 => user warning
-	// 1024 => user notice
-	// 2048 => strict
-	//
-	// CodeIgniter defines 3 levels (which get mapped to the CODE_X tags here)
-	//    1 => ERROR
-	//    2 => DEBUG
-	//    3 => INFO
-	//---------------------------------------------------------------
+    function __construct($code, $message, $tag, $line, $context, $type, $caught = TRUE, $trace = NULL)
+    {
+        $this->code = $code;
+        $this->message = $message;
+        $this->tag = $tag;
+        $this->line = $line;
+        $this->context = $context;
+        $this->type = $type;
+        $this->caught = $caught;
+        $this->trace = $trace;
+    }
 
-	const CODE_ERROR = -1;
-	const CODE_WARNING = -2;
-	const CODE_INFO = -4;
-	const CODE_DEBUG = -8;
+    /**
+     * Returns error code.
+     *
+     * @return integer error code
+     */
 
-	protected $code_map = array(
-		ClearOsError::CODE_ERROR => 'error',
-		ClearOsError::CODE_WARNING => 'warning',
-		ClearOsError::CODE_INFO => 'info',
-		ClearOsError::CODE_DEBUG => 'debug',
-		E_STRICT => 'PHP strict',   
-		E_ERROR => 'PHP error',
-		E_WARNING => 'PHP warning',
-		E_PARSE => 'PHP parse error',
-		E_NOTICE => 'PHP notice',
-		E_CORE_ERROR => 'PHP core error',
-		E_CORE_WARNING => 'PHP core warning',
-		E_COMPILE_ERROR => 'PHP compile error',
-		E_COMPILE_WARNING => 'PHP compile warning',
-		E_USER_ERROR => 'PHP user error',
-		E_USER_WARNING => 'PHP user warning',
-		E_USER_NOTICE => 'PHP user notice'
-	);
+    function get_code()
+    {
+        return $this->code;
+    }
 
-	/**
-	 * ClearOsError constructor.
-	 *
-	 * @param integer $code error code
-	 * @param string $message error message
-	 * @param string $tag a method name or some other nickname
-	 * @param integer $line line number
-	 * @param array $context error context
-	 * @param integer $type type of error - exception, error, trace
-	 * @param boolean $caught true if error was caught by application
-	 * @param array $trace error back trace
-	 * @returns void
-	 */
-	function __construct($code, $message, $tag, $line, $context = null, $type, $caught = true, $trace = null)
-	{
-		$this->code = $code;
-		$this->message = $message;
-		$this->tag = $tag;
-		$this->line = $line;
-		$this->context = $context;
-		$this->type = $type;
-		$this->caught = $caught;
-		$this->trace = $trace;
-	}
+    /**
+     * Returns error code string.
+     *
+     * @return string error code string
+     */
 
-	/**
-	 * Returns error code.
-	 *
-	 * @returns integer error code
-	 */
-	function GetCode()
-	{
-		return $this->code;
-	}
+    function get_code_string()
+    {
+        if (isset($this->code_map[$this->code]))
+            return $this->code_map[$this->code];
+        else
+            return "unknown";
+    }
 
-	/**
-	 * Returns error code string.
-	 *
-	 * @returns string error code string
-	 */
-	function GetCodeString()
-	{
-		if (isset($this->code_map[$this->code]))
-			return $this->code_map[$this->code];
-		else
-			return "unknown";
-	}
+    /**
+     * Returns error context.
+     *
+     * @return array error context
+     */
 
-	/**
-	 * Returns error message.
-	 *
-	 * @returns string error message
-	 */
-	function GetMessage()
-	{
-		return $this->message;
-	}
+    function get_context()
+    {
+        return $this->context;
+    }
 
-	/**
-	 * Returns error tag.
-	 *
-	 * @returns string error tag
-	 */
-	function GetTag()
-	{
-		return $this->tag;
-	}
+    /**
+     * Returns line number where error occurred.
+     *
+     * @return integer line number
+     */
 
-	/**
-	 * Returns line number where error occurred.
-	 *
-	 * @returns integer line number
-	 */
-	function GetLine()
-	{
-		return $this->line;
-	}
+    function get_line()
+    {
+        return $this->line;
+    }
 
-	/**
-	 * Returns error context.
-	 *
-	 * @returns array error context
-	 */
-	function GetContext()
-	{
-		return $this->context;
-	}
+    /**
+     * Returns error message.
+     *
+     * @return string error message
+     */
 
-	/**
-	 * Returns flag on state of the error.
-	 *
-	 * @returns boolean true if error was caught by application.
-	 */
-	function IsCaught()
-	{
-		return $this->caught;
-	}
+    function get_message()
+    {
+        return $this->message;
+    }
 
-	/**
-	 * Returns error type: error, exception or profile.
-	 *
-	 * @returns string error type
-	 */
-	function GetType()
-	{
-		return $this->type;
-	}
+    /**
+     * Returns error tag.
+     *
+     * @return string error tag
+     */
 
-	/**
-	 * Returns error type string: error, exception or profile.
-	 *
-	 * @returns string error type
-	 */
-	function GetTypeString()
-	{
-		if (isset($this->type_map[$this->type]))
-			return $this->type_map[$this->type];
-		else
-			return "unknown";
-	}
+    function get_tag()
+    {
+        return $this->tag;
+    }
 
-	/**
-	 * Returns error trace.
-	 *
-	 * @returns array error trace.
-	 */
-	function GetTrace()
-	{
-		if ($this->trace)
-			return $this->trace;
-		else
-			return array();
-	}
+    /**
+     * Returns error trace.
+     *
+     * @return array error trace.
+     */
+
+    function get_trace()
+    {
+        if ($this->trace)
+            return $this->trace;
+        else
+            return array();
+    }
+
+    /**
+     * Returns error type: error, exception or profile.
+     *
+     * @return string error type
+     */
+
+    function get_type()
+    {
+        return $this->type;
+    }
+
+    /**
+     * Returns error type string: error, exception or profile.
+     *
+     * @return string error type
+     */
+
+    function get_type_string()
+    {
+        if (isset($this->type_map[$this->type]))
+            return $this->type_map[$this->type];
+        else
+            return "unknown";
+    }
+
+    /**
+     * Returns flag on state of the error.
+     *
+     * @return boolean TRUE if error was caught by application.
+     */
+
+    function is_caught()
+    {
+        return $this->caught;
+    }
 }
 
-// vim: syntax=php ts=4
 ?>
