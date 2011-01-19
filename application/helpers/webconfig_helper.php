@@ -537,11 +537,9 @@ function convert_to_hash($items) {
  * Menu helper.
  */
 
-function menu($tag)
+function menu($app, $tag)
 {
-    $lang_base = preg_replace('/_.*/', '', $tag);
-
-    clearos_load_language($lang_base);
+    clearos_load_language($app);
 
     $translation = lang($tag);
 
