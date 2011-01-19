@@ -50,7 +50,7 @@ require_once 'libraries/Config.php';
 // configuration defaults.
 //------------------------------------------------------------------------
 
-if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
+if (getenv('CLEAROS_BOOTSTRAP')) {
 
     // Find a unique debug name to avoid log collisions.  Base on path.
     //----------------------------------------------------------------
