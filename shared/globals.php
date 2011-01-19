@@ -82,9 +82,6 @@ set_exception_handler("_clearos_exception_handler");
 // Logging
 //--------
 
-// FIXME: this might be a temporary hack... test it
-@ini_set('include_path', '.');
-
 if (Config::$debug_mode) {
     @ini_set('display_errors', TRUE); 
     @ini_set('display_startup_error', TRUE);
