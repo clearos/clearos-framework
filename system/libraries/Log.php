@@ -20,6 +20,10 @@
 $bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
 require_once($bootstrap . '/bootstrap.php');
 
+use \clearos\framework\Config as Config;
+use \clearos\framework\Error as Error;
+use \clearos\framework\Logger as Logger;
+
 // ------------------------------------------------------------------------
 
 /**
@@ -92,35 +96,35 @@ class CI_Log {
 		}
 
 		// Pull in ClearOS logging infrastructure
-		if (!ClearOsConfig::$debug_mode) 
+		if (!Config::$debug_mode) 
 			return FALSE;
 
-		if (!empty(ClearOsConfig::$clearos_devel_versions['framework']))
-			$version = ClearOsConfig::$clearos_devel_versions['framework'];
+		if (!empty(Config::$clearos_devel_versions['framework']))
+			$version = Config::$clearos_devel_versions['framework'];
 		else
 			$version = '';
 
-		// See ClearOsError.php for explanation of error code handling
-		require_once(ClearOsConfig::$framework_path . '/' . $version . '/shared/ClearOsLogger.php');
-		require_once(ClearOsConfig::$framework_path . '/' . $version . '/shared/ClearOsError.php');
+		// See Error.php for explanation of error code handling
+		require_once(Config::$framework_path . '/' . $version . '/shared/libraries/Logger.php');
+		require_once(Config::$framework_path . '/' . $version . '/shared/libraries/Error.php');
 
 		if ($level === 'ERROR') {
-			$clearos_level = ClearOsError::CODE_ERROR;
-			$type = ClearOsError::TYPE_ERROR;
+			$clearos_level = CLEAROS_ERROR;
+			$type = Error::TYPE_ERROR;
 		} else if ($level === 'DEBUG') {
-			$clearos_level = ClearOsError::CODE_DEBUG;
-			$type = ClearOsError::TYPE_PROFILE;
+			$clearos_level = CLEAROS_DEBUG;
+			$type = Error::TYPE_PROFILE;
 		} else if ($level === 'INFO') {
-			$clearos_level = ClearOsError::CODE_INFO;
-			$type = ClearOsError::TYPE_ERROR;
+			$clearos_level = CLEAROS_INFO;
+			$type = Error::TYPE_ERROR;
 		} else {
-			$clearos_level = ClearOsError::CODE_ERROR;
-			$type = ClearOsError::TYPE_ERROR;
+			$clearos_level = CLEAROS_ERROR;
+			$type = Error::TYPE_ERROR;
 		}
 
-		$error = new ClearOsError($clearos_level, $msg, 'Framework', 0, null, $type);
+		$error = new Error($clearos_level, $msg, 'Framework', 0, null, $type);
 
-		ClearOsLogger::Log($error);
+		Logger::Log($error);
 
 		/*
 		$trace = debug_backtrace();

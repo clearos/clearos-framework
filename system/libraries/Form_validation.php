@@ -63,16 +63,16 @@ class CI_Form_validation {
 	// --------------------------------------------------------------------
 
 	// ClearFoundation -- add a function similiar to set_rules
-	function set_policy($field, $rule, $is_required = FALSE)
+	function set_policy($field, $library, $method, $is_required = FALSE)
 	{
 		// Prefix rule to make it possible to identify it in execute()
-		$rules = 'api_' . $rule;
+		$rule = 'clearos.' . $library . '.' . $method;
 
 		// Add 
 		if ($is_required)
-			$rules = 'required|' . $rules;
+			$rule = 'required|' . $rule;
 
-		$this->set_rules($field, '', $rules);
+		$this->set_rules($field, '', $rule);
 	}
 
 	/**
@@ -503,8 +503,8 @@ class CI_Form_validation {
 		if ( ! in_array('required', $rules) AND is_null($postdata))
 		{
 			// Before we bail out, does the rule contain a callback?
-			// ClearFoundation add api_ callback
-			if (preg_match("/((callback|api)_\w+)/", implode(' ', $rules), $match))
+			// ClearFoundation add ClearOS callback
+			if (preg_match("/((callback|clearos\.)_\w+)/", implode(' ', $rules), $match))
 			{
 				$callback = TRUE;
 				$rules = (array('1' => $match[1]));
@@ -584,7 +584,7 @@ class CI_Form_validation {
 			// --------------------------------------------------------------------
 
 			// Is the rule a callback?
-			// ClearFoundation add api_ callback
+			// ClearFoundation add ClearOS callback
 			$callback = FALSE;
 			if (substr($rule, 0, 9) == 'callback_')
 			{
@@ -592,11 +592,11 @@ class CI_Form_validation {
 				$callback = TRUE;
 				$callback_type = 'normal';
 			}
-			else if (substr($rule, 0, 4) == 'api_')
+			else if (substr($rule, 0, 8) == 'clearos.')
 			{
-				$rule = substr($rule, 4);
+				$rule = substr($rule, 8);
 				$callback = TRUE;
-				$callback_type = 'api';
+				$callback_type = 'clearos';
 			}
 
 			// Strip the parameter (if exists) from the rule
@@ -611,26 +611,34 @@ class CI_Form_validation {
 			// Call the function that corresponds to the rule
 			if ($callback === TRUE)
 			{
-				// ClearFoundation - add api callback
-				if ($callback_type === 'api')
+				// ClearFoundation - add ClearOS callback
+				if ($callback_type === 'clearos')
 				{
 					if (empty($postdata) && ( ! in_array('required', $rules, TRUE) ))
 						continue;
 
+                    // Empty rule -- used in special cases 
+                    if ($rule === '.')
+                        continue;
+
 					$matches = array();
 
-					if (!preg_match("/(\w+)_(\w+)_(\w+)/", $rule, $matches)) 
+					if (!preg_match("/([^\.]+)\.(\w+)/", $rule, $matches)) {
+                        // FIXME: throw an error here
+                        echo "FIXME: the validation rule is malformed";
 						continue;
+                    }
 
-					$clear_app = $matches[1];
-					$clear_library = $matches[2];
-					$clear_method = $matches[3];
+					$clear_library = $matches[1];
+					$clear_method = $matches[2];
 
-					$this->CI->load->library($clear_app.'/'.$clear_library);
+					$this->CI->load->library($clear_library);
 
-					$clear_object = strtolower($clear_library);
+					$clear_object = strtolower(preg_replace('/.*\//', '', $clear_library));
 					if ( ! method_exists($this->CI->$clear_object, $clear_method))
 					{ 		
+                        // FIXME: throw an error here
+                        echo "FIXME: the validation rule is malformed";
 						continue;
 					}
 
