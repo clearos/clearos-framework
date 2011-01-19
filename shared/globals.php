@@ -153,8 +153,18 @@ function clearos_load_language($lang_file)
     // Load the language file
     //-----------------------
 
+    // Direct library access (e.g. command line)
+
     if (isset($clearos_lang)) {
         $clearos_lang->load($lang_file);
+
+    // Test framework access
+
+    } else if (! defined('BASEBAPTH')) {
+        $clearos_lang = new Lang();
+        $clearos_lang->load($lang_file);
+
+    // CodeIgniter access
     } else {
         include_once BASEPATH . 'core/CodeIgniter.php';
         $codeigniter =& get_instance();
