@@ -1,9 +1,17 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2010 ClearFoundation
-//
+/**
+ * Webconfig setup class.
+ *
+ * @category   Framework
+ * @package    Application
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/apps/
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // This program is free software: you can redistribute it and/or modify
@@ -21,27 +29,21 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-/**
- * Webconfig setup class.
- *
- * @package Framework
- * @author {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @copyright Copyright 2003-2010 ClearFoundation
- */
-
 ///////////////////////////////////////////////////////////////////////////////
 // B O O T S T R A P
 ///////////////////////////////////////////////////////////////////////////////
 
 $bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
-require_once($bootstrap . '/bootstrap.php');
+require_once $bootstrap . '/bootstrap.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
-clearos_load_library('base/Engine');
+use \clearos\apps\base\Webconfig as Webconfig;
+use \clearos\framework\Logger as Logger;
+
+clearos_load_library('base/Webconfig');
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -52,67 +54,79 @@ clearos_load_library('base/Engine');
  *
  * This class handles the setup wizard.
  *
- * @return  void
+ * @category   Framework
+ * @package    Application
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
 
-class MY_Setup extends Engine
+class MY_Setup
 {
-	///////////////////////////////////////////////////////////////////////////////
-	// V A R I A B L E S
-	///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    // V A R I A B L E S
+    ///////////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * @var object framework instance
-	 */
+    /**
+     * @var object framework instance
+     */
 
-	protected $framework = NULL;
+    protected $framework = NULL;
 
-	///////////////////////////////////////////////////////////////////////////////
-	// M E T H O D S
-	///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    // M E T H O D S
+    ///////////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Setup constructor.
-	 */
+    /**
+     * Setup constructor.
+     */
 
-	public function __construct()
-	{
-		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__, 'Setup Class Initialized');
+    public function __construct()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__, 'Setup Class Initialized');
 
-		$this->framework =& get_instance();
-	}
+        $this->framework =& get_instance();
+    }
 
-	public function check()
-	{
-		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+    /**
+     * TODO
+     *
+     * @return void
+     */
+    public function check()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
 
-		// Return right away if already on the setup/upgrade wizard
-		//---------------------------------------------------------
+        // Return right away if already on the setup/upgrade wizard
+        //---------------------------------------------------------
 
-		if ($_SERVER['PHP_SELF'] === '/app/base/setup')
-			return;
+        // FIXME
+        if ($_SERVER['PHP_SELF'] === '/app/base/setup')
+            return;
 
-if ($_SERVER['PHP_SELF'] === '/app/base/access')
-	return;
+        if ($_SERVER['PHP_SELF'] === '/app/base/access')
+            return;
 
-if ($_SERVER['PHP_SELF'] === '/app/base/login')
-	return;
+        if ($_SERVER['PHP_SELF'] === '/app/base/login')
+            return;
 
-		// Check to see if setup/upgrade wizard is required
-		//-------------------------------------------------
+        // Check to see if setup/upgrade wizard is required
+        //-------------------------------------------------
 
-		try { 
-			$webconfig = new Webconfig();
-			// $setup_required = $webconfig->GetSetupState();
-			$setup_required = FALSE;
-		} catch (Exception $e) {
-			echo $e->GetMessage();
-			exit();
-		} 
+        try { 
+            $webconfig = new Webconfig();
+            // $setup_required = $webconfig->GetSetupState();
+            $setup_required = FALSE;
+        } catch (Exception $e) {
+            echo $e->GetMessage();
+            exit();
+        } 
 
-		if ($setup_required)
-			redirect('base/setup');
-	}
+        if ($setup_required)
+            redirect('base/setup');
+    }
 }
 
 // vim: syntax=php ts=4

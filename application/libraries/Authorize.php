@@ -1,9 +1,17 @@
 <?php
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2010 ClearFoundation
-//
+/**
+ * Webconfig authorization class.
+ *
+ * @category   Framework
+ * @package    Application
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/apps/
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // This program is free software: you can redistribute it and/or modify
@@ -21,34 +29,25 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-/**
- * Webconfig authorization class.
- *
- * @package Framework
- * @author {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @copyright Copyright 2003-2010 ClearFoundation
- */
-
 ///////////////////////////////////////////////////////////////////////////////
 // B O O T S T R A P
 ///////////////////////////////////////////////////////////////////////////////
 
 $bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
-require_once($bootstrap . '/bootstrap.php');
+require_once $bootstrap . '/bootstrap.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
-clearos_load_library('base/Engine');
+use \clearos\framework\Logger as Logger;
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Authentication for web pages.
+ * Webconfig authorization class.
  *
  * The security model is simple - all protected pages start with a call to
  * WebAuthenticate().  The function does one of three things:
@@ -57,10 +56,16 @@ clearos_load_library('base/Engine');
  *  - 2) Returns a "login failed" username/password web form
  *  - 3) Returns an "access denied" page if user is accessing an unauthorized page
  *
- * @return  void
+ * @category   Framework
+ * @package    Application
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
 
-class MY_Authorize extends Engine
+class MY_Authorize
 {
     ///////////////////////////////////////////////////////////////////////////////
     // V A R I A B L E S
@@ -72,203 +77,206 @@ class MY_Authorize extends Engine
 
     protected $framework = NULL;
 
-	///////////////////////////////////////////////////////////////////////////////
-	// M E T H O D S
-	///////////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////////////////////////////////////////////////////
+    // M E T H O D S
+    ///////////////////////////////////////////////////////////////////////////////
 
-	/**
-	 * Authorize constructor.
-	 */
+    /**
+     * Authorize constructor.
+     */
 
-	public function __construct()
-	{
-		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__, 'Authorize Class Initialized');
+    public function __construct()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__, 'Authorize Class Initialized');
 
-		$this->framework =& get_instance();
-	}
+        $this->framework =& get_instance();
+    }
 
-	public function check()
-	{
-		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+    /**
+     * Checks the page authorization.
+     *
+     * @return void
+     */
 
-		// FIXME - the redirects create a dependency on app-base.  Fix this (by moving into application directory?)
+    public function check()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
 
-		$username = $this->framework->session->userdata('username');
-		$logged_in = (bool)$this->framework->session->userdata('logged_in');
+        // FIXME - the redirects create a dependency on app-base.  Fix this (by moving into application directory?)
 
-		// Kill X if requested
-		//--------------------
+        $username = $this->framework->session->userdata('username');
+        $logged_in = (bool)$this->framework->session->userdata('logged_in');
 
-// FIXME: move out of check
+        // Return right away if access granted
+        //------------------------------------
 
-		// Return right away if access granted
-		//------------------------------------
-// FIXME: disabled authentication 
-return;
+        // FIXME: disabled authentication 
+        return;
 
-		if ($this->check_acl($username, $_SERVER['PHP_SELF']))
-			return;
+        if ($this->check_acl($username, $_SERVER['PHP_SELF']))
+            return;
 
-		// If logged in but denied access, point the user in the right direction.
-		// If not logged in, send the user to the login page.
-		//-----------------------------------------------------------------------
+        // If logged in but denied access, point the user in the right direction.
+        // If not logged in, send the user to the login page.
+        //-----------------------------------------------------------------------
 
-		if ($logged_in) {
-			redirect('base/session/access_denied');
-		} else {
-			if (!($_SERVER['PHP_SELF'] === '/app/base/session/login'))
-				redirect('base/session/login');
-		}
-	}
+        if ($logged_in) {
+            redirect('base/session/access_denied');
+        } else {
+            if (!($_SERVER['PHP_SELF'] === '/app/base/session/login'))
+                redirect('base/session/login');
+        }
+    }
 
-	/**
-	 * Check access control for given user and URL.
-	 *
-	 * @param string $username username
-	 * @param string $url URL
-	 * @return true if access is permitted
-	 */
+    /**
+     * Check access control for given user and URL.
+     *
+     * @param string $username username
+     * @param string $url      URL
+     *
+     * @return true if access is permitted
+     */
 
-	public function check_acl($username, $url)
-	{
-		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+    public function check_acl($username, $url)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
 
-		clearos_load_library('base/Webconfig');
+        clearos_load_library('base/Webconfig');
 
-		try {
-			$webconfig = new Webconfig();
+        try {
+            $webconfig = new Webconfig();
 
-			$valid_urls = $webconfig->GetValidPages($username);
-			$allow_users = $webconfig->GetUserAccessState();
-			$allow_subadmins = $webconfig->GetAdminAccessState();
-		} catch (Exception $e) {
-			// Good security practice is to stop right away on error
-			echo "Could not get authorization settings: ";
-			echo $e->GetMessage();
-			exit();
-		}
+            $valid_urls = $webconfig->GetValidPages($username);
+            $allow_users = $webconfig->GetUserAccessState();
+            $allow_subadmins = $webconfig->GetAdminAccessState();
+        } catch (Exception $e) {
+            // Good security practice is to stop right away on error
+            echo "Could not get authorization settings: ";
+            echo $e->GetMessage();
+            exit();
+        }
 
-		$valid_public_urls = $valid_urls[Webconfig::ACCESS_TYPE_PUBLIC];
-		$valid_subadmin_urls = $valid_urls[Webconfig::ACCESS_TYPE_SUBADMIN];
-		$valid_user_urls = $valid_urls[Webconfig::ACCESS_TYPE_USER];
+        $valid_public_urls = $valid_urls[Webconfig::ACCESS_TYPE_PUBLIC];
+        $valid_subadmin_urls = $valid_urls[Webconfig::ACCESS_TYPE_SUBADMIN];
+        $valid_user_urls = $valid_urls[Webconfig::ACCESS_TYPE_USER];
 
-		// root - allow everything
-		//------------------------
+        // root - allow everything
+        //------------------------
 
-// FIXME: move this above the potential exception above?
-		if ($username === 'root') {
-			ClearOsLogger::SysLog("webconfig", "access control - full access granted for $username on $url");
-			return TRUE;
-		}
+        // FIXME: move this above the potential exception above?
 
-		// TODO: local administrators group? or add flag for * in sub-administrators?
-		/*
-		} else if ($username === 'root') {
-			$log_message = "local admin access granted for $username on $url";
-			$is_valid = TRUE;
-		*/
+        if ($username === 'root') {
+            Logger::SysLog("webconfig", "access control - full access granted for $username on $url");
+            return TRUE;
+        }
 
-		// local sub-administrator - allow access to configured URLs
-		//----------------------------------------------------------
+        // TODO: local administrators group? or add flag for * in sub-administrators?
+        /*
+        } else if ($username === 'root') {
+            $log_message = "local admin access granted for $username on $url";
+            $is_valid = TRUE;
+        */
 
-		if ($allow_subadmins && $username) {
-			foreach ($valid_subadmin_urls as $valid_url) {
-				$valid_url_regex = preg_quote($valid_url, '/');
+        // local sub-administrator - allow access to configured URLs
+        //----------------------------------------------------------
 
-				if (preg_match("/$valid_url_regex/", $url)) {
-					ClearOsLogger::SysLog("webconfig", "access control - local subadmin access granted for $username on $url (matched $valid_url)");
-					return TRUE;
-				}
-			}
-		}
+        if ($allow_subadmins && $username) {
+            foreach ($valid_subadmin_urls as $valid_url) {
+                $valid_url_regex = preg_quote($valid_url, '/');
 
-		// normal user - allow access to user-specific URLs
-		//------------------------------------------------------------
+                if (preg_match("/$valid_url_regex/", $url)) {
+                    Logger::SysLog("webconfig", "access control - local subadmin access granted for $username on $url (matched $valid_url)");
+                    return TRUE;
+                }
+            }
+        }
 
-		if ($allow_users && $username) {
-			foreach ($valid_user_urls as $valid_url) {
-				$valid_url_regex = preg_quote($valid_url, '/');
+        // normal user - allow access to user-specific URLs
+        //------------------------------------------------------------
 
-				if (preg_match("/$valid_url_regex/", $url)) {
-					ClearOsLogger::SysLog("webconfig", "access control - user access granted for $username on $url (matched $valid_url)");
-					return TRUE;
-				}
-			}
-		}
+        if ($allow_users && $username) {
+            foreach ($valid_user_urls as $valid_url) {
+                $valid_url_regex = preg_quote($valid_url, '/');
 
-		// public pages
-		//-------------
+                if (preg_match("/$valid_url_regex/", $url)) {
+                    Logger::SysLog("webconfig", "access control - user access granted for $username on $url (matched $valid_url)");
+                    return TRUE;
+                }
+            }
+        }
 
-		foreach ($valid_public_urls as $valid_url) {
-			$valid_url_regex = preg_quote($valid_url, '/');
+        // public pages
+        //-------------
 
-			if (preg_match("/$valid_url_regex/", $url)) {
-				ClearOsLogger::SysLog("webconfig", "access control - public access granted on $url (matched $valid_url)");
-				return TRUE;
-			}
-		}
+        foreach ($valid_public_urls as $valid_url) {
+            $valid_url_regex = preg_quote($valid_url, '/');
 
-		// Otherwise, ACL denied
-		//----------------------
+            if (preg_match("/$valid_url_regex/", $url)) {
+                Logger::SysLog("webconfig", "access control - public access granted on $url (matched $valid_url)");
+                return TRUE;
+            }
+        }
 
-		$user_log = ($username) ? " for $username" : '';
-		ClearOsLogger::SysLog("webconfig", "access control - access denied$user_log on $url");
+        // Otherwise, ACL denied
+        //----------------------
 
-		return FALSE;
-	}
+        $user_log = ($username) ? " for $username" : '';
+        Logger::SysLog("webconfig", "access control - access denied$user_log on $url");
 
-	/**
-	 * Sets session variables when authenticated.
-	 */
+        return FALSE;
+    }
 
-	function WebSetSessionAuthenticated()
-	{
-		ClearOsLogger::ProfileFramework(__METHOD__, __LINE__);
+    /**
+     * Sets session variables when authenticated.
+     *
+     * @return void
+     */
 
-		$webconfig = new Webconfig();
+    function set_session_authenticated()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
 
-		// Organization
-		//-------------
+        $webconfig = new Webconfig();
 
-		$orgname = "";
+        // Organization
+        //-------------
 
-		if (file_exists(COMMON_CORE_DIR . "/api/Organization.php")) {
-			require_once(COMMON_CORE_DIR . "/api/Organization.php");
+        $orgname = "";
 
-			try {
-				$organization = new Organization();
-				$orgname = $organization->GetName();
-			} catch (Exception $e) {
-				// Use default
-			}
-		}
+        if (file_exists(COMMON_CORE_DIR . "/api/Organization.php")) {
+            include_once COMMON_CORE_DIR . "/api/Organization.php" ;
 
-		// Full name
-		//----------
+            try {
+                $organization = new Organization();
+                $orgname = $organization->GetName();
+            } catch (Exception $e) {
+                // Use default
+            }
+        }
 
-		$fullname = "";
+        // Full name
+        //----------
 
-		if (file_exists(COMMON_CORE_DIR . "/api/User.php")) {
-			require_once(COMMON_CORE_DIR . "/api/User.php");
+        $fullname = "";
 
-			try {
-				if ($_SESSION['user_login'] == "root") {
-					$fullname = LOCALE_LANG_ADMINISTRATOR;
-				} else {
-					$user = new User($_SESSION['user_login']);
-					$userinfo = $user->GetInfo();
-					// TODO: not all cultures use "firstname lastname"
-					$fullname = $userinfo['firstName'] . " " . $userinfo['lastName'];
-				}
-			} catch (Exception $e) {
-				// Use default
-			}
-		}
+        if (file_exists(COMMON_CORE_DIR . "/api/User.php")) {
+            include_once COMMON_CORE_DIR . "/api/User.php" ;
 
-		$_SESSION['system_fullname'] = $fullname;
-		$_SESSION['system_organization'] = $orgname;
-	}
+            try {
+                if ($_SESSION['user_login'] == "root") {
+                    $fullname = LOCALE_LANG_ADMINISTRATOR;
+                } else {
+                    $user = new User($_SESSION['user_login']);
+                    $userinfo = $user->GetInfo();
+                    // TODO: not all cultures use "firstname lastname"
+                    $fullname = $userinfo['firstName'] . " " . $userinfo['lastName'];
+                }
+            } catch (Exception $e) {
+                // Use default
+            }
+        }
+
+        $_SESSION['system_fullname'] = $fullname;
+        $_SESSION['system_organization'] = $orgname;
+    }
 }
-
-// vim: syntax=php ts=4
-?>
