@@ -3,12 +3,16 @@
 /**
  * ClearOS framework core settings and functions.
  *
- * @category  ClearOS
- * @package   Framework
- * @author    ClearFoundation <developer@clearfoundation.com>
- * @copyright 2006-2011 ClearFoundation
- * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @link      http://www.clearfoundation.com/docs/developer/framework/
+ * The functions and environment in this file are shared by both the base API
+ * and the CodeIgniter engine. 
+ *
+ * @category   Framework
+ * @package    Shared
+ * @subpackage Helpers
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
 
 //////////////////////////////////////////////////////////////////////////////
@@ -17,7 +21,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -28,19 +32,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-/**
- * ClearOS framework core settings and functions. 
- *
- * The functions and environment in this file are shared by both the base API
- * and the CodeIgniter engine. 
- *
- * @package Framework
- * @author {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @copyright Copyright 2006-2011 ClearFoundation
- */
-
-//////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -63,12 +55,17 @@ require_once 'libraries/Logger.php';
 // FIXME: COMMON_CORE_DIR remove references to this
 define('COMMON_CORE_DIR', Config::$framework_path . '/application/libraries');
 
-// FIXME: move to Config if still required
-define("COMMON_TEMP_DIR", "/usr/webconfig/tmp");
-
 ///////////////////////////////////////////////////////////////////////////////
 // G L O B A L  I N I T I A L I Z A T I O N
 ///////////////////////////////////////////////////////////////////////////////
+
+define('CLEAROS_ERROR', -1);
+define('CLEAROS_WARNING', -2);
+define('CLEAROS_INFO', -4);
+define('CLEAROS_DEBUG', -8);
+
+// FIXME: move to Config if still required
+define("COMMON_TEMP_DIR", "/usr/webconfig/tmp");
 
 // The date_default_timezone_set must be called or the time zone must be set
 // in PHP's configuration when date() functions are called.  On a ClearOS 
@@ -105,9 +102,19 @@ $clearos_lang = new Lang();
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * 
+ * Generates profiling data. 
+ *
+ * @param string $method  method name
+ * @param string $line    line number
+ * @param string $message additional profiling information
+ *
+ * @return void
+ */
 
-function clearos_profile(:wq
+function clearos_profile($method, $line, $message = NULL)
+{
+    Logger::profile($method, $line, $message);
+}
 
 /**
  * Loads a language file.

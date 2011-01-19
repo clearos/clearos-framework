@@ -3,12 +3,13 @@
 /**
  * ClearOS error class.
  *
- * @category  ClearOS
- * @package   Framework
- * @author    ClearFoundation <developer@clearfoundation.com>
- * @copyright 2006-2011 ClearFoundation
- * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @link      http://www.clearfoundation.com/docs/developer/apps/fraemwork/
+ * @category   Framework
+ * @package    Shared
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -45,30 +46,31 @@ namespace clearos\framework;
  * PHP uncaught errors, ClearOS defined errors, and CodeIgniter errors.
  * 
  * Uncaught errors in PHP generate one of the following error codes:
- *    1 => error
- *    2 => warning
- *    4 => parse error
- *    8 => notice
- *   16 => core error
- *   32 => core warning
- *   64 => compile error
- *  128 => compile warning
- *  256 => user error
- *  512 => user warning
- * 1024 => user notice
- * 2048 => strict
+ *  1    => error
+ *  2    => warning
+ *  4    => parse error
+ *  8    => notice
+ *  16   => core error
+ *  32   => core warning
+ *  64   => compile error
+ *  128  => compile warning
+ *  256  => user error
+ *  512  => user warning
+ *  1024 => user notice
+ *  2048 => strict
  *
  * CodeIgniter defines 3 levels (which get mapped to the CODE_X tags here)
- *    1 => ERROR
- *    2 => DEBUG
- *    3 => INFO
+ *  1 => ERROR
+ *  2 => DEBUG
+ *  3 => INFO
  *
- * @category  ClearOS
- * @package   Framework
- * @author    ClearFoundation <developer@clearfoundation.com>
- * @copyright 2006-2011 ClearFoundation
- * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @link      http://www.clearfoundation.com/docs/developer/apps/framework/
+ * @category   Framework
+ * @package    Shared
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
 
 class Error
@@ -86,6 +88,7 @@ class Error
     const CODE_WARNING = -2;
     const CODE_INFO = -4;
     const CODE_DEBUG = -8;
+
     const TYPE_EXCEPTION = 11;
     const TYPE_ERROR = 22;
     const TYPE_PROFILE = 33;

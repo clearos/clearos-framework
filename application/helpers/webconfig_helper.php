@@ -1,10 +1,21 @@
+
 <?php
 
+/**
+ * Webconfig helper.
+ *
+ * The Webconfig helper is used to give the web-interface a consistent look and feel.
+ *
+ * @category   Framework
+ * @package    Application
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/apps/
+ */
+
 ///////////////////////////////////////////////////////////////////////////////
-//
-// Copyright 2002-2010 ClearFoundation
-//
-//////////////////////////////////////////////////////////////////////////////
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -21,23 +32,12 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-/**
- * Webconfig.
- *
- * Webconfig is used to give the web-interface a consistent look and feel.
- *
- * @package Framework
- * @author {@link http://www.clearfoundation.com/ ClearFoundation}
- * @license http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @copyright Copyright 2010 ClearFoundation
- */
-
 ///////////////////////////////////////////////////////////////////////////////
 // B O O T S T R A P
 ///////////////////////////////////////////////////////////////////////////////
 
 $bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
-require_once($bootstrap . '/bootstrap.php');
+require_once $bootstrap . '/bootstrap.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 // D E P E N D E N C I E S
@@ -58,10 +58,10 @@ define('CLEAROS_MOBILE', 'mobile');
 
 function _anchor_common($url, $text, $importance, $class, $attributes = NULL)
 {
-	$id = (isset($attributes['id'])) ? $attributes['id'] : 'clearos' . mt_rand();
+    $id = (isset($attributes['id'])) ? $attributes['id'] : 'clearos' . mt_rand();
 
-	// Call theme hook
-	return "\t" . theme_anchor($url, $text, $importance, $class, $id);
+    // Call theme hook
+    return "\t" . theme_anchor($url, $text, $importance, $class, $id);
 }
 
 /**
@@ -70,7 +70,7 @@ function _anchor_common($url, $text, $importance, $class, $attributes = NULL)
 
 function anchor_custom($url, $text, $importance, $attributes = NULL)
 {
-	return _anchor_common($url, $text, $importance, 'clearos-anchor-custom', $attributes);
+    return _anchor_common($url, $text, $importance, 'clearos-anchor-custom', $attributes);
 }
 
 /**
@@ -79,9 +79,9 @@ function anchor_custom($url, $text, $importance, $attributes = NULL)
 
 function anchor_javascript($id, $text, $importance, $attributes = NULL)
 {
-	$attributes['id'] = $id;
+    $attributes['id'] = $id;
 
-	return _anchor_common('#', $text, $importance, 'clearos-anchor-javascript', $attributes);
+    return _anchor_common('#', $text, $importance, 'clearos-anchor-javascript', $attributes);
 }
 
 /**
@@ -90,37 +90,37 @@ function anchor_javascript($id, $text, $importance, $attributes = NULL)
 
 function anchor_add($url, $importance = 'high', $attributes = NULL)
 {
-	return _anchor_common($url, lang('base_add'), $importance, 'clearos-anchor-add', $attributes);
+    return _anchor_common($url, lang('base_add'), $importance, 'clearos-anchor-add', $attributes);
 }
 
 function anchor_edit($url, $importance = 'high', $attributes = NULL)
 {
-	return _anchor_common($url, lang('base_edit'), $importance, 'clearos-anchor-edit', $attributes);
+    return _anchor_common($url, lang('base_edit'), $importance, 'clearos-anchor-edit', $attributes);
 }
 
 function anchor_cancel($url, $importance = 'low', $attributes = NULL)
 {
-	return _anchor_common($url, lang('base_cancel'), $importance, 'clearos-anchor-cancel', $attributes);
+    return _anchor_common($url, lang('base_cancel'), $importance, 'clearos-anchor-cancel', $attributes);
 }
 
 function anchor_delete($url, $importance = 'low', $attributes = NULL)
 {
-	return _anchor_common($url, lang('base_delete'), $importance, 'clearos-anchor-delete', $attributes);
+    return _anchor_common($url, lang('base_delete'), $importance, 'clearos-anchor-delete', $attributes);
 }
 
 function anchor_ok($url, $importance = 'high', $attributes = NULL)
 {
-	return _anchor_common($url, lang('base_ok'), $importance, 'clearos-anchor-ok', $attributes);
+    return _anchor_common($url, lang('base_ok'), $importance, 'clearos-anchor-ok', $attributes);
 }
 
 function anchor_previous($url, $importance = 'high', $attributes = NULL)
 {
-	return _anchor_common($url, lang('base_previous'), $importance, 'clearos-anchor-previous', $attributes);
+    return _anchor_common($url, lang('base_previous'), $importance, 'clearos-anchor-previous', $attributes);
 }
 
 function anchor_next($url, $importance = 'high', $attributes = NULL)
 {
-	return _anchor_common($url, lang('base_next'), $importance, 'clearos-anchor-next', $attributes);
+    return _anchor_common($url, lang('base_next'), $importance, 'clearos-anchor-next', $attributes);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -133,12 +133,12 @@ function anchor_next($url, $importance = 'high', $attributes = NULL)
 
 function _form_submit_common($name, $text, $importance, $class, $attributes = NULL)
 {
-	// FIXME
-	$id = (isset($attributes['id'])) ? $attributes['id'] : "FIXME_$name";
-	// $class = ...
+    // FIXME
+    $id = (isset($attributes['id'])) ? $attributes['id'] : "FIXME_$name";
+    // $class = ...
 
-	// Call theme hook
-	return "\t" . theme_form_submit($name, $text, $importance, $class, $id);
+    // Call theme hook
+    return "\t" . theme_form_submit($name, $text, $importance, $class, $id);
 }
 
 /**
@@ -147,7 +147,7 @@ function _form_submit_common($name, $text, $importance, $class, $attributes = NU
 
 function form_submit_custom($name, $text, $importance, $attributes = NULL)
 {
-	return _form_submit_common($name, $text, $importance, 'clearos-form-submit-custom', $attributes);
+    return _form_submit_common($name, $text, $importance, 'clearos-form-submit-custom', $attributes);
 }
 
 /**
@@ -156,32 +156,32 @@ function form_submit_custom($name, $text, $importance, $attributes = NULL)
 
 function form_submit_add($name, $importance = 'high', $attributes = NULL)
 {
-	return _form_submit_common($name, lang('base_add'), $importance, 'clearos-form-submit-add', $attributes);
+    return _form_submit_common($name, lang('base_add'), $importance, 'clearos-form-submit-add', $attributes);
 }
 
 function form_submit_delete($name, $importance = 'low', $attributes = NULL)
 {
-	return _form_submit_common($name, lang('base_delete'), $importance, 'clearos-form-submit-delete', $attributes);
+    return _form_submit_common($name, lang('base_delete'), $importance, 'clearos-form-submit-delete', $attributes);
 }
 
 function form_submit_update($name, $importance = 'high', $attributes = NULL)
 {
-	return _form_submit_common($name, lang('base_update'), $importance, 'clearos-form-submit-update', $attributes);
+    return _form_submit_common($name, lang('base_update'), $importance, 'clearos-form-submit-update', $attributes);
 }
 
 function form_submit_previous($name, $importance = 'high', $attributes = NULL)
 {
-	return _form_submit_common($name, lang('base_previous'), $importance, 'clearos-form-submit-previous', $attributes);
+    return _form_submit_common($name, lang('base_previous'), $importance, 'clearos-form-submit-previous', $attributes);
 }
 
 function form_submit_next($name, $importance = 'high', $attributes = NULL)
 {
-	return _form_submit_common($name, lang('base_next'), $importance, 'clearos-form-submit-next', $attributes);
+    return _form_submit_common($name, lang('base_next'), $importance, 'clearos-form-submit-next', $attributes);
 }
 
 function form_submit_disable($name, $importance = 'low', $attributes = NULL)
 {
-	return _form_submit_common($name, lang('base_disable'), $importance, 'clearos-form-submit-disable', $attributes);
+    return _form_submit_common($name, lang('base_disable'), $importance, 'clearos-form-submit-disable', $attributes);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -190,12 +190,12 @@ function form_submit_disable($name, $importance = 'low', $attributes = NULL)
 
 function button_set($buttons, $attributes = NULL)
 {
-	// FIXME
-	$id = (isset($attributes['id'])) ? $attributes['id'] : 'clearos' . mt_rand();
+    // FIXME
+    $id = (isset($attributes['id'])) ? $attributes['id'] : 'clearos' . mt_rand();
 
-	$html = theme_button_set($buttons, $id);
+    $html = theme_button_set($buttons, $id);
 
-	return $html;
+    return $html;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -205,21 +205,21 @@ function button_set($buttons, $attributes = NULL)
 function form_radio_set_open($class, $orientation)
 {
 // return "<div data-role='fieldcontain'>
-//	<fieldset data-role='controlgroup' data-type='horizontal'>
+//    <fieldset data-role='controlgroup' data-type='horizontal'>
 //";
-	return "<div class='$class'>\n";
+    return "<div class='$class'>\n";
 }
 
 function form_radio_set_item($id, $name, $label, $checked = FALSE)
 {
-	return "<input type='radio' id='$id' name='$name' /><label for='$id'>$label</label>\n";
+    return "<input type='radio' id='$id' name='$name' /><label for='$id'>$label</label>\n";
 }
 
 function form_radio_set_close()
 {
-//	return "   </fieldset>
+//    return "   </fieldset>
 // </div>";
-	return "</div>\n";
+    return "</div>\n";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -228,20 +228,20 @@ function form_radio_set_close()
 
 function field_input($name, $default, $label, $readonly = FALSE, $ids = NULL)
 {
-	// An input ID is required for the label.  See why @
-	// http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+    // An input ID is required for the label.  See why @
+    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
 
-	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
-	$value = ($readonly) ? $default : set_value($name, $default);
-	$error = form_error($name);
+    $value = ($readonly) ? $default : set_value($name, $default);
+    $error = form_error($name);
 
-	if ($readonly)
-		$html = theme_field_view($value, $label, $input_id, $ids);
-	else
-		$html = theme_field_input($name, $value, $label, $error, $input_id, $ids);
+    if ($readonly)
+        $html = theme_field_view($value, $label, $input_id, $ids);
+    else
+        $html = theme_field_input($name, $value, $label, $error, $input_id, $ids);
 
-	return $html;
+    return $html;
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -251,20 +251,20 @@ function field_input($name, $default, $label, $readonly = FALSE, $ids = NULL)
 
 function field_password($name, $default, $label, $readonly = FALSE, $ids = NULL)
 {
-	// An input ID is required for the label.  See why @
-	// http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+    // An input ID is required for the label.  See why @
+    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
 
-	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
-	$value = ($readonly) ? $default : set_value($name, $default);
-	$error = form_error($name);
+    $value = ($readonly) ? $default : set_value($name, $default);
+    $error = form_error($name);
 
-	if ($readonly)
-		$html = theme_field_view($value, $label, $input_id, $ids);
-	else
-		$html = theme_field_password($name, $value, $label, $error, $input_id, $ids);
+    if ($readonly)
+        $html = theme_field_view($value, $label, $input_id, $ids);
+    else
+        $html = theme_field_password($name, $value, $label, $error, $input_id, $ids);
 
-	return $html;
+    return $html;
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -273,17 +273,17 @@ function field_password($name, $default, $label, $readonly = FALSE, $ids = NULL)
 
 function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $ids = NULL)
 {
-	$selected = ($readonly) ? $default : set_value($name, $default);
-	$error = form_error($name);
+    $selected = ($readonly) ? $default : set_value($name, $default);
+    $error = form_error($name);
 
-	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
-	if ($readonly)
-		$html = theme_field_view($value, $label, $input_id, $ids);
-	else
-		$html = theme_field_dropdown($name, $selected, $label, $error, $options, $input_id, $ids);
+    if ($readonly)
+        $html = theme_field_view($value, $label, $input_id, $ids);
+    else
+        $html = theme_field_dropdown($name, $selected, $label, $error, $options, $input_id, $ids);
 
-	return $html;
+    return $html;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -292,24 +292,24 @@ function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $i
 
 function field_toggle_enable_disable($name, $default, $label, $readonly = FALSE, $ids = NULL)
 {
-	$selected = ($readonly) ? $default : set_value($name, $default);
-	$error = form_error($name);
+    $selected = ($readonly) ? $default : set_value($name, $default);
+    $error = form_error($name);
 
-	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
-	$options = array(
-		'0' => lang('base_disabled'),
-		'1' => lang('base_enabled')
-	);
+    $options = array(
+        '0' => lang('base_disabled'),
+        '1' => lang('base_enabled')
+    );
 
-	if ($readonly) {
-		$value = $options[$default];
-		$html = theme_field_view($value, $label, $input_id, $ids);
-	} else {
-		$html = theme_field_toggle_enable_disable($name, $selected, $label, $error, $options, $input_id, $ids);
-	}
+    if ($readonly) {
+        $value = $options[$default];
+        $html = theme_field_view($value, $label, $input_id, $ids);
+    } else {
+        $html = theme_field_toggle_enable_disable($name, $selected, $label, $error, $options, $input_id, $ids);
+    }
 
-	return $html;
+    return $html;
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -318,20 +318,20 @@ function field_toggle_enable_disable($name, $default, $label, $readonly = FALSE,
 
 function field_checkbox($name, $default, $label, $readonly = FALSE, $ids = NULL)
 {
-	// An input ID is required for the label.  See why @
-	// http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+    // An input ID is required for the label.  See why @
+    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
 
-	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
-	$value = ($readonly) ? $default : set_value($name, $default);
-	$error = form_error($name);
+    $value = ($readonly) ? $default : set_value($name, $default);
+    $error = form_error($name);
 
-	if ($readonly)
-		$html = theme_field_view($value, $label, $input_id, $ids);
-	else
-		$html = theme_field_checkbox($name, $value, $label, $error, $input_id, $ids);
+    if ($readonly)
+        $html = theme_field_view($value, $label, $input_id, $ids);
+    else
+        $html = theme_field_checkbox($name, $value, $label, $error, $input_id, $ids);
 
-	return $html;
+    return $html;
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -340,16 +340,16 @@ function field_checkbox($name, $default, $label, $readonly = FALSE, $ids = NULL)
 
 function field_progress_bar($name, $default, $label, $ids = NULL)
 {
-	// An input ID is required for the label.  See why @
-	// http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+    // An input ID is required for the label.  See why @
+    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
 
-	$input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
-	$value = set_value($name, $default);
+    $value = set_value($name, $default);
 
-	$html = theme_field_progress_bar($value, $label, $input_id, $ids);
+    $html = theme_field_progress_bar($value, $label, $input_id, $ids);
 
-	return $html;
+    return $html;
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -358,7 +358,7 @@ function field_progress_bar($name, $default, $label, $ids = NULL)
 
 function summary_table($title, $anchors, $headers, $items, $legend = NULL)
 {
-	return theme_summary_table($title, $anchors, $headers, $items, $legend);
+    return theme_summary_table($title, $anchors, $headers, $items, $legend);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -366,7 +366,7 @@ function summary_table($title, $anchors, $headers, $items, $legend = NULL)
 ///////////////////////////////////////////////////////////////////////////////
 
 function control_panel($links) {
-	echo theme_control_panel($links);
+    echo theme_control_panel($links);
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -375,7 +375,7 @@ function control_panel($links) {
 
 function dialogbox_confirm($message, $ok_anchor, $cancel_anchor)
 {
-	return theme_dialogbox_confirm($message, $ok_anchor, $cancel_anchor);
+    return theme_dialogbox_confirm($message, $ok_anchor, $cancel_anchor);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -405,8 +405,8 @@ define('BCONFIG_GUI', intval((substr(getenv("HTTP_USER_AGENT"),91,12) == "GranPa
 
 function progress_bar($id)
 {
-	// Jquery mobile progress bar was not in alpha, but expected in 1.0 
-	return "<div class='progressbar' id='$id'></div>";
+    // Jquery mobile progress bar was not in alpha, but expected in 1.0 
+    return "<div class='progressbar' id='$id'></div>";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -428,69 +428,69 @@ function progress_bar($id)
 
 function infobox($type, $message)
 {
-	if ($type == 'exception') {
-		$class = 'ui-state-error';
-		$iconclass = 'ui-icon-alert';
-	} else if ($type == 'critical') {
-		$class = 'ui-state-error';
-		$iconclass = 'ui-icon-alert';
-	} else if ($type == 'warning') {
-		$class = 'ui-state-highlight';
-		$iconclass = 'ui-icon-info';
-	} else if ($type == 'highlight') {
-		$class = 'ui-state-default';
-		$iconclass = 'ui-icon-info';
-	} else if ($type == 'help') {
-		$class = 'ui-state-default';
-		$iconclass = 'ui-icon-help';
-	}
+    if ($type == 'exception') {
+        $class = 'ui-state-error';
+        $iconclass = 'ui-icon-alert';
+    } else if ($type == 'critical') {
+        $class = 'ui-state-error';
+        $iconclass = 'ui-icon-alert';
+    } else if ($type == 'warning') {
+        $class = 'ui-state-highlight';
+        $iconclass = 'ui-icon-info';
+    } else if ($type == 'highlight') {
+        $class = 'ui-state-default';
+        $iconclass = 'ui-icon-info';
+    } else if ($type == 'help') {
+        $class = 'ui-state-default';
+        $iconclass = 'ui-icon-help';
+    }
 
-	return "
-		<div class='ui-widget'>
-			<div class='ui-corner-all $class' style='margin-top: 20px; padding: 0 .7em;'>
-				<span class='ui-icon $iconclass' style='float: left; margin-right: .3em; margin-top: 12px'>&nbsp; </span>$message
-			</div>
-		</div>
-	";
+    return "
+        <div class='ui-widget'>
+            <div class='ui-corner-all $class' style='margin-top: 20px; padding: 0 .7em;'>
+                <span class='ui-icon $iconclass' style='float: left; margin-right: .3em; margin-top: 12px'>&nbsp; </span>$message
+            </div>
+        </div>
+    ";
 }
 
 function infobox_exception($message)
 {
-	return infobox('exception', $message);
+    return infobox('exception', $message);
 }
 
 function infobox_critical($message)
 {
-	return infobox('critical', $message);
+    return infobox('critical', $message);
 }
 
 function infobox_warning($message)
 {
-	return infobox('warning', $message);
+    return infobox('warning', $message);
 }
 
 function infobox_highlight($message)
 {
-	return infobox('highlight', $message);
+    return infobox('highlight', $message);
 }
 
 
 function helpbox($message)
 {
-	// FIXME - make this a standalone widget
-	return infobox('help', $message);
+    // FIXME - make this a standalone widget
+    return infobox('help', $message);
 }
 
 
 function dialogbox($id, $title, $message)
 {
-	$dialog = "
+    $dialog = "
 <div class='dialogbox' id='$id' title='$title'>
-	<p>$message</p>
+    <p>$message</p>
 </div>
 ";
 
-	return $dialog;
+    return $dialog;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -521,12 +521,12 @@ function dialogbox($id, $title, $message)
  */
 
 function convert_to_hash($items) {
-	$hash_array = array();
+    $hash_array = array();
 
-	foreach ($items as $item)
-		$hash_array[$item] = $item;
+    foreach ($items as $item)
+        $hash_array[$item] = $item;
 
-	return $hash_array;
+    return $hash_array;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -539,19 +539,16 @@ function convert_to_hash($items) {
 
 function menu($tag)
 {
-	$lang_base = preg_replace('/_.*/', '', $tag);
+    $lang_base = preg_replace('/_.*/', '', $tag);
 
-	clearos_load_language($lang_base);
+    clearos_load_language($lang_base);
 
-	$translation = lang($tag);
+    $translation = lang($tag);
 
-	if (empty($translation)) {
-		clearos_load_language('base');
-		$translation = lang('base_other');
-	}
+    if (empty($translation)) {
+        clearos_load_language('base');
+        $translation = lang('base_other');
+    }
 
-	return $translation;
+    return $translation;
 }
-
-// vim: syntax=php ts=4
-?>

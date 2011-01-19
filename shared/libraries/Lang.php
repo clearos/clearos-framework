@@ -3,14 +3,15 @@
 /**
  * ClearOS language handling class. 
  *
- * @category  ClearOS
- * @package   Framework
- * @author    ClearFoundation <developer@clearfoundation.com>
- * @author    EllisLab Inc <info@ellislab.com>
- * @copyright 2010-2011 ClearFoundation
- * @copyright 2008-2020 EllisLab, Inc
- * @license   http://codeigniter.com/user_guide/license.html CodeIgniter
- * @link      http://www.clearfoundation.com/docs/developer/framework
+ * @category   Framework
+ * @package    Shared
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @author     EllisLab Inc <info@ellislab.com>
+ * @copyright  2011 ClearFoundation
+ * @copyright  2008-2010 EllisLab, Inc
+ * @license    http://codeigniter.com/user_guide/license.html CodeIgniter
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -34,14 +35,15 @@ require_once 'Config.php';
 /**
  * ClearOS language handling class. 
  *
- * @category  ClearOS
- * @package   Framework
- * @author    ClearFoundation <developer@clearfoundation.com>
- * @author    EllisLab Inc <info@ellislab.com>
- * @copyright 2010-2011 ClearFoundation
- * @copyright 2008-2020 EllisLab, Inc
- * @license   http://codeigniter.com/user_guide/license.html CodeIgniter
- * @link      http://www.clearfoundation.com/docs/developer/framework
+ * @category   Framework
+ * @package    Shared
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @author     EllisLab Inc <info@ellislab.com>
+ * @copyright  2011 ClearFoundation
+ * @copyright  2008-2010 EllisLab, Inc
+ * @license    http://codeigniter.com/user_guide/license.html CodeIgniter
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
 
 class Lang

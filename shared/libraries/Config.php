@@ -3,12 +3,13 @@
 /**
  * ClearOS framework configuration.
  *
- * @category  ClearOS
- * @package   Framework
- * @author    ClearFoundation <developer@clearfoundation.com>
- * @copyright 2010-2011 ClearFoundation
- * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @link      http://www.clearfoundation.com/docs/developer/framework/
+ * @category   Framework
+ * @package    Shared
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -49,12 +50,13 @@ require_once 'Logger.php';
 /**
  * ClearOS framework configuration.
  *
- * @category  ClearOS
- * @package   Framework
- * @author    ClearFoundation <developer@clearfoundation.com>
- * @copyright 2010-2011 ClearFoundation
- * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @link      http://www.clearfoundation.com/docs/developer/framework/
+ * @category   Framework
+ * @package    Shared
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
 
 class Config

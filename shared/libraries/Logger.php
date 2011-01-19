@@ -3,13 +3,14 @@
 /**
  * ClearOS logger class. 
  *
- * @category  ClearOS
- * @package   Framework
- * @author    ClearFoundation <developer@clearfoundation.com>
- * @copyright 2006-2011 ClearFoundation
- * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @link      http://www.clearfoundation.com/docs/developer/framework/
- */ 
+ * @category   Framework
+ * @package    Shared
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
+ */
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -17,7 +18,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-//  
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -50,13 +51,14 @@ require_once 'Error.php';
 /**
  * ClearOS logger class. 
  *
- * @category  ClearOS
- * @package   Framework
- * @author    ClearFoundation <developer@clearfoundation.com>
- * @copyright 2006-2011 ClearFoundation
- * @license   http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
- * @link      http://www.clearfoundation.com/docs/developer/apps/core/
- */ 
+ * @category   Framework
+ * @package    Shared
+ * @subpackage Libraries
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
+ */
 
 class Logger
 {
