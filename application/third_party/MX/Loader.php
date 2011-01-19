@@ -135,6 +135,11 @@ class MX_Loader extends CI_Loader
 		} else {		
 			Modules::load_file($_library, $path);
 			$library = ucfirst($_library);
+			// ClearFoundation -- add namespace
+			// FIXME: remove hard-coded values 
+			$namespace = preg_replace('/.*\/apps\//', '', $path);
+			$namespace = preg_replace('/\/.*/', '', $namespace);
+			$library = '\clearos\\apps\\' . $namespace . '\\' . $library;
 			CI::$APP->$_alias = new $library($params);
 			$this->_ci_classes[$class] = $_alias;
 		}

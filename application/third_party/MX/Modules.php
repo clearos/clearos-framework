@@ -7,6 +7,8 @@
 $bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
 require_once($bootstrap . '/bootstrap.php');
 
+use \clearos\framework\Config as ClearOsConfig;
+
 // Whoa... this is non-intuitive.
 //
 // The router needs the relative path to the "apps" directory. 
@@ -159,10 +161,13 @@ class Modules
 		$location = $path.$file.EXT;
 		
 		if ($type === 'other') {			
+			// ClearFoundation: Disable due to namespace usage
+			/*
 			if (class_exists($file, FALSE))	{
 				log_message('debug', "File already loaded: {$location}");				
 				return $result;
 			}	
+			*/
 			include_once $location;
 		} else { 
 		

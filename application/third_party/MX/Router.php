@@ -7,6 +7,8 @@
 $bootstrap = isset($_ENV['CLEAROS_BOOTSTRAP']) ? $_ENV['CLEAROS_BOOTSTRAP'] : '/usr/clearos/framework/shared';
 require_once($bootstrap . '/bootstrap.php');
 
+use \clearos\framework\Config as ClearOsConfig;
+
 /* load the MX core module class */
 require dirname(__FILE__).'/Modules.php';
 
