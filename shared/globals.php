@@ -150,25 +150,28 @@ function clearos_load_language($lang_file)
         }
     }
 
-    // Load the language file
-    //-----------------------
+    // Load language - CodeIgniter access
+    //-----------------------------------
 
-    // Direct library access (e.g. command line)
+    if (isset($_SERVER["REQUEST_URI"])) {
 
-    if (isset($clearos_lang)) {
-        $clearos_lang->load($lang_file);
-
-    // Test framework access
-
-    } else if (! defined('BASEBAPTH')) {
-        $clearos_lang = new Lang();
-        $clearos_lang->load($lang_file);
-
-    // CodeIgniter access
-    } else {
-        include_once BASEPATH . 'core/CodeIgniter.php';
+        include_once BASEPATH . '/core/CodeIgniter.php';
         $codeigniter =& get_instance();
         $codeigniter->lang->load($lang_file);
+
+    // Load language - direct library access (e.g. command line)
+    //----------------------------------------------------------
+
+    } else if (isset($clearos_lang)) {
+
+        $clearos_lang->load($lang_file);
+
+    // Load language - test framework access
+    //--------------------------------------
+
+    } else {
+        $clearos_lang = new Lang();
+        $clearos_lang->load($lang_file);
     }
 }
 
