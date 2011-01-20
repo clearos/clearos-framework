@@ -88,7 +88,7 @@ class Logger
         // In debug mode, all errors are logged. In production mode, only important
         // messages are logged.
 
-        if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
+        if (! getenv('CLEAROS_BOOTSTRAP')) {
             if ($type == Error::TYPE_EXCEPTION) {
                  if ($errno <= Error::CODE_WARNING)
                     return;
@@ -110,7 +110,7 @@ class Logger
             return;
 
         // Perform extra goodness in debug mode
-        if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
+        if (getenv('CLEAROS_BOOTSTRAP')) {
             // Append timestamp to log line
             if ($basetime == 0) {
                 $basetime = microtime(TRUE);
