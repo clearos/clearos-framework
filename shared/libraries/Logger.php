@@ -81,7 +81,6 @@ class Logger
         $file = $error->get_tag();
         $line = $error->get_line();
         $context = $error->get_context();
-        $caught = $error->is_caught();
         $type = $error->get_type();
         $typestring = $error->get_type_string();
 
@@ -169,12 +168,11 @@ class Logger
      * Logs an exception.
      *
      * @param Exception $exception exception object
-     * @param boolean   $iscaught  set to TRUE if exception was explicitly caught
      *
      * @return void
      */
 
-    public static function log_exception(Exception $exception, $iscaught = TRUE)
+    public static function log_exception(Exception $exception)
     {
         Logger::log(
             new Error(
@@ -184,7 +182,6 @@ class Logger
                 $exception->getLine(),
                 '',
                 Error::TYPE_EXCEPTION,
-                $iscaught,
                 $exception->getTrace()
             )
         );

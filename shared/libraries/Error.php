@@ -80,7 +80,6 @@ class Error
     protected $tag;
     protected $line;
     protected $context;
-    protected $caught;
     protected $trace;
     protected $type;
 
@@ -127,13 +126,12 @@ class Error
      * @param integer $line    line number
      * @param array   $context error context
      * @param integer $type    type of error - exception, error, profile
-     * @param boolean $caught  TRUE if error was caught by application
      * @param array   $trace   error back trace
      *
      * @return void
      */
 
-    public function __construct($code, $message, $tag, $line, $context, $type, $caught = TRUE, $trace = NULL)
+    public function __construct($code, $message, $tag, $line, $context, $type, $trace = NULL)
     {
         $this->code = $code;
         $this->message = $message;
@@ -141,7 +139,6 @@ class Error
         $this->line = $line;
         $this->context = $context;
         $this->type = $type;
-        $this->caught = $caught;
         $this->trace = $trace;
     }
 
@@ -252,17 +249,4 @@ class Error
         else
             return "unknown";
     }
-
-    /**
-     * Returns flag on state of the error.
-     *
-     * @return boolean TRUE if error was caught by application.
-     */
-
-    public function is_caught()
-    {
-        return $this->caught;
-    }
 }
-
-?>
