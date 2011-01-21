@@ -107,6 +107,21 @@ function clearos_profile($method, $line, $message = NULL)
 }
 
 /**
+ * Emits deprecated method call warnings
+ *
+ * @param string $method  method name
+ * @param string $line    line number
+ * @param string $message additional profiling information
+ *
+ * @return void
+ */
+
+function clearos_profile($method, $line, $message = 'deprecated method called')
+{
+    Logger::deprecated($method, $line, $message);
+}
+
+/**
  * Loads a language file.
  *
  * CodeIgniter defines the global lang() function for translations.  If the

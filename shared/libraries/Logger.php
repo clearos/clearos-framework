@@ -102,7 +102,7 @@ class Logger
         }
 
         // Specify log line format
-        $alt_filename = preg_replace("/.*\//", "", $file);
+        $alt_filename = preg_replace('/.*\//', '', $file);
         $logline = sprintf("$typestring: %s: %s (%d): %s", $errstring, $alt_filename, $line, $errmsg);
 
         // FIXME -- ignore strict errors coming out of CodeIgniter for now.
@@ -120,7 +120,7 @@ class Logger
                 $timestamp = microtime(TRUE) - $basetime;
             }
 
-            $logline = sprintf("%.4f: %s", round($timestamp, 4),  $logline);
+            $logline = sprintf('%.4f: %s', round($timestamp, 4),  $logline);
 
             // Log messages to standard out when in command-line mode
             if (ini_get('display_errors') && preg_match('/cli/', php_sapi_name()))
@@ -128,25 +128,25 @@ class Logger
 
             // Log messages to custom log file (if set) and standard out on
             if (ini_get('error_log')) {
-                date_default_timezone_set("EST");
-                $timestamp = date("M j G:i:s T Y");
+                date_default_timezone_set('EST');
+                $timestamp = date('M j G:i:s T Y');
                 error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
 
                 foreach ($error->get_trace() as $traceinfo) {
                     // Backtrace log format
-                    $alt_filename = preg_replace("/.*\//", "", $traceinfo["file"]);
+                    $alt_filename = preg_replace('/.*\//', '', $traceinfo['file']);
                     $logline = sprintf(
                         "$typestring: debug backtrace: %s (%d): %s",
                         $alt_filename,
-                        $traceinfo["line"],
-                        $traceinfo["function"]
+                        $traceinfo['line'],
+                        $traceinfo['function']
                     );
                     error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
                 }
             }
         } else {
             // Log errors to syslog
-            openlog("engine", LOG_NDELAY, LOG_LOCAL6);
+            openlog('engine', LOG_NDELAY, LOG_LOCAL6);
             syslog(LOG_INFO, $logline);
 
             // Log backtrace
@@ -154,9 +154,9 @@ class Logger
                 // Backtrace log format
                 $logline = sprintf(
                     "$typestring: debug backtrace: %s (%d): %s",
-                    preg_replace("/.*\//", "", $traceinfo["file"]),
-                    $traceinfo["line"],
-                    $traceinfo["function"]
+                    preg_replace('/.*\//', '', $traceinfo['file']),
+                    $traceinfo['line'],
+                    $traceinfo['function']
                 );
                 syslog(LOG_INFO, $logline);
             }
@@ -182,7 +182,7 @@ class Logger
                 $exception->getMessage(),
                 $exception->getFile(),
                 $exception->getLine(),
-                "",
+                '',
                 Error::TYPE_EXCEPTION,
                 $iscaught,
                 $exception->getTrace()
@@ -241,14 +241,29 @@ class Logger
         $tag = preg_replace('/^MY_/', '', $tag);
 
         // Create log format: tag(line)
-        $tagline = $tag . '(' . $line . ')';
+        $tagline = "$tag($line)";
 
         // Prefix optional message
-        $full_message = (empty($message)) ? $tagline : $message . ' - ' . $tagline;
+        $full_message = (empty($message)) ? $tagline : "$message - $tagline";
 
         $error = new Error(Error::CODE_DEBUG, $full_message, 'Framework', '0', NULL, Error::TYPE_PROFILE);
         Logger::log($error);
     }
-}
 
-?>
+    /**
+     * Logs deprecated method calls.
+     *
+     * @param string $tag     prefix for log message (usually the method name)
+     * @param string $line    line number
+     * @param string $message short and informative message
+     *
+     * @return void
+     */
+
+    public static function deprecated($tag, $line, $message = 'deprecated method called')
+    {
+        $error = new Error(Error::CODE_WARNING, $message, $tag, $line, NULL, Error::TYPE_PROFILE);
+        Logger::log($error);
+    }
+
+}
