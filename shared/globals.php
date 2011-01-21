@@ -47,16 +47,7 @@ require_once 'libraries/Lang.php';
 require_once 'libraries/Logger.php';
 
 ///////////////////////////////////////////////////////////////////////////////
-// C O N F I G U R A T I O N
-///////////////////////////////////////////////////////////////////////////////
-
-// Configuration is handled by the bootstrap.php process.
-
-// FIXME: COMMON_CORE_DIR remove references to this
-define('COMMON_CORE_DIR', Config::$framework_path . '/application/libraries');
-
-///////////////////////////////////////////////////////////////////////////////
-// G L O B A L  I N I T I A L I Z A T I O N
+// G L O B A L  C O N S T A N T S
 ///////////////////////////////////////////////////////////////////////////////
 
 define('CLEAROS_ERROR', -1);
@@ -64,8 +55,15 @@ define('CLEAROS_WARNING', -2);
 define('CLEAROS_INFO', -4);
 define('CLEAROS_DEBUG', -8);
 
+// FIXME: COMMON_CORE_DIR remove references to this
+define('COMMON_CORE_DIR', Config::$framework_path . '/application/libraries');
+
 // FIXME: move to Config if still required
 define("COMMON_TEMP_DIR", "/usr/webconfig/tmp");
+
+///////////////////////////////////////////////////////////////////////////////
+// G L O B A L  I N I T I A L I Z A T I O N
+///////////////////////////////////////////////////////////////////////////////
 
 // The date_default_timezone_set must be called or the time zone must be set
 // in PHP's configuration when date() functions are called.  On a ClearOS 
@@ -88,11 +86,6 @@ if (Config::$debug_mode) {
     @ini_set('log_errors', TRUE);
     @ini_set('error_log', Config::$debug_log);
 }
-
-// Translation object
-//-------------------
-
-$clearos_lang = new Lang();
 
 ///////////////////////////////////////////////////////////////////////////////
 // G L O B A L  F U N C T I O N S
@@ -135,6 +128,10 @@ function clearos_load_language($lang_file)
     //------------------------------------------------
 
     if (! function_exists('lang')) {
+
+        // Create lang object
+        $clearos_lang = new Lang();
+
         /**
          * Translation lookup
          *
@@ -150,27 +147,14 @@ function clearos_load_language($lang_file)
         }
     }
 
-    // Load language - CodeIgniter access
-    //-----------------------------------
+    // Load language - CodeIgniter access, or direct access
+    //-----------------------------------------------------
 
     if (isset($_SERVER["REQUEST_URI"])) {
-
         include_once BASEPATH . '/core/CodeIgniter.php';
         $codeigniter =& get_instance();
         $codeigniter->lang->load($lang_file);
-
-    // Load language - direct library access (e.g. command line)
-    //----------------------------------------------------------
-
     } else if (isset($clearos_lang)) {
-
-        $clearos_lang->load($lang_file);
-
-    // Load language - test framework access
-    //--------------------------------------
-
-    } else {
-        $clearos_lang = new Lang();
         $clearos_lang->load($lang_file);
     }
 }
@@ -202,7 +186,7 @@ function clearos_load_library($library)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// E R R O R  A N D  E X C E P T I O N  H A N D L E R S
+// G L O B A L  E R R O R  A N D  E X C E P T I O N  H A N D L E R S
 ///////////////////////////////////////////////////////////////////////////////
 
 /** 
