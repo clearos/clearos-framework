@@ -116,7 +116,7 @@ function clearos_profile($method, $line, $message = NULL)
  * @return void
  */
 
-function clearos_profile($method, $line, $message = 'deprecated method called')
+function clearos_deprecated($method, $line, $message = 'called deprecated method')
 {
     Logger::deprecated($method, $line, $message);
 }
