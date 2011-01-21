@@ -165,7 +165,7 @@ function clearos_load_language($lang_file)
     // Load language - CodeIgniter access, or direct access
     //-----------------------------------------------------
 
-    if (isset($_SERVER["REQUEST_URI"])) {
+    if (isset($_SERVER['REQUEST_URI'])) {
         include_once BASEPATH . '/core/CodeIgniter.php';
         $codeigniter =& get_instance();
         $codeigniter->lang->load($lang_file);
@@ -197,7 +197,27 @@ function clearos_load_library($library)
     else
         $version = '';
 
-    include_once Config::$apps_path . '/' . $app . '/' . $version . '/libraries/' . $library . '.php';
+    include_once Config::$apps_path . "/$app/$version/libraries/$library.php";
+}
+
+/**
+ * Returns the error message from any Exception object
+ *
+ * This function makes it possible to return the error message from
+ * an Exception object regardless if it is ours (derived from Engine_Exception),
+ * or if comes from some other third-party code (with only getMessage()).
+ *
+ * @param   object $exception exception object
+ * @return  string exception message
+ */
+
+function clearos_exception_message($exception)
+{
+    if (is_object($exception)) {
+        if (method_exists($exception, 'get_message')) return $exception->get_message();
+        else if (method_exists($exception, 'getMessage')) return $exception->getMessage();
+    }
+    return '';
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -238,7 +258,7 @@ function _clearos_error_handler($errno, $errmsg, $file, $line, $context)
 
     if (preg_match('/cli/', php_sapi_name())) {
         $errstring = $error->get_code_string();
-        echo $errstring . ": " . $errmsg . " - $file ($line)\n";
+        echo "$errstring: $errmsg - $file ($line)\n";
     }
 }
 
@@ -256,13 +276,13 @@ function _clearos_exception_handler(Exception $exception)
     // Log the exception
     //------------------
 
-    Logger::log_exception($exception, TRUE);
+    Logger::log_exception($exception, FALSE);
 
     // Show error on standard out if running from command line
     //--------------------------------------------------------
 
     if (preg_match('/cli/', php_sapi_name()))
-        echo "Fatal - uncaught exception: " . $exception->getMessage() . "\n";
+        echo 'Fatal - uncaught exception: ' . $exception->getMessage() . "\n";
     else
-        echo "<div>Ooooops: " . $exception->getMessage() . "</div>";
+        echo '<div>Ooooops: ' . $exception->getMessage() . '</div>';
 }
