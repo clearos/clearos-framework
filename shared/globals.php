@@ -187,7 +187,7 @@ function clearos_load_language($lang_file)
 
 function clearos_load_library($library)
 {
-    list($app, $library) = preg_split('/\//', $library);
+    list($app, $library) = preg_split('/\//', $library, 2);
 
     // FIXME: point to online document on what's going on here
     if (!empty(Config::$clearos_devel_versions['app'][$app]))
