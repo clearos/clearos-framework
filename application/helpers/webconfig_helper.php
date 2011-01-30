@@ -276,6 +276,8 @@ function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $i
     $selected = ($readonly) ? $default : set_value($name, $default);
     $error = form_error($name);
 
+    $options = convert_to_hash($options);
+
     $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
     if ($readonly)
@@ -362,6 +364,15 @@ function summary_table($title, $anchors, $headers, $items, $legend = NULL)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// L I S T  T A B L E
+///////////////////////////////////////////////////////////////////////////////
+
+function list_table($title, $anchors, $headers, $items, $legend = NULL)
+{
+    return theme_list_table($title, $anchors, $headers, $items, $legend);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // S U M M A R Y  V I E W
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -377,27 +388,6 @@ function dialogbox_confirm($message, $ok_anchor, $cancel_anchor)
 {
     return theme_dialogbox_confirm($message, $ok_anchor, $cancel_anchor);
 }
-
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-// C O N S T A N T S
-///////////////////////////////////////////////////////////////////////////////
-
-// FIXME: move to session
-define('BCONFIG_CONSOLE', intval((substr(getenv("HTTP_USER_AGENT"),0,4) == "Lynx")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
-define('BCONFIG_GUI', intval((substr(getenv("HTTP_USER_AGENT"),91,12) == "GranParadiso")&($_SERVER['REMOTE_ADDR'] == '127.0.0.1')));
-
-
-///////////////////////////////////////////////////////////////////////////////
-// I C O N S
-///////////////////////////////////////////////////////////////////////////////
-
-///////////////////////////////////////////////////////////////////////////////
-// T A B S
-///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
 // P R O G R E S S  B A R
@@ -504,7 +494,7 @@ function dialogbox($id, $title, $message)
  * is identical.  For example, the time zone list from the ClearOS API is
  * just a basic array.  Using:
  * 
- * form_dropdown('timezone', $timezones, $timezone); (mr(dro "form_dropdown($time_o  list drop-down contains:
+ * form_dropdown('timezone', $timezones, $timezone);
  *
  * Would yield:
  *
@@ -517,7 +507,6 @@ function dialogbox($id, $title, $message)
  * - <option value="Canada/Eastern">Canada/Eastern</option>
  * - <option value="Canada/Mountain">Canada/Mountain</option>
  * - <option value="Canada/Newfoundland">Canada/Newfoundland</option>
- *
  */
 
 function convert_to_hash($items) {
