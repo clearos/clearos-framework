@@ -1,11 +1,14 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
-///////////////////////////////////////////////////////////////////////////////
-// B O O T S T R A P
-///////////////////////////////////////////////////////////////////////////////
+// ClearFoundation -- add support for versioning on the fly.
+/* This little block of code allows developers to test their ClearOS Apps
+ * against different versions of the platform.  This is done via a configuration
+ * file, so no environment or handholding is required.  Continuous integration 
+ * friendliness was the main driver.
+ */
     
 $bootstrap = getenv('CLEAROS_BOOTSTRAP') ? getenv('CLEAROS_BOOTSTRAP') : '/usr/clearos/framework/shared';
-require_once($bootstrap . '/bootstrap.php');
+require_once $bootstrap . '/bootstrap.php';
 
 use \clearos\framework\Config as ClearOsConfig;
 
@@ -22,7 +25,9 @@ if (!empty(ClearOsConfig::$clearos_devel_versions['framework']))
 $relative_count = substr_count($framework_path, '/') - substr_count(ClearOsConfig::$apps_path, '/') + 3;
 $apps_path_name = preg_replace('/.*\//', "", ClearOsConfig::$apps_path);
 $relative_path = str_repeat('../', $relative_count) . $apps_path_name . '/';
+// ClearFoundation -- end
 
+// ClearFoundation - changed locations array below
 /* define the module locations and offset */
 Modules::$locations = array(
 	ClearOsConfig::$apps_path.'/' => "$relative_path",
@@ -43,8 +48,8 @@ spl_autoload_register('Modules::autoload');
  *
  * Install this file as application/third_party/MX/Modules.php
  *
- * @copyright	Copyright (c) Wiredesignz 2010-11-12
- * @version 	5.3.5
+ * @copyright	Copyright (c) 2011 Wiredesignz
+ * @version 	5.4
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -88,7 +93,7 @@ class Modules
 				$args = func_get_args();
 				$output = call_user_func_array(array($class, $method), array_slice($args, 1));
 				$buffer = ob_get_clean();
-				return ($output) ? $output : $buffer;
+				return ($output !== NULL) ? $output : $buffer;
 			}
 		}
 		
@@ -97,6 +102,7 @@ class Modules
 	
 	/** Load a module controller **/
 	public static function load($module) {
+		
 		(is_array($module)) ? list($module, $params) = each($module) : $params = NULL;	
 		
 		/* get the requested controller class name */
@@ -135,15 +141,13 @@ class Modules
 
 		/* autoload Modular Extensions MX core classes */
 		// ClearFoundation - change MX_Controller to ClearOS_Controller.
-		// Purely cosmetic for developer documentation (what's MX?).
-		// if (strstr($class, 'mX_') AND is_file($location = dirname(__FILE__).'/'.substr($class, 3).EXT)) {
 		if (strstr($class, 'ClearOS_') AND is_file($location = dirname(__FILE__).'/'.substr($class, 8).EXT)) {
 			include_once $location;
 			return;
 		}
 		
-		/* autoload CI 2 core classes */
-		if( ! (CI_VERSION < 2) AND is_file($location = APPPATH.'core/'.$class.EXT)) {
+		/* autoload core classes */
+		if(is_file($location = APPPATH.'core/'.$class.EXT)) {
 			include_once $location;
 			return;
 		}		
@@ -161,13 +165,13 @@ class Modules
 		$location = $path.$file.EXT;
 		
 		if ($type === 'other') {			
-			// ClearFoundation: Disable due to namespace usage
+			// ClearFoundation - disable class check due to namespace usage
 			/*
 			if (class_exists($file, FALSE))	{
 				log_message('debug', "File already loaded: {$location}");				
 				return $result;
 			}	
-			*/
+            */
 			include_once $location;
 		} else { 
 		
@@ -203,7 +207,7 @@ class Modules
 			$modules[array_shift($segments)] = ltrim(implode('/', $segments).'/','/');
 		}	
 
-		// ClearFoundation -- add support for multiple development trees
+		// ClearFoundation -- add support for multiple development trees (see opening comment)
 		if (isset(ClearOsConfig::$clearos_devel_versions['app'][$module]))
 			$app_version = ClearOsConfig::$clearos_devel_versions['app'][$module] . '/';
 		else if (isset(ClearOsConfig::$clearos_devel_versions['app']['default']))
@@ -223,7 +227,7 @@ class Modules
 		}
 		
 		/* is the file in an application directory? */
-		if ($base == 'views/' OR $base == 'models/' OR $base == 'plugins/') {
+		if ($base == 'views/' OR $base == 'plugins/') {
 			if (is_file(APPPATH.$base.$path.$file_ext)) return array(APPPATH.$base.$path, $file);	
 			show_error("Unable to locate the file: {$path}{$file_ext}");
 		}

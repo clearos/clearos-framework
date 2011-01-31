@@ -1,13 +1,11 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
-///////////////////////////////////////////////////////////////////////////////
-// B O O T S T R A P
-///////////////////////////////////////////////////////////////////////////////
-    
+// ClearFoundation -- add support for versioning on the fly.
 $bootstrap = getenv('CLEAROS_BOOTSTRAP') ? getenv('CLEAROS_BOOTSTRAP') : '/usr/clearos/framework/shared';
-require_once($bootstrap . '/bootstrap.php');
+require_once $bootstrap . '/bootstrap.php';
 
 use \clearos\framework\Config as ClearOsConfig;
+// ClearFoundation -- end
 
 /* load the MX core module class */
 require dirname(__FILE__).'/Modules.php';
@@ -23,8 +21,8 @@ require dirname(__FILE__).'/Modules.php';
  *
  * Install this file as application/third_party/MX/Router.php
  *
- * @copyright	Copyright (c) Wiredesignz 2010-11-12
- * @version 	5.3.5
+ * @copyright	Copyright (c) 2011 Wiredesignz
+ * @version 	5.4
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
