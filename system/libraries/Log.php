@@ -13,6 +13,17 @@
  * @filesource
  */
 
+///////////////////////////////////////////////////////////////////////////////
+// B O O T S T R A P 
+///////////////////////////////////////////////////////////////////////////////
+
+$bootstrap = getenv('CLEAROS_BOOTSTRAP') ? getenv('CLEAROS_BOOTSTRAP') : '/usr/clearos/framework/shared';
+require_once($bootstrap . '/bootstrap.php');
+
+use \clearos\framework\Config as Config;
+use \clearos\framework\Error as Error;
+use \clearos\framework\Logger as Logger;
+
 // ------------------------------------------------------------------------
 
 /**
@@ -83,6 +94,47 @@ class CI_Log {
 			return FALSE;
 		}
 
+		// Pull in ClearOS logging infrastructure
+		if (!Config::$debug_mode) 
+			return FALSE;
+
+		if (!empty(Config::$clearos_devel_versions['framework']))
+			$version = Config::$clearos_devel_versions['framework'];
+		else
+			$version = '';
+
+		// See Error.php for explanation of error code handling
+		require_once(Config::$framework_path . '/' . $version . '/shared/libraries/Logger.php');
+		require_once(Config::$framework_path . '/' . $version . '/shared/libraries/Error.php');
+
+		if ($level === 'ERROR') {
+			$clearos_level = CLEAROS_ERROR;
+			$type = Error::TYPE_ERROR;
+		} else if ($level === 'DEBUG') {
+			$clearos_level = CLEAROS_DEBUG;
+			$type = Error::TYPE_PROFILE;
+		} else if ($level === 'INFO') {
+			$clearos_level = CLEAROS_INFO;
+			$type = Error::TYPE_ERROR;
+		} else {
+			$clearos_level = CLEAROS_ERROR;
+			$type = Error::TYPE_ERROR;
+		}
+
+		$error = new Error($clearos_level, $msg, 'clearos\framework\Core', 0, NULL, $type);
+
+		Logger::Log($error);
+
+		/*
+		$trace = debug_backtrace();
+		foreach ($trace as $item) {
+			$error = new ClearOsError($clearos_level, "backtrace", $item['file'], $item['line'], NULL, $type);
+			ClearOsLogger::Log($error);
+		}
+		*/
+
+		return;
+		// ClearFoundation -- we're done
 		$filepath = $this->_log_path.'log-'.date('Y-m-d').EXT;
 		$message  = '';
 
