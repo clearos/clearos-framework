@@ -6,23 +6,12 @@
  *
  * @package		CodeIgniter
  * @author		ExpressionEngine Dev Team
- * @copyright	Copyright (c) 2008 - 2010, EllisLab, Inc.
+ * @copyright	Copyright (c) 2008 - 2011, EllisLab, Inc.
  * @license		http://codeigniter.com/user_guide/license.html
  * @link		http://codeigniter.com
  * @since		Version 1.0
  * @filesource
  */
-
-///////////////////////////////////////////////////////////////////////////////
-// B O O T S T R A P 
-///////////////////////////////////////////////////////////////////////////////
-
-$bootstrap = getenv('CLEAROS_BOOTSTRAP') ? getenv('CLEAROS_BOOTSTRAP') : '/usr/clearos/framework/shared';
-require_once($bootstrap . '/bootstrap.php');
-
-use \clearos\framework\Config as Config;
-use \clearos\framework\Error as Error;
-use \clearos\framework\Logger as Logger;
 
 // ------------------------------------------------------------------------
 
@@ -37,11 +26,11 @@ use \clearos\framework\Logger as Logger;
  */
 class CI_Log {
 
-	var $log_path;
-	var $_threshold	= 1;
-	var $_date_fmt	= 'Y-m-d H:i:s';
-	var $_enabled	= TRUE;
-	var $_levels	= array('ERROR' => '1', 'DEBUG' => '2',  'INFO' => '3', 'ALL' => '4');
+	protected $_log_path;
+	protected $_threshold	= 1;
+	protected $_date_fmt	= 'Y-m-d H:i:s';
+	protected $_enabled	= TRUE;
+	protected $_levels	= array('ERROR' => '1', 'DEBUG' => '2',  'INFO' => '3', 'ALL' => '4');
 
 	/**
 	 * Constructor
@@ -50,9 +39,9 @@ class CI_Log {
 	{
 		$config =& get_config();
 
-		$this->log_path = ($config['log_path'] != '') ? $config['log_path'] : BASEPATH.'logs/';
+		$this->_log_path = ($config['log_path'] != '') ? $config['log_path'] : APPPATH.'logs/';
 
-		if ( ! is_dir($this->log_path) OR ! is_really_writable($this->log_path))
+		if ( ! is_dir($this->_log_path) OR ! is_really_writable($this->_log_path))
 		{
 			$this->_enabled = FALSE;
 		}
@@ -75,13 +64,12 @@ class CI_Log {
 	 *
 	 * Generally this function will be called using the global log_message() function
 	 *
-	 * @access	public
 	 * @param	string	the error level
 	 * @param	string	the error message
 	 * @param	bool	whether the error is a native PHP error
 	 * @return	bool
 	 */
-	function write_log($level = 'error', $msg, $php_error = FALSE)
+	public function write_log($level = 'error', $msg, $php_error = FALSE)
 	{
 		if ($this->_enabled === FALSE)
 		{
@@ -95,49 +83,7 @@ class CI_Log {
 			return FALSE;
 		}
 
-		// Pull in ClearOS logging infrastructure
-		if (!Config::$debug_mode) 
-			return FALSE;
-
-		if (!empty(Config::$clearos_devel_versions['framework']))
-			$version = Config::$clearos_devel_versions['framework'];
-		else
-			$version = '';
-
-		// See Error.php for explanation of error code handling
-		require_once(Config::$framework_path . '/' . $version . '/shared/libraries/Logger.php');
-		require_once(Config::$framework_path . '/' . $version . '/shared/libraries/Error.php');
-
-		if ($level === 'ERROR') {
-			$clearos_level = CLEAROS_ERROR;
-			$type = Error::TYPE_ERROR;
-		} else if ($level === 'DEBUG') {
-			$clearos_level = CLEAROS_DEBUG;
-			$type = Error::TYPE_PROFILE;
-		} else if ($level === 'INFO') {
-			$clearos_level = CLEAROS_INFO;
-			$type = Error::TYPE_ERROR;
-		} else {
-			$clearos_level = CLEAROS_ERROR;
-			$type = Error::TYPE_ERROR;
-		}
-
-		$error = new Error($clearos_level, $msg, 'clearos\framework\Core', 0, NULL, $type);
-
-		Logger::Log($error);
-
-		/*
-		$trace = debug_backtrace();
-		foreach ($trace as $item) {
-			$error = new ClearOsError($clearos_level, "backtrace", $item['file'], $item['line'], NULL, $type);
-			ClearOsLogger::Log($error);
-		}
-		*/
-
-		return;
-		// ClearFoundation -- we're done
-
-		$filepath = $this->log_path.'log-'.date('Y-m-d').EXT;
+		$filepath = $this->_log_path.'log-'.date('Y-m-d').EXT;
 		$message  = '';
 
 		if ( ! file_exists($filepath))

@@ -11,9 +11,7 @@
 |	http://example.com/
 |
 */
-// ClearFoundation - automatically detect base URL
-$config['base_url'] = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http");
-$config['base_url'] .= "://".$_SERVER['HTTP_HOST'] . "/app/";
+$config['base_url']	= "http://example.com/";
 
 /*
 |--------------------------------------------------------------------------
@@ -25,7 +23,7 @@ $config['base_url'] .= "://".$_SERVER['HTTP_HOST'] . "/app/";
 | variable so that it is blank.
 |
 */
-$config['index_page'] = "";
+$config['index_page'] = "index.php";
 
 /*
 |--------------------------------------------------------------------------
@@ -68,7 +66,7 @@ $config['url_suffix'] = "";
 | than english.
 |
 */
-$config['language']	= "en_US";
+$config['language']	= "english";
 
 /*
 |--------------------------------------------------------------------------
@@ -90,7 +88,7 @@ $config['charset'] = "UTF-8";
 | setting this variable to TRUE (boolean).  See the user guide for details.
 |
 */
-$config['enable_hooks'] = TRUE;
+$config['enable_hooks'] = FALSE;
 
 
 /*
@@ -175,7 +173,7 @@ $config['directory_trigger']	= 'd'; // experimental not currently in use
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 4;
+$config['log_threshold'] = 0;
 
 /*
 |--------------------------------------------------------------------------
@@ -186,7 +184,7 @@ $config['log_threshold'] = 4;
 | system/logs/ folder.  Use a full server path with trailing slash.
 |
 */
-$config['log_path'] = '/tmp/';
+$config['log_path'] = '';
 
 /*
 |--------------------------------------------------------------------------
@@ -219,7 +217,7 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = "FIXME";
+$config['encryption_key'] = "";
 
 /*
 |--------------------------------------------------------------------------
@@ -239,12 +237,12 @@ $config['encryption_key'] = "FIXME";
 | 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'clearos_webconfig';
-$config['sess_expiration']		= 3600;
+$config['sess_cookie_name']		= 'ci_session';
+$config['sess_expiration']		= 7200;
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= FALSE;
 $config['sess_use_database']	= FALSE;
-$config['sess_table_name']		= 'clearos_webconfig';
+$config['sess_table_name']		= 'ci_sessions';
 $config['sess_match_ip']		= FALSE;
 $config['sess_match_useragent']	= TRUE;
 $config['sess_time_to_update']	= 300;
@@ -272,7 +270,7 @@ $config['cookie_path']		= "/";
 | COOKIE data is encountered
 |
 */
-$config['global_xss_filtering'] = TRUE;
+$config['global_xss_filtering'] = FALSE;
 
 /*
 |--------------------------------------------------------------------------
@@ -282,7 +280,7 @@ $config['global_xss_filtering'] = TRUE;
 | checked on a submitted form. If you are accepting user data, it is strongly
 | recommended CSRF protection be enabled.
 */
-$config['csrf_protection'] = TRUE;
+$config['csrf_protection'] = FALSE;
 
 
 /*

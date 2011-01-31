@@ -6,7 +6,7 @@
  *
  * @package		CodeIgniter
  * @author		ExpressionEngine Dev Team
- * @copyright	Copyright (c) 2008 - 2010, EllisLab, Inc.
+ * @copyright	Copyright (c) 2008 - 2011, EllisLab, Inc.
  * @license		http://codeigniter.com/user_guide/license.html
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -167,17 +167,6 @@ if ( ! function_exists('form_input'))
 {
 	function form_input($data = '', $value = '', $extra = '')
 	{
-		/*
-			ClearFoundation - the following line of code is common on web forms:
-				form_label('NTP', 'ntp') .
-				form_input('ntp', set_value('ntp', $ntp));
-
-			To avoid generating an HTML error (reference to non-existent ID), we need to pass in
-			the ID for form_input.  That makes the code messy, so we add it if not specified.
-		*/
-		if (! is_array($data))
-			$data = array('name' => $data, 'id' => $data);
-
 		$defaults = array('type' => 'text', 'name' => (( ! is_array($data)) ? $data : ''), 'value' => $value);
 
 		return "<input "._parse_form_attributes($data, $defaults).$extra." />";
@@ -328,10 +317,6 @@ if ( ! function_exists('form_dropdown'))
 
 		if ($extra != '') $extra = ' '.$extra;
 
-		// ClearFoundation - see form_input
-		if (! preg_match('/id=/', $extra))
-			$extra .= " id='$name'";
-
 		$multiple = (count($selected) > 1 && strpos($extra, 'multiple') === FALSE) ? ' multiple="multiple"' : '';
 
 		$form = '<select name="'.$name.'"'.$extra.$multiple.">\n";
@@ -348,7 +333,7 @@ if ( ! function_exists('form_dropdown'))
 				{
 					$sel = (in_array($optgroup_key, $selected)) ? ' selected="selected"' : '';
 
-					$form .= "\t\t\t\t" . '<option value="'.$optgroup_key.'"'.$sel.'>'.(string) $optgroup_val."</option>\n";
+					$form .= '<option value="'.$optgroup_key.'"'.$sel.'>'.(string) $optgroup_val."</option>\n";
 				}
 
 				$form .= '</optgroup>'."\n";
@@ -357,11 +342,11 @@ if ( ! function_exists('form_dropdown'))
 			{
 				$sel = (in_array($key, $selected)) ? ' selected="selected"' : '';
 
-				$form .= "\t\t\t\t" . '<option value="'.$key.'"'.$sel.'>'.(string) $val."</option>\n";
+				$form .= '<option value="'.$key.'"'.$sel.'>'.(string) $val."</option>\n";
 			}
 		}
 
-		$form .= "\t\t\t" . '</select>';
+		$form .= '</select>';
 
 		return $form;
 	}
@@ -384,10 +369,6 @@ if ( ! function_exists('form_checkbox'))
 	function form_checkbox($data = '', $value = '', $checked = FALSE, $extra = '')
 	{
 		$defaults = array('type' => 'checkbox', 'name' => (( ! is_array($data)) ? $data : ''), 'value' => $value);
-
-		// ClearFoundation - see form_input
-		if (! is_array($data))
-			$data = array('name' => $data, 'id' => $data);
 
 		if (is_array($data) AND array_key_exists('checked', $data))
 		{
@@ -564,7 +545,7 @@ if ( ! function_exists('form_fieldset'))
 {
 	function form_fieldset($legend_text = '', $attributes = array())
 	{
-		$fieldset = "\n\t" . "<fieldset";
+		$fieldset = "<fieldset";
 
 		$fieldset .= _attributes_to_string($attributes, FALSE);
 
@@ -572,7 +553,7 @@ if ( ! function_exists('form_fieldset'))
 
 		if ($legend_text != '')
 		{
-			$fieldset .= "\t\t" . "<legend>$legend_text</legend>\n";
+			$fieldset .= "<legend>$legend_text</legend>\n";
 		}
 
 		return $fieldset;
@@ -592,7 +573,7 @@ if ( ! function_exists('form_fieldset_close'))
 {
 	function form_fieldset_close($extra = '')
 	{
-		return "\n\t" . "</fieldset>".$extra . "\n";
+		return "</fieldset>".$extra;
 	}
 }
 

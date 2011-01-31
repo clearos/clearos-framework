@@ -6,7 +6,7 @@
  *
  * @package		CodeIgniter
  * @author		ExpressionEngine Dev Team
- * @copyright	Copyright (c) 2008 - 2010, EllisLab, Inc.
+ * @copyright	Copyright (c) 2008 - 2011, EllisLab, Inc.
  * @license		http://codeigniter.com/user_guide/license.html
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -59,7 +59,7 @@ class CI_Input {
 			$this->security =& load_class('Security');
 		}
 
-		// Do we need the Unicode class?
+		// Do we need the UTF-8 class?
 		if (UTF8_ENABLED === TRUE)
 		{
 			global $UNI;
@@ -622,6 +622,20 @@ class CI_Input {
 		}
 
 		return $this->headers[$index];		
+	}
+
+	// --------------------------------------------------------------------
+	
+	/**
+	 * Is ajax Request?
+	 *
+	 * Test to see if a request contains the HTTP_X_REQUESTED_WITH header
+	 *
+	 * @return 	boolean 	
+	 */
+	public function is_ajax_request()
+	{
+		return ($this->server('HTTP_X_REQUESTED_WITH') === 'XMLHttpRequest');
 	}
 
 }

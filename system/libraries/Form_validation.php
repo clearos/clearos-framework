@@ -6,7 +6,7 @@
  *
  * @package		CodeIgniter
  * @author		ExpressionEngine Dev Team
- * @copyright	Copyright (c) 2008 - 2010, EllisLab, Inc.
+ * @copyright	Copyright (c) 2008 - 2011, EllisLab, Inc.
  * @license		http://codeigniter.com/user_guide/license.html
  * @link		http://codeigniter.com
  * @since		Version 1.0
@@ -31,9 +31,8 @@ class CI_Form_validation {
 	var $_config_rules			= array();
 	var $_error_array			= array();
 	var $_error_messages		= array();
-	// ClearFoundation -- set defaults
-	var $_error_prefix			= '<span class="validation-error">';
-	var $_error_suffix			= '</span>';
+	var $_error_prefix			= '<p>';
+	var $_error_suffix			= '</p>';
 	var $error_string			= '';
 	var $_safe_form_data		= FALSE;
 
@@ -61,19 +60,6 @@ class CI_Form_validation {
 	}
 
 	// --------------------------------------------------------------------
-
-	// ClearFoundation -- add a function similiar to set_rules
-	function set_policy($field, $library, $method, $is_required = FALSE)
-	{
-		// Prefix rule to make it possible to identify it in execute()
-		$rule = 'clearos.' . $library . '.' . $method;
-
-		// Add 
-		if ($is_required)
-			$rule = 'required|' . $rule;
-
-		$this->set_rules($field, '', $rule);
-	}
 
 	/**
 	 * Set Rules
@@ -503,8 +489,7 @@ class CI_Form_validation {
 		if ( ! in_array('required', $rules) AND is_null($postdata))
 		{
 			// Before we bail out, does the rule contain a callback?
-			// ClearFoundation add ClearOS callback
-			if (preg_match("/((callback|clearos\.)_\w+)/", implode(' ', $rules), $match))
+			if (preg_match("/(callback_\w+)/", implode(' ', $rules), $match))
 			{
 				$callback = TRUE;
 				$rules = (array('1' => $match[1]));
@@ -557,9 +542,6 @@ class CI_Form_validation {
 		// Cycle through each rule and run it
 		foreach ($rules As $rule)
 		{
-			// ClearFoundation - add callback type
-			$callback_type = '';
-			
 			$_in_array = FALSE;
 
 			// We set the $postdata variable with the current data in our master array so that
@@ -584,19 +566,11 @@ class CI_Form_validation {
 			// --------------------------------------------------------------------
 
 			// Is the rule a callback?
-			// ClearFoundation add ClearOS callback
 			$callback = FALSE;
 			if (substr($rule, 0, 9) == 'callback_')
 			{
 				$rule = substr($rule, 9);
 				$callback = TRUE;
-				$callback_type = 'normal';
-			}
-			else if (substr($rule, 0, 8) == 'clearos.')
-			{
-				$rule = substr($rule, 8);
-				$callback = TRUE;
-				$callback_type = 'clearos';
 			}
 
 			// Strip the parameter (if exists) from the rule
@@ -611,53 +585,13 @@ class CI_Form_validation {
 			// Call the function that corresponds to the rule
 			if ($callback === TRUE)
 			{
-				// ClearFoundation - add ClearOS callback
-				if ($callback_type === 'clearos')
+				if ( ! method_exists($this->CI, $rule))
 				{
-					if (empty($postdata) && ( ! in_array('required', $rules, TRUE) ))
-						continue;
-
-                    // Empty rule -- used in special cases 
-                    if ($rule === '.')
-                        continue;
-
-					$matches = array();
-
-					if (!preg_match("/([^\.]+)\.(\w+)/", $rule, $matches)) {
-                        // FIXME: throw an error here
-                        echo "FIXME: the validation rule is malformed";
-						continue;
-                    }
-
-					$clear_library = $matches[1];
-					$clear_method = $matches[2];
-
-					$this->CI->load->library($clear_library);
-
-					$clear_object = strtolower(preg_replace('/.*\//', '', $clear_library));
-					if ( ! method_exists($this->CI->$clear_object, $clear_method))
-					{ 		
-                        // FIXME: throw an error here
-                        echo "FIXME: the validation rule is malformed";
-						continue;
-					}
-
-					$error_message = $this->CI->$clear_object->$clear_method($postdata);
-
-					$result = ($error_message) ? FALSE : TRUE;	
-
-					$this->CI->form_validation->set_message($rule, $error_message);
+					continue;
 				}
-				else 
-				{
-					if ( ! method_exists($this->CI, $rule))
-					{
-						continue;
-					}
 
-					// Run the function and grab the result
-					$result = $this->CI->$rule($postdata, $param);
-				}
+				// Run the function and grab the result
+				$result = $this->CI->$rule($postdata, $param);
 
 				// Re-assign the result to the master data array
 				if ($_in_array == TRUE)
