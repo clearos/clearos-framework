@@ -122,14 +122,14 @@ class CI_Log {
 			$type = Error::TYPE_ERROR;
 		}
 
-		$error = new Error($clearos_level, $msg, 'Framework', 0, null, $type);
+		$error = new Error($clearos_level, $msg, 'clearos\framework\Core', 0, NULL, $type);
 
 		Logger::Log($error);
 
 		/*
 		$trace = debug_backtrace();
 		foreach ($trace as $item) {
-			$error = new ClearOsError($clearos_level, "backtrace", $item['file'], $item['line'], null, $type);
+			$error = new ClearOsError($clearos_level, "backtrace", $item['file'], $item['line'], NULL, $type);
 			ClearOsLogger::Log($error);
 		}
 		*/

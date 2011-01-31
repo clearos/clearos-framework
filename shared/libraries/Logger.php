@@ -243,7 +243,7 @@ class Logger
         // Prefix optional message
         $full_message = (empty($message)) ? $tagline : "$message - $tagline";
 
-        $error = new Error(Error::CODE_DEBUG, $full_message, 'Framework', '0', NULL, Error::TYPE_PROFILE);
+        $error = new Error(Error::CODE_DEBUG, $full_message, 'clearos\framework\Core', '0', NULL, Error::TYPE_PROFILE);
         Logger::log($error);
     }
 
