@@ -227,7 +227,7 @@ class MY_Page
         // FIXME: not necessary since it is done on view_header.  Clean up.
         //    $this->_load_meta_data();
 
-        echo page_footer($this->data);
+        echo theme_page_footer($this->data);
     }
 
     /**
@@ -242,9 +242,9 @@ class MY_Page
 
         $this->_load_meta_data();
 
-        echo page_doctype() . "\n";
+        echo theme_page_doctype() . "\n";
         echo $this->_build_page_head($this->data);
-        echo page_header($this->data);
+        echo theme_page_header($this->data);
     }
 
     /**
@@ -340,7 +340,7 @@ class MY_Page
         // <head> extras defined in theme (head.php)
         //------------------------------------------
 
-        $head .= page_head($theme_path);
+        $head .= theme_page_head($theme_path);
 
         // <head> extras defined in app
         //------------------------------------------
