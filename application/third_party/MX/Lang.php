@@ -36,9 +36,6 @@
 class MX_Lang extends CI_Lang
 {
 	public function load($langfile, $lang = '', $return = FALSE, $_module = NULL)	{
-        // ClearFoundation - support short form tags, e.g. load('date') is equivalent to load('date/date')
-		if (!preg_match('/\//', $langfile))
-			$langfile .= "/$langfile";
 		
 		if (is_array($langfile)) return $this->load_many($langfile);
 			
@@ -50,6 +47,12 @@ class MX_Lang extends CI_Lang
 	
 		$_module OR $_module = CI::$APP->router->fetch_module();
 		list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/'.$idiom.'/');
+
+		if ($path === FALSE) {
+			// ClearFoundation - support short form tags, e.g. load('date') is equivalent to load('date/date')
+			$newlangfile = "$langfile/$langfile";
+			list($path, $_langfile) = Modules::find($newlangfile.'_lang', $_module, 'language/'.$idiom.'/');
+		}
 
 		if ($path === FALSE) {
 			if ($lang = parent::load($langfile, $lang, $return)) return $lang;
