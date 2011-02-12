@@ -92,6 +92,19 @@ if (Config::$debug_mode) {
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Returns the apps base path
+ *
+ * @param string $app app
+ *
+ * @return string base path for the given app
+ */
+
+function clearos_app_base($app)
+{
+    return Config::$apps_path . '/' . Config::get_app_base($app);
+}
+
+/**
  * Generates profiling data. 
  *
  * @param string $method  method name

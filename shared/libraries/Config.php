@@ -121,6 +121,29 @@ class Config
     }
 
     /**
+     * Returns the app base path.
+     *
+     * @param string $app app name
+     *
+     * @return string app base path
+     */
+
+    public static function get_app_base($app)
+    {
+        Logger::profile(__METHOD__, __LINE__);
+
+        if (isset(Config::$clearos_devel_versions['app'][$app]))
+            $app_version = Config::$clearos_devel_versions['app'][$app];
+        else if (isset(Config::$clearos_devel_versions['app']['default']))
+            $app_version = Config::$clearos_devel_versions['app']['default'];
+        else
+            $app_version = "";
+
+        // FIXME: merge duplicate code
+        return $app . '/' . $app_version;
+    }
+
+    /**
      * Returns the app URL.
      *
      * @param string $app app name
