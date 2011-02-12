@@ -13,3 +13,4 @@ $lang['menu_subcategory_resources'] = 'Resources';
 $lang['menu_subcategory_dashboard'] = 'Dashboard';
 $lang['menu_subcategory_file_and_print'] = 'File and Print';
 $lang['menu_subcategory_intrusion_protection'] = 'Intrusion Protection';
+$lang['menu_subcategory_antimalware'] = 'Antimalware';
