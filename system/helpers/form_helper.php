@@ -51,7 +51,9 @@ if ( ! function_exists('form_open'))
 
 		$action = ( strpos($action, '://') === FALSE) ? $CI->config->site_url($action) : $action;
 
-		$form = '<form action="'.$action.'"';
+        // ClearFoundation add a wrapper around form
+        $form = "<div class='theme-form-container'>\n";
+		$form .= '<form action="'.$action.'"';
 
 		$form .= _attributes_to_string($attributes, TRUE);
 
@@ -590,7 +592,8 @@ if ( ! function_exists('form_close'))
 {
 	function form_close($extra = '')
 	{
-		return "</form>".$extra;
+        // ClearFoundation add a wrapper around form
+		return "</form>".$extra."</div>";
 	}
 }
 
