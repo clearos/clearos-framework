@@ -51,9 +51,11 @@ if ( ! function_exists('form_open'))
 
 		$action = ( strpos($action, '://') === FALSE) ? $CI->config->site_url($action) : $action;
 
-        // ClearFoundation add a wrapper around form
+        // ClearFoundation
+        // - add a wrapper around form
+        // - add default form class
         $form = "<div class='theme-form-container'>\n";
-		$form .= '<form action="'.$action.'"';
+		$form .= '<form class="theme-form" action="'.$action.'"';
 
 		$form .= _attributes_to_string($attributes, TRUE);
 
@@ -547,7 +549,8 @@ if ( ! function_exists('form_fieldset'))
 {
 	function form_fieldset($legend_text = '', $attributes = array())
 	{
-		$fieldset = "<fieldset";
+        // ClearFoundation - add default classes
+		$fieldset = "<fieldset class='theme-fieldset'";
 
 		$fieldset .= _attributes_to_string($attributes, FALSE);
 
@@ -555,7 +558,7 @@ if ( ! function_exists('form_fieldset'))
 
 		if ($legend_text != '')
 		{
-			$fieldset .= "<legend>$legend_text</legend>\n";
+			$fieldset .= "<legend class='theme-fieldset-legend'>$legend_text</legend>\n";
 		}
 
 		return $fieldset;
