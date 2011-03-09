@@ -52,14 +52,15 @@ if ( ! function_exists('form_open'))
 		$action = ( strpos($action, '://') === FALSE) ? $CI->config->site_url($action) : $action;
 
         // ClearFoundation
-        // - add a wrapper around form
-        // - add default form class
+        // - added a wrapper around form
+        // - added default form class
+        // - added a newline 
         $form = "<div class='theme-form-container'>\n";
 		$form .= '<form class="theme-form" action="'.$action.'"';
 
 		$form .= _attributes_to_string($attributes, TRUE);
 
-		$form .= '>';
+		$form .= ">\n";
 
 		// CSRF
 		if ($CI->config->item('csrf_protection') === TRUE)
@@ -596,7 +597,7 @@ if ( ! function_exists('form_close'))
 	function form_close($extra = '')
 	{
         // ClearFoundation add a wrapper around form
-		return "</form>".$extra."</div>";
+		return "</form>".$extra."</div>\n";
 	}
 }
 
