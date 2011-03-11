@@ -275,6 +275,29 @@ function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $i
     $selected = ($readonly) ? $default : set_value($name, $default);
     $error = form_error($name);
 
+    // FIXME: this is dirty, may need a new field_dropdown_hash function
+    // $options = convert_to_hash($options);
+
+    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+
+    if ($readonly)
+        $html = theme_field_view($value, $label, $input_id, $ids);
+    else
+        $html = theme_field_dropdown($name, $selected, $label, $error, $options, $input_id, $ids);
+
+    return $html;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  S I M P L E  D R O P D O W N
+///////////////////////////////////////////////////////////////////////////////
+
+function field_simple_dropdown($name, $options, $default, $label, $readonly = FALSE, $ids = NULL)
+{
+    $selected = ($readonly) ? $default : set_value($name, $default);
+    $error = form_error($name);
+
+    // FIXME: this is dirty, may need a new field_dropdown_hash function
     $options = convert_to_hash($options);
 
     $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
@@ -286,6 +309,7 @@ function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $i
 
     return $html;
 }
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // F I E L D  T O G G L E
@@ -352,6 +376,20 @@ function field_progress_bar($name, $default, $label, $ids = NULL)
 
     return $html;
 } 
+
+///////////////////////////////////////////////////////////////////////////////
+// F O R M  H E A D E R / F O O T E R
+///////////////////////////////////////////////////////////////////////////////
+
+function form_header($title)
+{
+    return theme_form_header($title);
+}
+
+function form_footer()
+{
+    return theme_form_footer();
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // S U M M A R Y  T A B L E
