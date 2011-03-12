@@ -275,9 +275,6 @@ function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $i
     $selected = ($readonly) ? $default : set_value($name, $default);
     $error = form_error($name);
 
-    // FIXME: this is dirty, may need a new field_dropdown_hash function
-    // $options = convert_to_hash($options);
-
     $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
     if ($readonly)
@@ -297,7 +294,6 @@ function field_simple_dropdown($name, $options, $default, $label, $readonly = FA
     $selected = ($readonly) ? $default : set_value($name, $default);
     $error = form_error($name);
 
-    // FIXME: this is dirty, may need a new field_dropdown_hash function
     $options = convert_to_hash($options);
 
     $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
