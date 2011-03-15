@@ -22,4 +22,7 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-$this->page->view_header();
+if (empty($message))
+    $message = lang('base_confirm_delete');
+
+dialogbox_confirm_delete($message, $items, $ok_anchor, $cancel_anchor);

@@ -2,7 +2,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2010 ClearFoundation
+// Copyright 2011 ClearFoundation
 //
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -22,4 +22,28 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-$this->page->view_footer();
+/**
+ * Displays a help box.
+ *
+ * The available data for display:
+ * - $name - app name
+ * - $category - category
+ * - $subcategory - subcategory
+ * - $description - description
+ * - $tooltip -  tooltip
+ * - $user_guide_url - URL to the User Guide
+ * - $support_url - URL to support
+ */
+
+// FIXME: translate
+$tooltip = empty($tooltip) ? '' : '<p><b>Tooltip -- </b>' . $tooltip . '</p>';
+echo theme_dialogbox_info("
+        <h3>Help Box</h3>
+        <p>" . $category . " &gt; " . $subcategory . " &gt; $name</p>
+        <p>" . $description . "</p>
+        $tooltip
+        <ul>
+            <li><a target='_blank' href='" . $user_guide_url . "'>User Guide</a></li>
+            <li><a target='_blank' href='" . $support_url . "'>ClearCenter Support</a></li>
+        </ul>
+");

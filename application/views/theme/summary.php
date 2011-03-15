@@ -2,7 +2,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2010 ClearFoundation
+// Copyright 2011 ClearFoundation
 //
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -22,4 +22,39 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-control_panel($links);
+/**
+ * Displays a summary box.
+ *
+ * The available data for display:
+ * - $name - app name
+ * - $version - version number (e.g. 4.7)
+ * - $release - release number (e.g. 31.1, so version-release is 4.7-31.1)
+ * - $vendor - vendor
+ * 
+ * If this application is included in the Marketplace, the following
+ * information is also available.
+ *
+ * - $subscription_expiration - subscription expiration (if applicable)
+ * - $install_status - install status ("up-to-date" or "update available")
+ * - $marketplace_chart - a relevant chart object
+ */
+
+// FIXME: translate
+echo theme_dialogbox_info("
+        <h3>$name</h3>
+        <table>
+            <tr>
+                <td><b>Version</b></td>
+                <td>" . $version . '-' . $release . "</td>
+            </tr>
+            <tr>
+                <td><b>Status</b></td>
+                <td>" . $install_status . "</td>
+            </tr>
+            <tr>
+                <td><b>Subscription</b></td>
+                <td>" . $subscription_expiration . "</td>
+            </tr>
+        </table>
+        $marketplace_chart
+");

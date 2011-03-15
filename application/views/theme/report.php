@@ -2,7 +2,7 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 //
-// Copyright 2010 ClearFoundation
+// Copyright 2011 ClearFoundation
 //
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -22,4 +22,9 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-dialogbox_confirm($message, $ok_anchor, $cancel_anchor);
+// FIXME: translate
+echo theme_dialogbox_info("
+        <h3>Report Box</h3>
+        <div id='theme-chart-report-box' style='height:200px; width:200px;'></div>
+        <a href='#'>Link to Full Report</a>
+");
