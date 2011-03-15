@@ -414,8 +414,16 @@ function control_panel($links) {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-// C O N F I R M A T I O N  D I A L O G B O X
+// D I A L O G  B O X E S
 ///////////////////////////////////////////////////////////////////////////////
+
+function dialogbox_confirm_delete($message, $items, $ok_anchor, $cancel_anchor)
+{
+    if (! is_array($items))
+        $items = array($items);
+
+    return theme_dialogbox_confirm_delete($message, $items, $ok_anchor, $cancel_anchor);
+}
 
 function dialogbox_confirm($message, $ok_anchor, $cancel_anchor)
 {
