@@ -58,4 +58,14 @@ class ClearOS_Controller
 	public function __get($class) {
 		return CI::$APP->$class;
 	}
+
+    /* ClearFoundation - add default methods */
+
+    public function help() {
+        $this->load->page->view_help(uri_string());
+    }
+
+    public function summary() {
+        $this->load->page->view_summary(uri_string());
+    }
 }
