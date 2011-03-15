@@ -120,6 +120,12 @@ class MY_Page
 
     public $data = array();
 
+    /**
+     * @var boolean form_only
+     */
+
+    public $form_only = FALSE;
+
     ///////////////////////////////////////////////////////////////////////////////
     // M E T H O D S
     ///////////////////////////////////////////////////////////////////////////////
@@ -141,8 +147,7 @@ class MY_Page
      * The theme hooks are loaded after the controller has been initialized.
      * - doctype.php
      * - head.php
-     * - header.php
-     * - footer.php
+     * - page.php
      * - widgets.php
      *
      * This is called by a CodeIgniter hook instead of the constructor since
@@ -155,7 +160,7 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $theme_files = array('doctype.php', 'head.php', 'header.php', 'footer.php', 'widgets.php');
+        $theme_files = array('doctype.php', 'head.php', 'page.php', 'widgets.php');
         $path = Config::get_theme_path($this->framework->session->userdata('theme'));
 
         foreach ($theme_files as $file) {
@@ -185,18 +190,48 @@ class MY_Page
     }
 
     /**
-     * Sets the title for the page.
-     *
-     * @param string $title page title
+     * Handles status added message.
      *
      * @return void
      */
 
-    public function set_title($title)
-    {
+    public function set_status_added()
+    { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $this->data['title'] = $title;
+        $message = 'Added.'; // FIXME translate 
+
+        $this->framework->session->set_userdata('status_success', $message);
+    }
+
+    /**
+     * Handles status deleted message.
+     *
+     * @return void
+     */
+
+    public function set_status_deleted()
+    { 
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $message = 'Delete completed.'; // FIXME translate 
+
+        $this->framework->session->set_userdata('status_success', $message);
+    }
+
+    /**
+     * Handles status updated message.
+     *
+     * @return void
+     */
+
+    public function set_status_updated()
+    { 
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $message = 'System Updated'; // FIXME translate 
+
+        $this->framework->session->set_userdata('status_success', $message);
     }
 
     /**
@@ -207,7 +242,7 @@ class MY_Page
      * @return void
      */
 
-    public function set_success($message)
+    public function set_status_success($message)
     { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -215,55 +250,217 @@ class MY_Page
     }
 
     /**
-     * Displays the footer view.
+     * Redirects depending on theme mode.
+     *
+     * @param string $redirect redirect URL
      *
      * @return void
      */
 
-    public function view_footer()
+    public function theme_redirect($redirect)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        // FIXME: not necessary since it is done on view_header.  Clean up.
-        //    $this->_load_meta_data();
+        // Non-intuitive, see view_forms for form_only discussion
+        if ($this->form_only)
+            return;
 
-        echo theme_page_footer($this->data);
+        if ($this->framework->session->userdata['theme_mode'] !== CLEAROS_MOBILE)
+            redirect($redirect);
     }
 
     /**
-     * Displays the header view.
+     * Displays a page with a single form.
      *
-     * @return void
+     * @return view
      */
 
-    public function view_header()
+    public function view_form($form, $data)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+/*
+        // FIXME: what to do with help and summary widgets 
+        if ($this->framework->session->userdata['theme_mode'] === CLEAROS_MOBILE) {
+        }
+*/
+
+        if (empty($this->data))
+            $this->_load_meta_data();
+
+        $app_data = $this->_load_app_data();
+
+        $this->data['title'] = $app_data['forms'][$form]['title'];
+
+        // Non-intuitive: see view_forms for form_only explanation
+        
+        if ($this->form_only) {
+            $this->framework->load->view($form, $data);
+        } else {
+            $this->data['app_view'] = $this->framework->load->view($form, $data, TRUE);
+            $this->data['page_help'] = $this->_get_help_view($form);
+            $this->data['page_summary'] = $this->_get_summary_view($form);
+            $this->data['page_report'] = $this->_get_report_view($form);
+
+            $this->_display_page();
+        }
+    }
+
+    /**
+     * Displays a page with multiple forms.
+     *
+     * @return view
+     */
+
+    public function view_forms($forms, $title)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
         $this->_load_meta_data();
 
-        echo theme_page_doctype() . "\n";
-        echo $this->_build_page_head($this->data);
-        echo theme_page_header($this->data);
+        $this->data['title'] = $title;
+
+        // Control panel style
+        //--------------------
+
+        if ($this->framework->session->userdata['theme_mode'] === CLEAROS_MOBILE) {
+
+            // FIXME: cleanup _load_app_data()... don't know how to separate the data yet.
+            $app_data = $this->_load_app_data();
+
+            foreach ($forms as $form) {
+                $basename = preg_replace('/.*\//', '', $form);
+                $data[$form]['title'] = $app_data['forms'][$basename]['title'];
+            }
+
+            // Add common widgets
+            $basename = preg_replace('/\/.*/', '', $form);
+            $data[$basename . '/help']['title'] = lang('base_help');
+            $data[$basename . '/summary']['title'] = 'Summary'; // FIXME: Translate
+
+            $this->data['app_view'] = theme_control_panel($data);
+
+        // Full desktop style
+        //-------------------
+
+        } else {
+            // Non-intuitive, but this saves app developers from handling a 
+            // useless variable in their controllers.  The form_only variable
+            // is set to TRUE to indicate that only the raw form should be 
+            // loaded (no headers, no footers, etc.).
+
+            $this->form_only = TRUE; 
+
+            ob_start();
+
+            foreach ($forms as $form) {
+                $basename = preg_replace('/.*\//', '', $form);
+
+                $this->framework->load->module($form);
+                $this->framework->$basename->index('view');
+            }
+
+            $this->data['app_view'] = ob_get_clean();
+
+            // Now we set form_only back to the default
+            $this->form_only = FALSE; 
+        }
+
+        $this->data['page_help'] = $this->_get_help_view($form);
+        $this->data['page_summary'] = $this->_get_summary_view($form);
+        $this->data['page_report'] = $this->_get_report_view($form);
+
+        $this->_display_page();
     }
 
     /**
      * Displays the exception view.
      *
-     * @param string $message error message
+     * @param Exception $exception exception
      *
      * @return void
      */
 
-    public function view_exception($message)
+    public function view_exception($exception)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $this->data['title'] = 'Exception';
+        if (empty($this->data))
+            $this->_load_meta_data();
 
-        $this->view_header();
-        echo infobox_critical($message);
-        $this->view_footer();
+        // FIXME: might want to make this a splash layout
+        $this->data['title'] = 'Exception'; // FIXME: translate
+        $this->data['app_view'] = theme_dialog_warning($exception->GetMessage());
+
+        $this->_display_page();
+    }
+
+    ///////////////////////////////////////////////////////////////////////////////
+    // F R I E N D  M E T H O D S
+    ///////////////////////////////////////////////////////////////////////////////
+    //
+    // These are for internal framework use and not intended for app developers.
+    //
+    ///////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Display help box.
+     *
+     * @access private
+     */
+
+    public function view_help($form)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $this->data = array();
+        $this->_load_meta_data();
+
+        $this->data['title'] = 'Help'; // FIXME
+        $this->data['layout'] = 'default';
+        $this->data['app_view'] = $this->_get_help_view($form);
+
+        $this->_display_page();
+    }
+
+    /**
+     * Display report box.
+     *
+     * @access private
+     */
+
+    public function view_report($form)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $this->data = array();
+        $this->_load_meta_data();
+
+        $this->data['title'] = 'Dashboard Report'; // FIXME
+        $this->data['layout'] = 'default';
+        $this->data['app_view'] = $this->_get_report_view($form);
+
+        $this->_display_page();
+    }
+
+    /**
+     * Display summary box.
+     *
+     * @access private
+     */
+
+    public function view_summary($form)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $this->data = array();
+        $this->_load_meta_data();
+
+        $this->data['title'] = 'Summary'; // FIXME
+        $this->data['layout'] = 'default';
+        $this->data['app_view'] = $this->_get_summary_view($form);
+
+        $this->_display_page();
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -357,7 +554,123 @@ class MY_Page
     }
 
     /**
-     * Returns menu data in an array
+     * Displays the webconfig page.
+     *
+     * @return string HTML of webconfig page
+     */
+
+    protected function _display_page()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        echo theme_page_doctype() . "\n";
+        echo $this->_build_page_head($this->data);
+        echo theme_page($this->data);
+    }
+
+    /**
+     * Returns the help view.
+     *
+     * @return string HTML for help view
+     */
+
+    public function _get_help_view($form)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $data = $this->_load_app_data();
+
+        // FIXME: Move this to a driver package
+        if (empty($data['user_guide_url']))
+            $data['user_guide_url'] = 'http://www.clearcenter.com/support/documentation/FIXME';
+
+        if (empty($data['support_url']))
+            $data['support_url'] = 'http://www.clearcenter.com/getsupport/FIXME';
+
+        $data['tooltip'] = (isset($data['forms'][$form]['tooltip'])) ? $data['forms'][$form]['tooltip'] : '';
+
+        return $this->framework->load->view('theme/help', $data, TRUE);
+    }
+
+    /**
+     * Returns the report view.
+     *
+     * Returns NULL if no report exists for the given form.
+     *
+     * @return string HTML for report box
+     */
+
+    protected function _get_report_view($form)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $basename = preg_replace('/.*\//', '', $form);
+
+        $this->framework->load->module($form);
+
+        if (! method_exists($this->framework->$basename, 'report'))
+            return;
+
+        ob_start();
+        $this->framework->$basename->report();
+        $report = ob_get_clean();
+
+        return $report;
+    }
+
+    /**
+     * Returns the summary view.
+     *
+     * @return string HTML for summary view
+     */
+
+    public function _get_summary_view($form)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $data = $this->_load_app_data();
+
+        // FIXME: fake data here
+        $data['subscription_expiration'] = 'July 1, 2011';
+        $data['install_status'] = 'Update available';
+        $data['marketplace_chart'] = "
+<div id='theme-chart-info-box' style='height:200px; width:200px;'></div>
+<script type='text/javascript'>
+$.jqplot.config.enablePlugins = true;
+$.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]]);
+</script>
+";
+
+        return $this->framework->load->view('theme/summary', $data, TRUE);
+    }
+
+    /**
+     * Returns app data in an array.
+     *
+     * @return array app meta data
+     */
+
+    protected function _load_app_data($app_name = NULL)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        if (is_null($app_name)) {
+            $segments = explode('/', $_SERVER['PHP_SELF']);
+            $app_name = $segments[2];
+        }
+
+        $info_file = Config::$apps_path . '/' . Config::get_app_base($app_name) . '/deploy/info.php';
+
+        if (file_exists($info_file)) {
+            clearos_load_language($app_name);
+            include $info_file;
+
+            return $app;
+        }
+    }
+
+    /**
+     * Returns menu data in an array.
      *
      * @return array menu meta data
      */
@@ -366,41 +679,72 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        // Load menu files in app directory
+        // Load info files in app directory
         //---------------------------------
 
-        exec(MY_Page::COMMAND_FIND . ' ' . Config::$apps_path . " -name menu.php", $menu_list, $retval);
+        // FIXME: deal with versioning
+        exec(MY_Page::COMMAND_FIND . ' ' . Config::$apps_path . " -name info.php", $info_list, $retval);
 
         if ($retval !== 0) {
-            // FIXME: die? 
+            echo "Ooops.  Unable to load menu information.";
+            return array();
         }
 
-        $menu = array();
+        $apps_list = array();
 
-        foreach ($menu_list as $menu_file) {
-            include_once $menu_file;
+        foreach ($info_list as $info_file) {
+            $app_name = preg_replace('/.*\/webconfig\/apps\//', '', $info_file);
+            $app_name = preg_replace('/\/.*/', '', $app_name);
+            $apps_list[] = $app_name;
         }
 
         // Load menu order preferences
         //----------------------------
 
-        // $category_order = array();
+        // FIXME - move this to a configuration file
+        $order = array(
+            lang('base_category_system')  => '010',
+            lang('base_category_network') => '020',
+            lang('base_category_gateway') => '030',
+            lang('base_category_server')  => '040',
+        );
 
-        // Set ordering
-        //-------------
+        // Create an array with the sort key
+        //----------------------------------
 
         $sorted = array();
 
-        foreach ($menu as $url => $detail) {
-            $sorted[$detail['category'] . $detail['subcategory'] . $detail['title']] = $url;
+        foreach ($apps_list as $app) {
+            $app = $this->_load_app_data($app);
+
+            if (! isset($app['basename'])) 
+                continue;
+
+            $primary_sort = empty($order[$app['category']]) ? '500' : $order[$app['category']];
+            $secondary_sort = empty($order[$app['subcategory']]) ? '500' : $order[$app['subcategory']];
+            $page_sort = empty($app['priority']) ? '500' : $app['priority'];
+
+            $menu_info = array();
+
+            $menu_info['/app/' . $app['basename']] = array(
+                'title' => $app['name'],
+                'category' => $app['category'],
+                'subcategory' => $app['subcategory'],
+            );
+
+            $sorted[$primary_sort . '.' . $secondary_sort . '.' . $page_sort . '.' . $app['name']] = $menu_info;
         }
+
+        // Use the sorted array to generate the menu array
+        //------------------------------------------------
 
         ksort($sorted);
 
         $menu_data = array();
 
-        foreach ($sorted as $sort => $url) {
-            $menu_data[$url] = $menu[$url];
+        foreach ($sorted as $sort_key => $sort_details) {
+            foreach ($sort_details as $url => $details)
+                $menu_data[$url] = $details;
         }
 
         return $menu_data;
@@ -422,7 +766,6 @@ class MY_Page
 
         $this->data = array_merge($this->data, $view_data, $session_data, $menu_data);
     }
-
 
     /**
      * Returns page session data in an array.
