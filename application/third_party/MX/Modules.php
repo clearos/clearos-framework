@@ -26,17 +26,19 @@ $relative_count = substr_count($framework_path, '/') - substr_count(ClearOsConfi
 $apps_path_name = preg_replace('/.*\//', "", ClearOsConfig::$apps_path);
 $relative_path = str_repeat('../', $relative_count) . $apps_path_name . '/';
 
-// Add a trailing slash if its missing
-if (! preg_match('/\/$/', ClearOsConfig::$apps_alt_relative_path))
-    ClearOsConfig::$apps_alt_relative_path .= '/';
-
 /* define the module locations and offset */
 Modules::$locations = array(
 	ClearOsConfig::$apps_path.'/' => $relative_path,
 );
 
-if (! empty(ClearOsConfig::$apps_alt_path))
-    Modules::$locations[ClearOsConfig::$apps_alt_path.'/'] = ClearOsConfig::$apps_alt_relative_path;
+// If we have similar developer app roots in parallel, we can hack them in too
+foreach (ClearOsConfig::$apps_alt_roots as $root_dir) {
+    $base = preg_replace('/.*\//', '', $root_dir);   
+    $full_path = $root_dir . '/webconfig/apps/';
+    $relative_path = '../../../../../../' . $base . '/webconfig/apps/';
+    Modules::$locations[$full_path] = $relative_path;
+}
+
 // ClearFoundation -- end
 
 /* PHP5 spl_autoload */
