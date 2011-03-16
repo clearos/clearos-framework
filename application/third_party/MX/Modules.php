@@ -25,13 +25,19 @@ if (!empty(ClearOsConfig::$clearos_devel_versions['framework']))
 $relative_count = substr_count($framework_path, '/') - substr_count(ClearOsConfig::$apps_path, '/') + 3;
 $apps_path_name = preg_replace('/.*\//', "", ClearOsConfig::$apps_path);
 $relative_path = str_repeat('../', $relative_count) . $apps_path_name . '/';
-// ClearFoundation -- end
 
-// ClearFoundation - changed locations array below
+// Add a trailing slash if its missing
+if (! preg_match('/\/$/', ClearOsConfig::$apps_alt_relative_path))
+    ClearOsConfig::$apps_alt_relative_path .= '/';
+
 /* define the module locations and offset */
 Modules::$locations = array(
-	ClearOsConfig::$apps_path.'/' => "$relative_path",
+	ClearOsConfig::$apps_path.'/' => $relative_path,
 );
+
+if (! empty(ClearOsConfig::$apps_alt_path))
+    Modules::$locations[ClearOsConfig::$apps_alt_path.'/'] = ClearOsConfig::$apps_alt_relative_path;
+// ClearFoundation -- end
 
 /* PHP5 spl_autoload */
 spl_autoload_register('Modules::autoload');
