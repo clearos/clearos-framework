@@ -66,6 +66,12 @@ class Config
     //-----------------------------------------------------------------------
 
     /**
+     * @var string alternate root path for apps
+     */
+
+    public static $apps_alt_roots = array();
+
+    /**
      * @var string base path for apps
      */
 
