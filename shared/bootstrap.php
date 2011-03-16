@@ -92,10 +92,9 @@ if (getenv('CLEAROS_BOOTSTRAP')) {
 // If the CLEAROS_CONFIG enviroment variable is set, load the values.
 //------------------------------------------------------------------------
 
-/*
-if (!empty($_ENV['CLEAROS_CONFIG']))
-    require_once($_ENV['CLEAROS_CONFIG']);
-*/
+if (isset($_SERVER['CLEAROS_CONFIG']) && file_exists($_SERVER['CLEAROS_CONFIG'])) {
+    require_once($_SERVER['CLEAROS_CONFIG']);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // C O R E  F U N C T I O N S  A N D  H E L P E R S
