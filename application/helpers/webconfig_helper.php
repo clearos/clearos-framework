@@ -222,6 +222,22 @@ function form_radio_set_close()
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// F I E L D  V I E W
+///////////////////////////////////////////////////////////////////////////////
+
+function field_view($name, $default, $label, $ids = NULL)
+{
+    // An input ID is required for the label.  See why @
+    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+
+    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+
+    $html = theme_field_view($value, $label, $input_id, $ids);
+
+    return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
 // F I E L D  I N P U T
 ///////////////////////////////////////////////////////////////////////////////
 
