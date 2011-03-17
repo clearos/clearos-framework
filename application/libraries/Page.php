@@ -50,7 +50,7 @@ use \clearos\framework\Config as Config;
 /**
  * Webconfig page class.
  *
- * This class provides the mechanism for managing the layout of a webconfig
+ * This class provides the mechanism for managing the type of a webconfig
  * page.  The view of a given ClearOS App is managed by the app developer,
  * while the view of the following is managed by this class:
  *
@@ -77,7 +77,7 @@ use \clearos\framework\Config as Config;
  * - app 32x32 icon
  * - success message (e.g. firewall rule has been deleted)
  * - warning message (e.g. OpenVPN is running, but the firewall is not allowing connections)
- * - page layout (default, splash, wizard(?))
+ * - page type (default, splash, wizard(?))
  * - page title
  *
  * This class also handles exceptions.  When an exception occurs in a
@@ -99,8 +99,8 @@ class MY_Page
     // C O N S T A N T S
     ///////////////////////////////////////////////////////////////////////////////
 
-    const COMMAND_FIND = '/usr/bin/find';
-    const TYPE_DEFAULT = 'default';
+    const TYPE_CONFIGURATION = 'configuration';
+    const TYPE_REPORT = 'report';
     const TYPE_SPLASH = 'splash';
     const TYPE_WIZARD = 'wizard';
 
@@ -153,6 +153,7 @@ class MY_Page
      * This is called by a CodeIgniter hook instead of the constructor since
      * the user session has not been initialized in the constructor.
      *
+     * @access private
      * @return void
      */
 
@@ -172,21 +173,6 @@ class MY_Page
             else
                 echo "<p class='alert'>Theme file is missing: $file</p>";
         }
-    }
-
-    /**
-     * Sets the layout for the page.
-     *
-     * @param string $layout layout type
-     *
-     * @return void
-     */
-
-    public function set_layout($layout)
-    {
-        Logger::profile_framework(__METHOD__, __LINE__);
-
-        $this->data['layout'] = $layout;
     }
 
     /**
@@ -275,7 +261,7 @@ class MY_Page
      * @return view
      */
 
-    public function view_form($form, $data)
+    public function view_form($form, $data, $title, $options)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -285,12 +271,16 @@ class MY_Page
         }
 */
 
+
         if (empty($this->data))
             $this->_load_meta_data();
 
         $app_data = $this->_load_app_data();
 
-        $this->data['title'] = $app_data['forms'][$form]['title'];
+        $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
+
+        $this->data['title'] = $title;
+        $this->data['type'] = $type;
 
         // Non-intuitive: see view_forms for form_only explanation
         
@@ -388,7 +378,7 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data();
 
-        // FIXME: might want to make this a splash layout
+        // FIXME: might want to make this a splash type
         $this->data['title'] = 'Exception'; // FIXME: translate
         $this->data['app_view'] = theme_dialog_warning($exception->GetMessage());
 
@@ -417,7 +407,7 @@ class MY_Page
         $this->_load_meta_data();
 
         $this->data['title'] = 'Help'; // FIXME
-        $this->data['layout'] = 'default';
+        $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_help_view($form);
 
         $this->_display_page();
@@ -437,7 +427,7 @@ class MY_Page
         $this->_load_meta_data();
 
         $this->data['title'] = 'Dashboard Report'; // FIXME
-        $this->data['layout'] = 'default';
+        $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_report_view($form);
 
         $this->_display_page();
@@ -457,7 +447,7 @@ class MY_Page
         $this->_load_meta_data();
 
         $this->data['title'] = 'Summary'; // FIXME
-        $this->data['layout'] = 'default';
+        $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_summary_view($form);
 
         $this->_display_page();
@@ -502,7 +492,6 @@ class MY_Page
 
         $css =  $app . '.css';
         $js = $app . '.js.php';
-        $js_sub_app = $sub_app . '.js.php';
 
         $page_auto_head = '';
 
@@ -796,9 +785,8 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
 
         $view_data = array();
 
-        // Set layout to 'default'
-        if (empty($this->data['layout']))
-            $view_data['layout'] = MY_Page::TYPE_DEFAULT;
+        if (empty($this->data['type']))
+            $view_data['type'] = MY_Page::TYPE_CONFIGURATION;
 
         return $view_data;
     }
