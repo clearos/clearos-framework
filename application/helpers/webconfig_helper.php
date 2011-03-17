@@ -225,7 +225,7 @@ function form_radio_set_close()
 // F I E L D  V I E W
 ///////////////////////////////////////////////////////////////////////////////
 
-function field_view($name, $default, $label, $ids = NULL)
+function field_view($name, $value, $label, $ids = NULL)
 {
     // An input ID is required for the label.  See why @
     // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
