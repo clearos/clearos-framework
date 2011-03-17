@@ -12,33 +12,22 @@ require_once $bootstrap . '/bootstrap.php';
 
 use \clearos\framework\Config as ClearOsConfig;
 
-// Whoa... this is non-intuitive.
-//
 // The router needs the relative path to the "apps" directory. 
 // Counting the number of slashes in the paths should work.
-// Then we add 3 directories to get from here down to the framework root.
 
 $framework_path = ClearOsConfig::$framework_path;
+
 if (!empty(ClearOsConfig::$clearos_devel_versions['framework']))
 	$framework_path .= '/trunk';
 
-$relative_count = substr_count($framework_path, '/') - substr_count(ClearOsConfig::$apps_path, '/') + 3;
-$apps_path_name = preg_replace('/.*\//', "", ClearOsConfig::$apps_path);
-$relative_path = str_repeat('../', $relative_count) . $apps_path_name . '/';
+// The +2 is to account for the additional 'application/core/' subdirectory.
+$root_dir = str_repeat('../', substr_count($framework_path, '/') + 2);
 
-/* define the module locations and offset */
-Modules::$locations = array(
-	ClearOsConfig::$apps_path.'/' => $relative_path,
-);
-
-// If we have similar developer app roots in parallel, we can hack them in too
-foreach (ClearOsConfig::$apps_alt_roots as $root_dir) {
-    $base = preg_replace('/.*\//', '', $root_dir);   
-    $full_path = $root_dir . '/webconfig/apps/';
-    $relative_path = '../../../../../../' . $base . '/webconfig/apps/';
+foreach (ClearOsConfig::$apps_paths as $app_path) {
+    $full_path = $app_path . '/apps/'; 
+    $relative_path = $root_dir . $app_path . '/apps/'; 
     Modules::$locations[$full_path] = $relative_path;
 }
-
 // ClearFoundation -- end
 
 /* PHP5 spl_autoload */

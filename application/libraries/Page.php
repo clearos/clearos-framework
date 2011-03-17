@@ -492,28 +492,25 @@ class MY_Page
 
         $segments = explode('/', $_SERVER['PHP_SELF']);
         $app = $segments[2];
-        $sub_app = isset($segments[3]) ? $segments['3'] : 'none';
 
-        $app_path = Config::get_app_url($app);
+        $doc_base = clearos_app_base($app) . '/htdocs/';
+        $app_url = Config::get_app_url($app);
         $theme_path = Config::get_theme_url($this->framework->session->userdata('theme'));
 
         // Add page-specific head links
         //-----------------------------
 
-        $css = $app_path . '/' . $app . '.css';
-        $js = $app_path . '/' . $app . '.js.php';
-        $js_sub_app = $app_path . '/' . $sub_app . '.js.php';
+        $css =  $app . '.css';
+        $js = $app . '.js.php';
+        $js_sub_app = $sub_app . '.js.php';
 
         $page_auto_head = '';
 
-        if (file_exists(Config::$apps_path . '/' . $js))
-            $page_auto_head .= "<script type='text/javascript' src='/approot" . $js . "'></script>\n";
+        if (file_exists($doc_base . '/' . $js))
+            $page_auto_head .= "<script type='text/javascript' src='" . $app_url . '/' . $js . "'></script>\n";
 
-        if (file_exists(Config::$apps_path . '/' . $js_sub_app))
-            $page_auto_head .= "<script type='text/javascript' src='/approot" . $js_sub_app . "'></script>\n";
-
-        if (file_exists(Config::$apps_path . '/' . $css))
-            $page_auto_head .= "<link type='text/css' href='/approot" . $css ."' rel='stylesheet'>\n";
+        if (file_exists($doc_base . '/' . $css))
+            $page_auto_head .= "<link type='text/css' href='" . $app_url . '/' . $css ."' rel='stylesheet'>\n";
 
         // <html>
         //-------------------
@@ -659,7 +656,7 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
             $app_name = $segments[2];
         }
 
-        $info_file = Config::$apps_path . '/' . Config::get_app_base($app_name) . '/deploy/info.php';
+        $info_file = clearos_app_base($app_name) . '/deploy/info.php';
 
         if (file_exists($info_file)) {
             clearos_load_language($app_name);
@@ -682,26 +679,19 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         // Load info files in app directory
         //---------------------------------
 
-        // FIXME: deal with versioning
-        exec(MY_Page::COMMAND_FIND . ' ' . Config::$apps_path . " -name info.php", $info_list, $retval);
-
-        if ($retval !== 0) {
-            echo "Ooops.  Unable to load menu information.";
-            return array();
-        }
-
         $apps_list = array();
 
-        foreach ($info_list as $info_file) {
-            $app_name = preg_replace('/.*\/webconfig\/apps\//', '', $info_file);
-            $app_name = preg_replace('/\/.*/', '', $app_name);
-            $apps_list[] = $app_name;
+        foreach (Config::$apps_paths as $path) {
+            $raw_list = scandir($path . '/apps');
+            foreach ($raw_list as $dir) {
+                if (! preg_match('/^\./', $dir))
+                    $apps_list[] = $dir;
+            }
         }
 
         // Load menu order preferences
         //----------------------------
 
-        // FIXME - move this to a configuration file
         $order = array(
             lang('base_category_system')  => '010',
             lang('base_category_network') => '020',

@@ -77,7 +77,7 @@ if (getenv('CLEAROS_BOOTSTRAP')) {
 
     $basedir = preg_replace('/\/framework\/.*/', '', dirname(__FILE__));
 
-    Config::$apps_path = $basedir . '/apps';
+    Config::$apps_paths = array($basedir);
     Config::$framework_path = $basedir . '/framework';
     Config::$htdocs_path = $basedir . '/framework/trunk/htdocs';
     Config::$themes_path = $basedir . '/themes';
@@ -92,9 +92,9 @@ if (getenv('CLEAROS_BOOTSTRAP')) {
 // If the CLEAROS_CONFIG enviroment variable is set, load the values.
 //------------------------------------------------------------------------
 
-if (isset($_SERVER['CLEAROS_CONFIG']) && file_exists($_SERVER['CLEAROS_CONFIG'])) {
+if (isset($_SERVER['CLEAROS_CONFIG']) && file_exists($_SERVER['CLEAROS_CONFIG']))
     require_once($_SERVER['CLEAROS_CONFIG']);
-}
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // C O R E  F U N C T I O N S  A N D  H E L P E R S

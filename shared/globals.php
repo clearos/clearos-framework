@@ -92,7 +92,20 @@ if (Config::$debug_mode) {
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Returns the apps base path
+ * Returns the app URL
+ *
+ * @param string $app app
+ *
+ * @return string app URL 
+ */
+
+
+function clearos_app_url($app)
+{
+}
+
+/**
+ * Returns the app base path
  *
  * @param string $app app
  *
@@ -101,7 +114,7 @@ if (Config::$debug_mode) {
 
 function clearos_app_base($app)
 {
-    return Config::$apps_path . '/' . Config::get_app_base($app);
+    return Config::get_app_base($app);
 }
 
 /**
@@ -202,15 +215,7 @@ function clearos_load_library($library)
 {
     list($app, $library) = preg_split('/\//', $library, 2);
 
-    // FIXME: point to online document on what's going on here
-    if (!empty(Config::$clearos_devel_versions['app'][$app]))
-        $version = Config::$clearos_devel_versions['app'][$app];
-    else if (!empty(Config::$clearos_devel_versions['app']['default']))
-        $version = Config::$clearos_devel_versions['app']['default'];
-    else
-        $version = '';
-
-    include_once Config::$apps_path . "/$app/$version/libraries/$library.php";
+    include_once clearos_app_base($app) . "/libraries/$library.php";
 }
 
 /**
@@ -227,9 +232,12 @@ function clearos_load_library($library)
 function clearos_exception_message($exception)
 {
     if (is_object($exception)) {
-        if (method_exists($exception, 'get_message')) return $exception->get_message();
-        else if (method_exists($exception, 'getMessage')) return $exception->getMessage();
+        if 
+            (method_exists($exception, 'get_message')) return $exception->get_message();
+        else if 
+            (method_exists($exception, 'getMessage')) return $exception->getMessage();
     }
+
     return '';
 }
 

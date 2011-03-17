@@ -66,16 +66,10 @@ class Config
     //-----------------------------------------------------------------------
 
     /**
-     * @var string alternate root path for apps
+     * @var array apps paths
      */
 
-    public static $apps_alt_roots = array();
-
-    /**
-     * @var string base path for apps
-     */
-
-    public static $apps_path = '/usr/clearos/apps';
+    public static $apps_paths = array('/usr/clearos/apps');
 
     /**
      * @var string base path for the framework
@@ -145,8 +139,11 @@ class Config
         else
             $app_version = "";
 
-        // FIXME: merge duplicate code
-        return $app . '/' . $app_version;
+        foreach (Config::$apps_paths as $path) {
+            $base = $path . '/apps/' . $app . '/' . $app_version;
+            if (is_dir($base))
+                return $base;
+        }
     }
 
     /**
@@ -168,8 +165,7 @@ class Config
         else
             $app_version = "";
 
-        // FIXME: cleanup hard coded value below
-        return '/' . $app . '/' . $app_version . 'htdocs';
+        return '/approot/' . $app . '/' . $app_version . 'htdocs';
     }
 
     /**
@@ -213,8 +209,6 @@ class Config
         else
             $theme_version = "";
 
-        // FIXME: cleanup hard coded value below
-        // FIXME: merge common blocks of code
         return "/themes/" . $theme . $theme_version;
     }
 }

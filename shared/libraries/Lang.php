@@ -77,21 +77,13 @@ class Lang
 
         $langfile .= '_lang.php';
 
-        // Grab the development version 
-        if (!empty(Config::$clearos_devel_versions['app'][$app]))
-            $version = Config::$clearos_devel_versions['app'][$app];
-        else if (!empty(Config::$clearos_devel_versions['app']['default']))
-            $version = Config::$clearos_devel_versions['app']['default'];
-        else
-            $version = '';
-
         // FIXME - pull in language
         // $deft_lang = ( ! isset($config['language'])) ? 'english' : $config['language'];
         // $idiom = ($deft_lang == '') ? 'english' : $deft_lang;
         $language = 'en_US';
 
         // Load the language file
-        $langpath = Config::$apps_path . '/' . $app . '/' . $version . "/language/$language/$langfile";
+        $langpath = clearos_app_base($app) . "/language/$language/$langfile";
 
         if (file_exists($langpath)) {
             include "$langpath";
