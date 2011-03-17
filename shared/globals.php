@@ -92,7 +92,7 @@ if (Config::$debug_mode) {
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Returns the app URL
+ * Returns the app htdocs URL
  *
  * @param string $app app
  *
@@ -100,8 +100,13 @@ if (Config::$debug_mode) {
  */
 
 
-function clearos_app_url($app)
+function clearos_app_htdocs($app = NULL)
 {
+    // FIXME: fix inconsistent naming
+    if (is_null($app))
+        $app = uri_string();
+
+    return Config::get_app_url($app);
 }
 
 /**
