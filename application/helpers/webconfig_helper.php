@@ -292,7 +292,6 @@ function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $i
     $error = form_error($name);
 
     $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
-print_r($options);
 
     if ($readonly)
         $html = theme_field_view($options[$default], $label, $input_id, $ids);
