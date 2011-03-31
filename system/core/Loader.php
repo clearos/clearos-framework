@@ -64,6 +64,37 @@ class CI_Loader {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Factory Class Loader
+     *
+     * ClearOS uses factories for implementing drivers.
+	 *
+	 * @access	public
+	 * @param	string	the name of the class
+	 * @param	mixed	the optional parameters
+	 * @param	string	an optional object name
+	 * @return	void
+	 */
+	function factory($factory = '', $params = NULL, $object_name = NULL)
+	{
+        // ClearFoundation method
+
+        if ($object_name === NULL)
+            $object_name = preg_replace('/.*\//', '', $factory);
+
+        // Use two underscores just to avoid name conflicts
+        $factory_object = strtolower($object_name . '__factory');
+
+        // Find the name of the driver
+        $this->library($factory, NULL, $factory_object);
+        $driver = $this->$factory_object->framework_create();
+
+        // Load the library
+        $this->library($driver, $params, $object_name); 
+    }    
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Class Loader
 	 *
 	 * This function lets users load and instantiate classes.
