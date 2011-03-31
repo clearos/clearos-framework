@@ -122,6 +122,11 @@ function anchor_next($url, $importance = 'high', $attributes = NULL)
     return _anchor_common($url, lang('base_next'), $importance, 'clearos-anchor-next', $attributes);
 }
 
+function anchor_view($url, $importance = 'high', $attributes = NULL)
+{
+    return _anchor_common($url, lang('base_view'), $importance, 'clearos-anchor-view', $attributes);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // B U T T O N S
 ///////////////////////////////////////////////////////////////////////////////
