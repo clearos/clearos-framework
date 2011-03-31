@@ -261,7 +261,7 @@ class MY_Page
      * @return view
      */
 
-    public function view_form($form, $data, $title, $options)
+    public function view_form($form, $data, $title, $options = array())
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -575,7 +575,7 @@ class MY_Page
 
         $data['tooltip'] = (isset($data['forms'][$form]['tooltip'])) ? $data['forms'][$form]['tooltip'] : '';
 
-        return $this->framework->load->view('theme/help', $data, TRUE);
+        return theme_help_box($data);
     }
 
     /**
@@ -627,7 +627,7 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
 </script>
 ";
 
-        return $this->framework->load->view('theme/summary', $data, TRUE);
+        return theme_summary_box($data);
     }
 
     /**
@@ -698,6 +698,9 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
 
             if (! isset($app['basename'])) 
                 continue;
+
+            // FIXME: if "controllers" directory ! exists
+            //  continue;
 
             $primary_sort = empty($order[$app['category']]) ? '500' : $order[$app['category']];
             $secondary_sort = empty($order[$app['subcategory']]) ? '500' : $order[$app['subcategory']];
