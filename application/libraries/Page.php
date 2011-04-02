@@ -671,7 +671,9 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         $apps_list = array();
 
         foreach (Config::$apps_paths as $path) {
-            $raw_list = scandir($path . '/apps');
+            $path = (preg_match('/apps$/', $path)) ? $path : $path . '/apps'; // FIXME: temporary workaround for old version
+
+            $raw_list = scandir($path);
             foreach ($raw_list as $dir) {
                 if (! preg_match('/^\./', $dir))
                     $apps_list[] = $dir;

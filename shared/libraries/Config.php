@@ -130,7 +130,8 @@ class Config
 
     public static function get_app_base($app)
     {
-        Logger::profile(__METHOD__, __LINE__);
+        // FIXME: verbose
+        // Logger::profile(__METHOD__, __LINE__);
 
         if (isset(Config::$clearos_devel_versions['app'][$app]))
             $app_version = Config::$clearos_devel_versions['app'][$app];
@@ -140,7 +141,9 @@ class Config
             $app_version = "";
 
         foreach (Config::$apps_paths as $path) {
-            $base = $path . '/apps/' . $app . '/' . $app_version;
+            $path = (preg_match('/apps$/', $path)) ? $path : $path . '/apps'; // FIXME: temporary workaround for old version
+
+            $base = $path . '/' . $app . '/' . $app_version;
             if (is_dir($base))
                 return $base;
         }

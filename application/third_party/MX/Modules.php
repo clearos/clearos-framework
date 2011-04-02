@@ -24,8 +24,10 @@ if (!empty(ClearOsConfig::$clearos_devel_versions['framework']))
 $root_dir = str_repeat('../', substr_count($framework_path, '/') + 2);
 
 foreach (ClearOsConfig::$apps_paths as $app_path) {
-    $full_path = $app_path . '/apps/'; 
-    $relative_path = $root_dir . $app_path . '/apps/'; 
+    $app_path = (preg_match('/apps$/', $app_path)) ? $app_path : $app_path . '/apps'; // FIXME: temporary workaround for old version
+
+    $full_path = $app_path . '/'; 
+    $relative_path = $root_dir . $app_path . '/'; 
     Modules::$locations[$full_path] = $relative_path;
 }
 // ClearFoundation -- end

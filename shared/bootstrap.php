@@ -77,7 +77,7 @@ if (getenv('CLEAROS_BOOTSTRAP')) {
 
     $basedir = preg_replace('/\/framework\/.*/', '', dirname(__FILE__));
 
-    Config::$apps_paths = array($basedir);
+    Config::$apps_paths = array($basedir . '/apps');
     Config::$framework_path = $basedir . '/framework';
     Config::$htdocs_path = $basedir . '/framework/trunk/htdocs';
     Config::$themes_path = $basedir . '/themes';
