@@ -625,7 +625,7 @@ class CI_Form_validation {
 
 					if (!preg_match("/([^\.]+)\.(\w+)/", $rule, $matches)) {
                         // FIXME: throw an error here
-                        echo "FIXME: the validation rule is malformed";
+                        show_error("Ooops.  The validation rule is borked -  $rule");
 						continue;
                     }
 
@@ -638,7 +638,7 @@ class CI_Form_validation {
 					if ( ! method_exists($this->CI->$clear_object, $clear_method))
 					{ 		
                         // FIXME: throw an error here
-                        echo "FIXME: the validation rule is malformed";
+                        show_error("Ooops.  The validation rule is borked -  $clear_object->$clear_method");
 						continue;
 					}
 
