@@ -617,32 +617,31 @@ class CI_Form_validation {
 					if (empty($postdata) && ( ! in_array('required', $rules, TRUE) ))
 						continue;
 
-                    // Empty rule -- used in special cases 
-                    if ($rule === '.')
-                        continue;
+					// Empty rule -- used in special cases 
+					if ($rule === '.')
+						continue;
 
 					$matches = array();
 
 					if (!preg_match("/([^\.]+)\.(\w+)/", $rule, $matches)) {
-                        // FIXME: throw an error here
-                        show_error("Ooops.  The validation rule is borked -  $rule");
+						show_error("Ooops.  The validation rule is borked -  $rule");
 						continue;
-                    }
+					}
+
+					// The standard CI loader is not namespace aware, so 
+					// using clearos_load_library is required.
 
 					$clear_library = $matches[1];
 					$clear_method = $matches[2];
 
-					$this->CI->load->library($clear_library);
+					$clear_class_name = preg_replace('/\//', '\\', $clear_library);
+					$clear_class_name = "\\clearos\\apps\\$clear_class_name";
 
-					$clear_object = strtolower(preg_replace('/.*\//', '', $clear_library));
-					if ( ! method_exists($this->CI->$clear_object, $clear_method))
-					{ 		
-                        // FIXME: throw an error here
-                        show_error("Ooops.  The validation rule is borked -  $clear_object->$clear_method");
-						continue;
-					}
+					clearos_load_library($clear_library);
 
-					$error_message = $this->CI->$clear_object->$clear_method($postdata);
+					$clear_object = new $clear_class_name;
+
+					$error_message = $clear_object->$clear_method($postdata);
 
 					$result = ($error_message) ? FALSE : TRUE;	
 
