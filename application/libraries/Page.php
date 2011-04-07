@@ -705,7 +705,7 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
             //  continue;
 
             $primary_sort = empty($order[$app['category']]) ? '500' : $order[$app['category']];
-            $secondary_sort = empty($order[$app['subcategory']]) ? '500' : $order[$app['subcategory']];
+            $secondary_sort = empty($order[$app['subcategory']]) ? $app['subcategory'] : $order[$app['subcategory']];
             $page_sort = empty($app['priority']) ? '500' : $app['priority'];
 
             $menu_info = array();
@@ -723,6 +723,7 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         //------------------------------------------------
 
         ksort($sorted);
+print_r($sorted);
 
         $menu_data = array();
 
