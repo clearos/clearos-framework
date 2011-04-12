@@ -398,14 +398,14 @@ function field_progress_bar($name, $default, $label, $ids = NULL)
 // F O R M  H E A D E R / F O O T E R
 ///////////////////////////////////////////////////////////////////////////////
 
-function form_header($title)
+function form_header($title, $id = NULL)
 {
-    return theme_form_header($title);
+    return theme_form_header($title, $id);
 }
 
-function form_footer()
+function form_footer($d = NULL)
 {
-    return theme_form_footer();
+    return theme_form_footer($id);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -465,65 +465,19 @@ function progress_bar($id)
 // I N F O  B O X E S
 ///////////////////////////////////////////////////////////////////////////////
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// infobox -- generic dialog box routine.
-//
-// Note: do not be tempted to make this one table -- browsers do not behave!
-//
-// class:  the CSS class (intro, warning, info)
-// title:  the title to put in the box
-// icon:   the icon to display on the left hand side of the box
-// blurb:  blurb to display in dialog box
-//
-///////////////////////////////////////////////////////////////////////////////
-
-function infobox($type, $message)
+function infobox_critical($title, $message)
 {
-    if ($type == 'exception') {
-        $class = 'ui-state-error';
-        $iconclass = 'ui-icon-alert';
-    } else if ($type == 'critical') {
-        $class = 'ui-state-error';
-        $iconclass = 'ui-icon-alert';
-    } else if ($type == 'warning') {
-        $class = 'ui-state-highlight';
-        $iconclass = 'ui-icon-info';
-    } else if ($type == 'highlight') {
-        $class = 'ui-state-default';
-        $iconclass = 'ui-icon-info';
-    } else if ($type == 'help') {
-        $class = 'ui-state-default';
-        $iconclass = 'ui-icon-help';
-    }
-
-    return "
-        <div class='ui-widget'>
-            <div class='ui-corner-all $class' style='margin-top: 20px; padding: 0 .7em;'>
-                <span class='ui-icon $iconclass' style='float: left; margin-right: .3em; margin-top: 12px'>&nbsp; </span>$message
-            </div>
-        </div>
-    ";
+    return theme_infobox('critical', $title, $message);
 }
 
-function infobox_exception($message)
+function infobox_warning($title, $message)
 {
-    return infobox('exception', $message);
+    return theme_infobox('warning', $title, $message);
 }
 
-function infobox_critical($message)
+function infobox_highlight($title, $message)
 {
-    return infobox('critical', $message);
-}
-
-function infobox_warning($message)
-{
-    return infobox('warning', $message);
-}
-
-function infobox_highlight($message)
-{
-    return infobox('highlight', $message);
+    return theme_infobox('highlight', $title, $message);
 }
 
 

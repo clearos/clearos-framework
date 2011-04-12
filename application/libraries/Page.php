@@ -271,7 +271,6 @@ class MY_Page
         }
 */
 
-
         if (empty($this->data))
             $this->_load_meta_data();
 
