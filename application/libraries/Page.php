@@ -314,18 +314,17 @@ class MY_Page
 
         if ($this->framework->session->userdata['theme_mode'] === CLEAROS_MOBILE) {
 
-            // FIXME: cleanup _load_app_data()... don't know how to separate the data yet.
             $app_data = $this->_load_app_data();
 
             foreach ($forms as $form) {
                 $basename = preg_replace('/.*\//', '', $form);
-                $data[$form]['title'] = $app_data['forms'][$basename]['title'];
+                $data[$form]['title'] = $app_data['controllers'][$basename]['title'];
             }
 
             // Add common widgets
             $basename = preg_replace('/\/.*/', '', $form);
-            $data[$basename . '/help']['title'] = lang('base_help');
             $data[$basename . '/summary']['title'] = 'Summary'; // FIXME: Translate
+            $data[$basename . '/help']['title'] = 'Help'; // FIXME: Translate
 
             $this->data['app_view'] = theme_control_panel($data);
 
@@ -700,8 +699,9 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
             if (! isset($app['basename'])) 
                 continue;
 
-            // FIXME: if "controllers" directory ! exists
-            //  continue;
+            // If this is just a library, skip it
+            if (isset($app['menu_enabled']) && (!$app['menu_enabled']))
+                continue;
 
             $primary_sort = empty($order[$app['category']]) ? '500' : $order[$app['category']];
             $secondary_sort = empty($order[$app['subcategory']]) ? $app['subcategory'] : $order[$app['subcategory']];
