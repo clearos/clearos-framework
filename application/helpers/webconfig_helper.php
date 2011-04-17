@@ -230,14 +230,14 @@ function form_radio_set_close()
 // F I E L D  V I E W
 ///////////////////////////////////////////////////////////////////////////////
 
-function field_view($name, $value, $label, $ids = NULL)
+function field_view($label, $text, $name = NULL, $value = NULL, $ids = NULL)
 {
     // An input ID is required for the label.  See why @
     // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
 
     $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
-    $html = theme_field_view($value, $label, $input_id, $ids);
+    $html = theme_field_view($label, $text, $name, $value, $input_id, $ids);
 
     return $html;
 } 
@@ -257,7 +257,7 @@ function field_input($name, $default, $label, $readonly = FALSE, $ids = NULL)
     $error = form_error($name);
 
     if ($readonly)
-        $html = theme_field_view($value, $label, $input_id, $ids);
+        $html = theme_field_view($label, $value, $name, $value, $input_id, $ids);
     else
         $html = theme_field_input($name, $value, $label, $error, $input_id, $ids);
 
@@ -299,7 +299,7 @@ function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $i
     $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
     if ($readonly)
-        $html = theme_field_view($options[$default], $label, $input_id, $ids);
+        $html = theme_field_view($label, $options[$selected], $name, $selected, $input_id, $ids);
     else
         $html = theme_field_dropdown($name, $selected, $label, $error, $options, $input_id, $ids);
 
@@ -320,7 +320,7 @@ function field_simple_dropdown($name, $options, $default, $label, $readonly = FA
     $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
 
     if ($readonly)
-        $html = theme_field_view($default, $label, $input_id, $ids);
+        $html = theme_field_view($label, $options[$selected], $name, $selected, $input_id, $ids);
     else
         $html = theme_field_dropdown($name, $selected, $label, $error, $options, $input_id, $ids);
 
@@ -346,7 +346,7 @@ function field_toggle_enable_disable($name, $default, $label, $readonly = FALSE,
 
     if ($readonly) {
         $value = $options[$default];
-        $html = theme_field_view($value, $label, $input_id, $ids);
+        $html = theme_field_view($label, $options[$selected], $name, $selected, $input_id, $ids);
     } else {
         $html = theme_field_toggle_enable_disable($name, $selected, $label, $error, $options, $input_id, $ids);
     }
@@ -368,8 +368,11 @@ function field_checkbox($name, $default, $label, $readonly = FALSE, $ids = NULL)
     $value = ($readonly) ? $default : set_value($name, $default);
     $error = form_error($name);
 
+    // FIXME: this needs to be improved of course
+    $text = ($value) ? 'X' : '';
+
     if ($readonly)
-        $html = theme_field_view($value, $label, $input_id, $ids);
+        $html = theme_field_view($label, $text, $name, $value, $input_id, $ids);
     else
         $html = theme_field_checkbox($name, $value, $label, $error, $input_id, $ids);
 
