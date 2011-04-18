@@ -125,7 +125,8 @@ class CI_Lang {
 	 */
 	function line($line = '')
 	{
-		$line = ($line == '' OR ! isset($this->language[$line])) ? FALSE : $this->language[$line];
+        // ClearFoundation - return an translation error
+		$line = ($line == '' OR ! isset($this->language[$line])) ? 'Translation missing' : $this->language[$line];
 		return $line;
 	}
 
