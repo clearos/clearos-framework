@@ -173,6 +173,11 @@ function form_submit_update($name, $importance = 'high', $attributes = NULL)
     return _form_submit_common($name, lang('base_update'), $importance, 'clearos-form-submit-update', $attributes);
 }
 
+function form_submit_ok($name, $importance = 'high', $attributes = NULL)
+{
+    return _form_submit_common($name, lang('base_ok'), $importance, 'clearos-form-submit-ok', $attributes);
+}
+
 function form_submit_previous($name, $importance = 'high', $attributes = NULL)
 {
     return _form_submit_common($name, lang('base_previous'), $importance, 'clearos-form-submit-previous', $attributes);
