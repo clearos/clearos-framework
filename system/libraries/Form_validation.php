@@ -31,9 +31,9 @@ class CI_Form_validation {
 	var $_config_rules			= array();
 	var $_error_array			= array();
 	var $_error_messages		= array();
-	// ClearFoundation -- set defaults
-	var $_error_prefix			= '<span class="validation-error">';
-	var $_error_suffix			= '</span>';
+	// ClearFoundation -- set to span tag
+	var $_error_prefix			= '';
+	var $_error_suffix			= '';
 	var $error_string			= '';
 	var $_safe_form_data		= FALSE;
 
