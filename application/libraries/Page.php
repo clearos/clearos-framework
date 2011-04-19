@@ -377,7 +377,8 @@ class MY_Page
             $this->_load_meta_data();
 
         // FIXME: might want to make this a splash type
-        $this->data['title'] = 'Exception'; // FIXME: translate
+        $this->data['type'] = MY_Page::TYPE_REPORT;
+        $this->data['title'] = 'Ooops';
         $this->data['app_view'] = theme_dialog_warning($exception->GetMessage());
 
         $this->_display_page();
