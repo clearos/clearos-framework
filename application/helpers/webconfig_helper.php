@@ -42,8 +42,6 @@ require_once $bootstrap . '/bootstrap.php';
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
-// clearos_load_language('base');
-
 // FIXME
 define('CLEAROS_MOBILE', 'mobile');
 
@@ -52,79 +50,78 @@ define('CLEAROS_MOBILE', 'mobile');
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Common function for all anchor_* calls.
+ * Custom anchor.
  */
 
-function _anchor_common($url, $text, $importance, $class, $attributes = NULL)
+function anchor_custom($url, $text, $importance, $options = NULL)
 {
-    $id = (isset($attributes['id'])) ? $attributes['id'] : 'clearos' . mt_rand();
-
-    // Call theme hook
-    return "\t" . theme_anchor($url, $text, $importance, $class, $id);
+    return theme_anchor($url, $text, $importance, 'clearos-anchor-custom', $options);
 }
 
 /**
- * Custom anchors
+ * Dialog box anchor
  */
 
-function anchor_custom($url, $text, $importance, $attributes = NULL)
+function anchor_dialog($id, $text, $importance, $options = NULL)
 {
-    return _anchor_common($url, $text, $importance, 'clearos-anchor-custom', $attributes);
+    $options['id'] = $id;
+
+    return theme_anchor('#', $text, $importance, 'clearos-anchor-dialog', $options);
 }
 
 /**
  * Javascript anchor
  */
 
-function anchor_javascript($id, $text, $importance, $attributes = NULL)
+function anchor_javascript($id, $text, $importance, $options = NULL)
 {
-    $attributes['id'] = $id;
+    $options['id'] = $id;
 
-    return _anchor_common('#', $text, $importance, 'clearos-anchor-javascript', $attributes);
+    return theme_anchor('#', $text, $importance, 'clearos-anchor-javascript', $options);
 }
 
 /**
- * Standard anchors
+ * Standard anchors.
  */
 
-function anchor_add($url, $importance = 'high', $attributes = NULL)
+function anchor_add($url, $importance = 'high', $options = NULL)
 {
-    return _anchor_common($url, lang('base_add'), $importance, 'clearos-anchor-add', $attributes);
+    return theme_anchor($url, lang('base_add'), $importance, 'clearos-anchor-add', $options);
 }
 
-function anchor_edit($url, $importance = 'high', $attributes = NULL)
+function anchor_cancel($url, $importance = 'low', $options = NULL)
 {
-    return _anchor_common($url, lang('base_edit'), $importance, 'clearos-anchor-edit', $attributes);
+    return theme_anchor($url, lang('base_cancel'), $importance, 'clearos-anchor-cancel', $options);
 }
 
-function anchor_cancel($url, $importance = 'low', $attributes = NULL)
+function anchor_delete($url, $importance = 'low', $options = NULL)
 {
-    return _anchor_common($url, lang('base_cancel'), $importance, 'clearos-anchor-cancel', $attributes);
+    return theme_anchor($url, lang('base_delete'), $importance, 'clearos-anchor-delete', $options);
 }
 
-function anchor_delete($url, $importance = 'low', $attributes = NULL)
+function anchor_edit($url, $importance = 'high', $options = NULL)
 {
-    return _anchor_common($url, lang('base_delete'), $importance, 'clearos-anchor-delete', $attributes);
+    return theme_anchor($url, lang('base_edit'), $importance, 'clearos-anchor-edit', $options);
 }
 
-function anchor_ok($url, $importance = 'high', $attributes = NULL)
+function anchor_next($url, $importance = 'high', $options = NULL)
 {
-    return _anchor_common($url, lang('base_ok'), $importance, 'clearos-anchor-ok', $attributes);
+    return theme_anchor($url, lang('base_next'), $importance, 'clearos-anchor-next', $options);
 }
 
-function anchor_previous($url, $importance = 'high', $attributes = NULL)
+function anchor_ok($url, $importance = 'high', $options = NULL)
 {
-    return _anchor_common($url, lang('base_previous'), $importance, 'clearos-anchor-previous', $attributes);
+    return theme_anchor($url, lang('base_ok'), $importance, 'clearos-anchor-ok', $options);
 }
 
-function anchor_next($url, $importance = 'high', $attributes = NULL)
+function anchor_previous($url, $importance = 'high', $options = NULL)
 {
-    return _anchor_common($url, lang('base_next'), $importance, 'clearos-anchor-next', $attributes);
+    return theme_anchor($url, lang('base_previous'), $importance, 'clearos-anchor-previous', $options);
 }
 
-function anchor_view($url, $importance = 'high', $attributes = NULL)
+function anchor_view($url, $importance = 'high', $options = NULL)
 {
-    return _anchor_common($url, lang('base_view'), $importance, 'clearos-anchor-view', $attributes);
+    return theme_anchor($url, lang('base_view'), $importance, 'clearos-anchor-view', $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,65 +129,51 @@ function anchor_view($url, $importance = 'high', $attributes = NULL)
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Common function for all form_submit_* calls.
- */
-
-function _form_submit_common($name, $text, $importance, $class, $attributes = NULL)
-{
-    // FIXME
-    $id = (isset($attributes['id'])) ? $attributes['id'] : "FIXME_$name";
-    // $class = ...
-
-    // Call theme hook
-    return "\t" . theme_form_submit($name, $text, $importance, $class, $id);
-}
-
-/**
  * Custom submit buttons
  */
 
-function form_submit_custom($name, $text, $importance, $attributes = NULL)
+function form_submit_custom($name, $text, $importance, $options = NULL)
 {
-    return _form_submit_common($name, $text, $importance, 'clearos-form-submit-custom', $attributes);
+    return theme_form_submit($name, $text, $importance, 'clearos-form-submit-custom', $options);
 }
 
 /**
  * Standard submit buttons
  */
 
-function form_submit_add($name, $importance = 'high', $attributes = NULL)
+function form_submit_add($name, $importance = 'high', $options = NULL)
 {
-    return _form_submit_common($name, lang('base_add'), $importance, 'clearos-form-submit-add', $attributes);
+    return theme_form_submit($name, lang('base_add'), $importance, 'clearos-form-submit-add', $options);
 }
 
-function form_submit_delete($name, $importance = 'low', $attributes = NULL)
+function form_submit_delete($name, $importance = 'low', $options = NULL)
 {
-    return _form_submit_common($name, lang('base_delete'), $importance, 'clearos-form-submit-delete', $attributes);
+    return theme_form_submit($name, lang('base_delete'), $importance, 'clearos-form-submit-delete', $options);
 }
 
-function form_submit_update($name, $importance = 'high', $attributes = NULL)
+function form_submit_update($name, $importance = 'high', $options = NULL)
 {
-    return _form_submit_common($name, lang('base_update'), $importance, 'clearos-form-submit-update', $attributes);
+    return theme_form_submit($name, lang('base_update'), $importance, 'clearos-form-submit-update', $options);
 }
 
-function form_submit_ok($name, $importance = 'high', $attributes = NULL)
+function form_submit_ok($name, $importance = 'high', $options = NULL)
 {
-    return _form_submit_common($name, lang('base_ok'), $importance, 'clearos-form-submit-ok', $attributes);
+    return theme_form_submit($name, lang('base_ok'), $importance, 'clearos-form-submit-ok', $options);
 }
 
-function form_submit_previous($name, $importance = 'high', $attributes = NULL)
+function form_submit_previous($name, $importance = 'high', $options = NULL)
 {
-    return _form_submit_common($name, lang('base_previous'), $importance, 'clearos-form-submit-previous', $attributes);
+    return theme_form_submit($name, lang('base_previous'), $importance, 'clearos-form-submit-previous', $options);
 }
 
-function form_submit_next($name, $importance = 'high', $attributes = NULL)
+function form_submit_next($name, $importance = 'high', $options = NULL)
 {
-    return _form_submit_common($name, lang('base_next'), $importance, 'clearos-form-submit-next', $attributes);
+    return theme_form_submit($name, lang('base_next'), $importance, 'clearos-form-submit-next', $options);
 }
 
-function form_submit_disable($name, $importance = 'low', $attributes = NULL)
+function form_submit_disable($name, $importance = 'low', $options = NULL)
 {
-    return _form_submit_common($name, lang('base_disable'), $importance, 'clearos-form-submit-disable', $attributes);
+    return theme_form_submit($name, lang('base_disable'), $importance, 'clearos-form-submit-disable', $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -385,19 +368,38 @@ function field_checkbox($name, $default, $label, $readonly = FALSE, $ids = NULL)
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
-// F I E L D  P R O G R E S S  B A R
+// P R O G R E S S  B A R S
 ///////////////////////////////////////////////////////////////////////////////
 
-function field_progress_bar($name, $default, $label, $ids = NULL)
+/**
+ * Display a progress bar as part of a form field.
+ *
+ * @param string $label   form field label
+ * @param string $id      HTML ID
+ * @param array  $options options
+ *
+ * @return string HTML output
+ */
+
+function field_progress_bar($label, $id, $options)
 {
-    // An input ID is required for the label.  See why @
-    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+    $html = theme_field_progress_bar($label, $id, $options);
 
-    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
+    return $html;
+}
 
-    $value = set_value($name, $default);
+/**
+ * Display a progress bar as standalone entity.
+ *
+ * @param string $id      HTML ID
+ * @param array  $options options
+ *
+ * @return string HTML output
+ */
 
-    $html = theme_field_progress_bar($value, $label, $input_id, $ids);
+function progress_bar($id, $options)
+{
+    $html = theme_progress_bar($id, $options);
 
     return $html;
 } 
@@ -457,16 +459,6 @@ function dialogbox_confirm_delete($message, $items, $ok_anchor, $cancel_anchor)
 function dialogbox_confirm($message, $ok_anchor, $cancel_anchor)
 {
     return theme_dialogbox_confirm($message, $ok_anchor, $cancel_anchor);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// P R O G R E S S  B A R
-///////////////////////////////////////////////////////////////////////////////
-
-function progress_bar($id)
-{
-    // Jquery mobile progress bar was not in alpha, but expected in 1.0 
-    return "<div class='progressbar' id='$id'></div>";
 }
 
 ///////////////////////////////////////////////////////////////////////////////
