@@ -203,8 +203,8 @@ function clearos_load_language($lang_file)
 
     if (defined('BASEPATH')) {
         include_once Config::$framework_path . '/system/core/CodeIgniter.php';
-        $codeigniter =& get_instance();
-        $codeigniter->lang->load($lang_file);
+        $framework =& get_instance();
+        $framework->lang->load($lang_file);
     } else if (isset($clearos_lang)) {
         $clearos_lang->load($lang_file);
     }
