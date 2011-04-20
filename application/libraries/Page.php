@@ -573,8 +573,6 @@ class MY_Page
         if (empty($data['support_url']))
             $data['support_url'] = 'http://www.clearcenter.com/getsupport/FIXME';
 
-        $data['tooltip'] = (isset($data['controllers'][$form]['tooltip'])) ? $data['controllers'][$form]['tooltip'] : '';
-
         return theme_help_box($data);
     }
 
@@ -615,6 +613,8 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__);
 
         $data = $this->_load_app_data();
+
+        $data['tooltip'] = (isset($data['controllers'][$form]['tooltip'])) ? $data['controllers'][$form]['tooltip'] : '';
 
         // FIXME: fake data here
         $data['subscription_expiration'] = 'July 1, 2011';
