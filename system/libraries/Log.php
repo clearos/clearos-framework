@@ -98,14 +98,9 @@ class CI_Log {
 		if (!Config::$debug_mode) 
 			return FALSE;
 
-		if (!empty(Config::$clearos_devel_versions['framework']))
-			$version = Config::$clearos_devel_versions['framework'];
-		else
-			$version = '';
-
 		// See Error.php for explanation of error code handling
-		require_once(Config::$framework_path . '/' . $version . '/shared/libraries/Logger.php');
-		require_once(Config::$framework_path . '/' . $version . '/shared/libraries/Error.php');
+		require_once(Config::$framework_path . '/shared/libraries/Logger.php');
+		require_once(Config::$framework_path . '/shared/libraries/Error.php');
 
 		if ($level === 'ERROR') {
 			$clearos_level = CLEAROS_ERROR;

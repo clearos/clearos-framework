@@ -73,12 +73,11 @@ if (getenv('CLEAROS_BOOTSTRAP')) {
 
     // Paths
     //----------------------------------------------------------------
-    // FIXME: trunk should not be hardcoded.
 
     $basedir = preg_replace('/\/framework\/.*/', '', dirname(__FILE__));
 
     Config::$apps_paths = array($basedir . '/apps');
-    Config::$framework_path = $basedir . '/framework';
+    Config::$framework_path = $basedir . '/framework/trunk';
     Config::$htdocs_path = $basedir . '/framework/trunk/htdocs';
     Config::$themes_path = $basedir . '/themes';
 
@@ -95,14 +94,8 @@ if (getenv('CLEAROS_BOOTSTRAP')) {
 if (isset($_SERVER['CLEAROS_CONFIG']) && file_exists($_SERVER['CLEAROS_CONFIG']))
     require_once($_SERVER['CLEAROS_CONFIG']);
 
-
 ///////////////////////////////////////////////////////////////////////////////
 // C O R E  F U N C T I O N S  A N D  H E L P E R S
 ///////////////////////////////////////////////////////////////////////////////
 
-if (!empty(Config::$clearos_devel_versions['framework']))
-    $version = Config::$clearos_devel_versions['framework'];
-else
-    $version = '';
-
-require_once Config::$framework_path . '/' . $version . '/shared/globals.php';
+require_once Config::$framework_path . '/shared/globals.php';

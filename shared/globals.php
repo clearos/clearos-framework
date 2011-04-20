@@ -201,8 +201,8 @@ function clearos_load_language($lang_file)
     // Load language - CodeIgniter access, or direct access
     //-----------------------------------------------------
 
-    if (isset($_SERVER['REQUEST_URI'])) {
-        include_once BASEPATH . '/core/CodeIgniter.php';
+    if (defined('BASEPATH')) {
+        include_once Config::$framework_path . '/system/core/CodeIgniter.php';
         $codeigniter =& get_instance();
         $codeigniter->lang->load($lang_file);
     } else if (isset($clearos_lang)) {

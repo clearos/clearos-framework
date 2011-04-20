@@ -15,13 +15,8 @@ use \clearos\framework\Config as ClearOsConfig;
 // The router needs the relative path to the "apps" directory. 
 // Counting the number of slashes in the paths should work.
 
-$framework_path = ClearOsConfig::$framework_path;
-
-if (!empty(ClearOsConfig::$clearos_devel_versions['framework']))
-	$framework_path .= '/trunk';
-
 // The +2 is to account for the additional 'application/core/' subdirectory.
-$root_dir = str_repeat('../', substr_count($framework_path, '/') + 2);
+$root_dir = str_repeat('../', substr_count(ClearOsConfig::$framework_path, '/') + 2);
 
 foreach (ClearOsConfig::$apps_paths as $app_path) {
     $app_path = (preg_match('/apps$/', $app_path)) ? $app_path : $app_path . '/apps'; // FIXME: temporary workaround for old version
