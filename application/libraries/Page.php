@@ -573,7 +573,7 @@ class MY_Page
         if (empty($data['support_url']))
             $data['support_url'] = 'http://www.clearcenter.com/getsupport/FIXME';
 
-        $data['tooltip'] = (isset($data['forms'][$form]['tooltip'])) ? $data['forms'][$form]['tooltip'] : '';
+        $data['tooltip'] = (isset($data['controllers'][$form]['tooltip'])) ? $data['controllers'][$form]['tooltip'] : 'wtf';
 
         return theme_help_box($data);
     }
