@@ -271,18 +271,17 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data();
 
-$form = "/app/radius";
-        // $message = isset($options['message']) ? $options['message'] : 'Are you sure you want to delete the following?'; // FIXME translate
-        $this->data['title'] = 'Confirm Delete'; // FIXME: translate
-        $this->data['type'] =  isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
+        $app = $this->framework->uri->segment(1);
 
-        $this->data['app_view'] = theme_confirm_delete($confirm, $cancel, $items, $message. $options);
-        $this->data['page_help'] = $this->_get_help_view($form);
-        $this->data['page_summary'] = $this->_get_summary_view($form);
-        $this->data['page_report'] = $this->_get_report_view($form);
+        $message = isset($options['message']) ? $options['message'] : 'Are you sure you want to delete the following?'; // FIXME translate
+
+        $this->data['title'] = 'Confirm Delete'; // FIXME: translate
+        $this->data['app_view'] = theme_confirm_delete($confirm, $cancel, $items, $message, $options);
+        $this->data['page_help'] = $this->_get_help_view($app);
+        $this->data['page_summary'] = $this->_get_summary_view($app);
+        $this->data['page_report'] = $this->_get_report_view($app);
 
         $this->_display_page();
-        // return theme_confirm_delete($data, $title, $options);
     }
 
     /**
