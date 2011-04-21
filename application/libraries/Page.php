@@ -104,6 +104,9 @@ class MY_Page
     const TYPE_SPLASH = 'splash';
     const TYPE_WIZARD = 'wizard';
 
+    const MODE_CONTROL_PANEL = 'control_panel';
+    const MODE_NORMAL = 'normal';
+
     ///////////////////////////////////////////////////////////////////////////////
     // V A R I A B L E S
     ///////////////////////////////////////////////////////////////////////////////
@@ -251,8 +254,35 @@ class MY_Page
         if ($this->form_only)
             return;
 
-        if ($this->framework->session->userdata['theme_mode'] !== CLEAROS_MOBILE)
+        if ($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL)
             redirect($redirect);
+    }
+
+    /**
+     * Displays delete confirmation.
+     *
+     * @return view
+     */
+
+    public function view_confirm_delete($confirm, $cancel, $items, $options = array())
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+   
+        if (empty($this->data))
+            $this->_load_meta_data();
+
+$form = "/app/radius";
+        // $message = isset($options['message']) ? $options['message'] : 'Are you sure you want to delete the following?'; // FIXME translate
+        $this->data['title'] = 'Confirm Delete'; // FIXME: translate
+        $this->data['type'] =  isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
+
+        $this->data['app_view'] = theme_confirm_delete($confirm, $cancel, $items, $message. $options);
+        $this->data['page_help'] = $this->_get_help_view($form);
+        $this->data['page_summary'] = $this->_get_summary_view($form);
+        $this->data['page_report'] = $this->_get_report_view($form);
+
+        $this->_display_page();
+        // return theme_confirm_delete($data, $title, $options);
     }
 
     /**
@@ -267,14 +297,12 @@ class MY_Page
 
 /*
         // FIXME: what to do with help and summary widgets 
-        if ($this->framework->session->userdata['theme_mode'] === CLEAROS_MOBILE) {
+        if ($this->framework->session->userdata['theme_mode'] === self::MODE_CONTROL_PANEL) {
         }
 */
 
         if (empty($this->data))
             $this->_load_meta_data();
-
-        $app_data = $this->_load_app_data();
 
         $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
@@ -312,7 +340,7 @@ class MY_Page
         // Control panel style
         //--------------------
 
-        if ($this->framework->session->userdata['theme_mode'] === CLEAROS_MOBILE) {
+        if ($this->framework->session->userdata['theme_mode'] === self::MODE_CONTROL_PANEL) {
 
             $app_data = $this->_load_app_data();
 

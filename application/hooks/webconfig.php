@@ -172,14 +172,14 @@ function webconfig_session()
     //------
 
     $session['theme'] = "clearos6x";
-    $session['theme_mode'] = 'normal';
+    $session['theme_mode'] = 'normal'; // FIXME: use Page::MODE_NORMAL
 
     if (file_exists(COMMON_CORE_DIR . "/api/Webconfig.php")) {
         require_once(COMMON_CORE_DIR . "/api/Webconfig.php");
 
         try {
             $session['theme'] = $webconfig->GetTemplate();
-            $session['theme_mode'] = 'normal';
+            $session['theme_mode'] = 'normal'; // FIXME: use Page::MODE_NORMAL
         } catch (Exception $e) {
             // Use default
         }

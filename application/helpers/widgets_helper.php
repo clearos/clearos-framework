@@ -39,89 +39,179 @@ $bootstrap = getenv('CLEAROS_BOOTSTRAP') ? getenv('CLEAROS_BOOTSTRAP') : '/usr/c
 require_once $bootstrap . '/bootstrap.php';
 
 ///////////////////////////////////////////////////////////////////////////////
-// D E P E N D E N C I E S
-///////////////////////////////////////////////////////////////////////////////
-
-// FIXME
-define('CLEAROS_MOBILE', 'mobile');
-
-///////////////////////////////////////////////////////////////////////////////
 // A N C H O R S
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
  * Custom anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $text       anchor text
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
  */
 
 function anchor_custom($url, $text, $importance, $options = NULL)
 {
-    return theme_anchor($url, $text, $importance, 'clearos-anchor-custom', $options);
+    return theme_anchor($url, $text, $importance, 'theme-anchor-custom', $options);
 }
 
 /**
- * Dialog box anchor
+ * Dialog box anchor.
+ *
+ * @param string $id         HTML ID
+ * @param string $text       anchor text
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
  */
 
 function anchor_dialog($id, $text, $importance, $options = NULL)
 {
     $options['id'] = $id;
 
-    return theme_anchor('#', $text, $importance, 'clearos-anchor-dialog', $options);
+    return theme_anchor('#', $text, $importance, 'theme-anchor-dialog', $options);
 }
 
 /**
- * Javascript anchor
+ * Javascript anchor.
+ *
+ * @param string $id         HTML ID
+ * @param string $text       anchor text
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
  */
 
 function anchor_javascript($id, $text, $importance, $options = NULL)
 {
     $options['id'] = $id;
 
-    return theme_anchor('#', $text, $importance, 'clearos-anchor-javascript', $options);
+    return theme_anchor('#', $text, $importance, 'theme-anchor-javascript', $options);
 }
 
 /**
- * Standard anchors.
+ * Add anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
  */
 
 function anchor_add($url, $importance = 'high', $options = NULL)
 {
-    return theme_anchor($url, lang('base_add'), $importance, 'clearos-anchor-add', $options);
+    return theme_anchor($url, lang('base_add'), $importance, 'theme-anchor-add', $options);
 }
+
+/**
+ * Cancel anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
 
 function anchor_cancel($url, $importance = 'low', $options = NULL)
 {
-    return theme_anchor($url, lang('base_cancel'), $importance, 'clearos-anchor-cancel', $options);
+    return theme_anchor($url, lang('base_cancel'), $importance, 'theme-anchor-cancel', $options);
 }
+
+/**
+ * Delete anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
 
 function anchor_delete($url, $importance = 'low', $options = NULL)
 {
-    return theme_anchor($url, lang('base_delete'), $importance, 'clearos-anchor-delete', $options);
+    return theme_anchor($url, lang('base_delete'), $importance, 'theme-anchor-delete', $options);
 }
+
+/**
+ * Edit anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
 
 function anchor_edit($url, $importance = 'high', $options = NULL)
 {
-    return theme_anchor($url, lang('base_edit'), $importance, 'clearos-anchor-edit', $options);
+    return theme_anchor($url, lang('base_edit'), $importance, 'theme-anchor-edit', $options);
 }
+
+/**
+ * Next anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
 
 function anchor_next($url, $importance = 'high', $options = NULL)
 {
-    return theme_anchor($url, lang('base_next'), $importance, 'clearos-anchor-next', $options);
+    return theme_anchor($url, lang('base_next'), $importance, 'theme-anchor-next', $options);
 }
+
+/**
+ * Okay anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
 
 function anchor_ok($url, $importance = 'high', $options = NULL)
 {
-    return theme_anchor($url, lang('base_ok'), $importance, 'clearos-anchor-ok', $options);
+    return theme_anchor($url, lang('base_ok'), $importance, 'theme-anchor-ok', $options);
 }
+
+/**
+ * Previous anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
 
 function anchor_previous($url, $importance = 'high', $options = NULL)
 {
-    return theme_anchor($url, lang('base_previous'), $importance, 'clearos-anchor-previous', $options);
+    return theme_anchor($url, lang('base_previous'), $importance, 'theme-anchor-previous', $options);
 }
+
+/**
+ * View anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
 
 function anchor_view($url, $importance = 'high', $options = NULL)
 {
-    return theme_anchor($url, lang('base_view'), $importance, 'clearos-anchor-view', $options);
+    return theme_anchor($url, lang('base_view'), $importance, 'theme-anchor-view', $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -129,76 +219,372 @@ function anchor_view($url, $importance = 'high', $options = NULL)
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Custom submit buttons
+ * Custom submit button.
+ *
+ * @param string $name       name of submit button
+ * @param string $text       anchor text
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
  */
 
 function form_submit_custom($name, $text, $importance, $options = NULL)
 {
-    return theme_form_submit($name, $text, $importance, 'clearos-form-submit-custom', $options);
+    return theme_form_submit($name, $text, $importance, 'theme-form-submit-custom', $options);
 }
 
 /**
- * Standard submit buttons
+ * Add submit button.
+ *
+ * @param string $name       name of submit button
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
  */
 
 function form_submit_add($name, $importance = 'high', $options = NULL)
 {
-    return theme_form_submit($name, lang('base_add'), $importance, 'clearos-form-submit-add', $options);
+    return theme_form_submit($name, lang('base_add'), $importance, 'theme-form-submit-add', $options);
 }
+
+/**
+ * Delete submit button.
+ *
+ * @param string $name       name of submit button
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
 
 function form_submit_delete($name, $importance = 'low', $options = NULL)
 {
-    return theme_form_submit($name, lang('base_delete'), $importance, 'clearos-form-submit-delete', $options);
+    return theme_form_submit($name, lang('base_delete'), $importance, 'theme-form-submit-delete', $options);
 }
 
-function form_submit_update($name, $importance = 'high', $options = NULL)
-{
-    return theme_form_submit($name, lang('base_update'), $importance, 'clearos-form-submit-update', $options);
-}
-
-function form_submit_ok($name, $importance = 'high', $options = NULL)
-{
-    return theme_form_submit($name, lang('base_ok'), $importance, 'clearos-form-submit-ok', $options);
-}
-
-function form_submit_previous($name, $importance = 'high', $options = NULL)
-{
-    return theme_form_submit($name, lang('base_previous'), $importance, 'clearos-form-submit-previous', $options);
-}
-
-function form_submit_next($name, $importance = 'high', $options = NULL)
-{
-    return theme_form_submit($name, lang('base_next'), $importance, 'clearos-form-submit-next', $options);
-}
+/**
+ * Disable submit button.
+ *
+ * @param string $name       name of submit button
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
 
 function form_submit_disable($name, $importance = 'low', $options = NULL)
 {
-    return theme_form_submit($name, lang('base_disable'), $importance, 'clearos-form-submit-disable', $options);
+    return theme_form_submit($name, lang('base_disable'), $importance, 'theme-form-submit-disable', $options);
+}
+
+/**
+ * Next submit button.
+ *
+ * @param string $name       name of submit button
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function form_submit_next($name, $importance = 'high', $options = NULL)
+{
+    return theme_form_submit($name, lang('base_next'), $importance, 'theme-form-submit-next', $options);
+}
+
+/**
+ * Okay submit button.
+ *
+ * @param string $name       name of submit button
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function form_submit_ok($name, $importance = 'high', $options = NULL)
+{
+    return theme_form_submit($name, lang('base_ok'), $importance, 'theme-form-submit-ok', $options);
+}
+
+/**
+ * Previous submit button.
+ *
+ * @param string $name       name of submit button
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function form_submit_previous($name, $importance = 'high', $options = NULL)
+{
+    return theme_form_submit($name, lang('base_previous'), $importance, 'theme-form-submit-previous', $options);
+}
+
+/**
+ * Update submit button.
+ *
+ * @param string $name       name of submit button
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function form_submit_update($name, $importance = 'high', $options = NULL)
+{
+    return theme_form_submit($name, lang('base_update'), $importance, 'theme-form-submit-update', $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // B U T T O N  S E T S
 ///////////////////////////////////////////////////////////////////////////////
 
-function button_set($buttons, $attributes = NULL)
-{
-    // FIXME
-    $id = (isset($attributes['id'])) ? $attributes['id'] : 'clearos' . mt_rand();
+/**
+ * Button set.
+ *
+ * @param array $buttons buttons array
+ * @param array $options options
+ *
+ * @return string HTML
+ */
 
-    $html = theme_button_set($buttons, $id);
+function button_set($buttons, $options = NULL)
+{
+    return theme_button_set($buttons, $options);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  V I E W
+///////////////////////////////////////////////////////////////////////////////
+//
+// For the field_X functions, an input ID is required for the label.  See why @
+// http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
+//
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Field view.
+ *
+ * @param string $label   label for text input field
+ * @param string $text    text shown
+ * @param string $name    name of text input element
+ * @param string $value   value of text input 
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function field_view($label, $text, $name = NULL, $value = NULL, $options = NULL)
+{
+    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+
+    return theme_field_view($label, $text, $name, $value, $input_id, $options);
+} 
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  I N P U T
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Text input field.
+ *
+ * @param string $name      name of text input element
+ * @param string $value     value of text input 
+ * @param string $label     label for text input field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_input($name, $value, $label, $read_only = FALSE, $options = NULL)
+{
+    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $value = ($read_only) ? $value : set_value($name, $value);
+    $error = form_error($name);
+
+    if ($read_only)
+        $html = theme_field_view($label, $value, $name, $value, $input_id, $options);
+    else
+        $html = theme_field_input($name, $value, $label, $error, $input_id, $options);
+
+    return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  P A S S W O R D
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Password input field.
+ *
+ * @param string $name      name of text input element
+ * @param string $value     value of text input 
+ * @param string $label     label for text input field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_password($name, $value, $label, $read_only = FALSE, $options = NULL)
+{
+    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $value = ($read_only) ? $value : set_value($name, $value);
+    $error = form_error($name);
+
+    if ($read_only)
+        $html = theme_field_view($label, $value, $name, $value, $input_id, $options);
+    else
+        $html = theme_field_password($name, $value, $label, $error, $input_id, $options);
+
+    return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  D R O P D O W N
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Dropdown box field for hash arrays.
+ *
+ * @param string $name      name of text input element
+ * @param array  $values    hash list of values for dropdown
+ * @param string $value     value of text input 
+ * @param string $label     label for text input field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_dropdown($name, $values, $value, $label, $read_only = FALSE, $options = NULL)
+{
+    $value = ($read_only) ? $value : set_value($name, $value);
+    $error = form_error($name);
+    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+
+    if ($read_only)
+        $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
+    else
+        $html = theme_field_dropdown($name, $value, $label, $error, $values, $input_id, $options);
 
     return $html;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// F I E L D  S I M P L E  D R O P D O W N
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Dropdown box field for simple arrays.
+ *
+ * @param string $name      name of text input element
+ * @param array  $values    hash list of values for dropdown
+ * @param string $value     value of text input 
+ * @param string $label     label for text input field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_simple_dropdown($name, $values, $value, $label, $read_only = FALSE, $options = NULL)
+{
+    $value = ($read_only) ? $value : set_value($name, $value);
+    $error = form_error($name);
+    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+
+    $values = convert_to_hash($values);
+
+    if ($read_only)
+        $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
+    else
+        $html = theme_field_dropdown($name, $value, $label, $error, $values, $input_id, $options);
+
+    return $html;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  T O G G L E
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Enable/disable toggle field.
+ *
+ * @param string $name      name of text input element
+ * @param string $value     value of text input 
+ * @param string $label     label for text input field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_toggle_enable_disable($name, $value, $label, $read_only = FALSE, $options = NULL)
+{
+    $value = ($read_only) ? $value : set_value($name, $value);
+    $error = form_error($name);
+    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+
+    $values = array(
+        '0' => lang('base_disabled'),
+        '1' => lang('base_enabled')
+    );
+
+    if ($read_only) {
+        $value = $values[$value];
+        $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
+    } else {
+        $html = theme_field_toggle_enable_disable($name, $value, $label, $error, $values, $input_id, $options);
+    }
+
+    return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  C H E C K B O X E S
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Checkbox field.
+ *
+ * @param string $name      name of text input element
+ * @param string $value     value of text input 
+ * @param string $label     label for text input field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_checkbox($name, $value, $label, $read_only = FALSE, $options = NULL)
+{
+    $value = ($read_only) ? $value : set_value($name, $value);
+    $error = form_error($name);
+    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+
+    // FIXME: this needs to be improved of course
+    $text = ($value) ? 'X' : '';
+
+    if ($read_only)
+        $html = theme_field_view($label, $text, $name, $value, $input_id, $options);
+    else
+        $html = theme_field_checkbox($name, $value, $label, $error, $input_id, $options);
+
+    return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
 // R A D I O  S E T S
 ///////////////////////////////////////////////////////////////////////////////
 
-function form_radio_set_open($class, $orientation)
+function form_radio_set_open($class, $orientation, $options = NULL)
 {
-// return "<div data-role='fieldcontain'>
-//    <fieldset data-role='controlgroup' data-type='horizontal'>
-//";
     return "<div class='$class'>\n";
 }
 
@@ -209,163 +595,8 @@ function form_radio_set_item($id, $name, $label, $checked = FALSE)
 
 function form_radio_set_close()
 {
-//    return "   </fieldset>
-// </div>";
     return "</div>\n";
 }
-
-///////////////////////////////////////////////////////////////////////////////
-// F I E L D  V I E W
-///////////////////////////////////////////////////////////////////////////////
-
-function field_view($label, $text, $name = NULL, $value = NULL, $ids = NULL)
-{
-    // An input ID is required for the label.  See why @
-    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
-
-    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
-
-    $html = theme_field_view($label, $text, $name, $value, $input_id, $ids);
-
-    return $html;
-} 
-
-///////////////////////////////////////////////////////////////////////////////
-// F I E L D  I N P U T
-///////////////////////////////////////////////////////////////////////////////
-
-function field_input($name, $default, $label, $readonly = FALSE, $ids = NULL)
-{
-    // An input ID is required for the label.  See why @
-    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
-
-    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
-
-    $value = ($readonly) ? $default : set_value($name, $default);
-    $error = form_error($name);
-
-    if ($readonly)
-        $html = theme_field_view($label, $value, $name, $value, $input_id, $ids);
-    else
-        $html = theme_field_input($name, $value, $label, $error, $input_id, $ids);
-
-    return $html;
-} 
-
-///////////////////////////////////////////////////////////////////////////////
-// F I E L D  P A S S W O R D
-///////////////////////////////////////////////////////////////////////////////
-// TODO: merge with field_input
-
-function field_password($name, $default, $label, $readonly = FALSE, $ids = NULL)
-{
-    // An input ID is required for the label.  See why @
-    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
-
-    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
-
-    $value = ($readonly) ? $default : set_value($name, $default);
-    $error = form_error($name);
-
-    if ($readonly)
-        $html = theme_field_view($value, $label, $input_id, $ids);
-    else
-        $html = theme_field_password($name, $value, $label, $error, $input_id, $ids);
-
-    return $html;
-} 
-
-///////////////////////////////////////////////////////////////////////////////
-// F I E L D  D R O P D O W N
-///////////////////////////////////////////////////////////////////////////////
-
-function field_dropdown($name, $options, $default, $label, $readonly = FALSE, $ids = NULL)
-{
-    $selected = ($readonly) ? $default : set_value($name, $default);
-    $error = form_error($name);
-
-    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
-
-    if ($readonly)
-        $html = theme_field_view($label, $options[$selected], $name, $selected, $input_id, $ids);
-    else
-        $html = theme_field_dropdown($name, $selected, $label, $error, $options, $input_id, $ids);
-
-    return $html;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// F I E L D  S I M P L E  D R O P D O W N
-///////////////////////////////////////////////////////////////////////////////
-
-function field_simple_dropdown($name, $options, $default, $label, $readonly = FALSE, $ids = NULL)
-{
-    $selected = ($readonly) ? $default : set_value($name, $default);
-    $error = form_error($name);
-
-    $options = convert_to_hash($options);
-
-    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
-
-    if ($readonly)
-        $html = theme_field_view($label, $options[$selected], $name, $selected, $input_id, $ids);
-    else
-        $html = theme_field_dropdown($name, $selected, $label, $error, $options, $input_id, $ids);
-
-    return $html;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// F I E L D  T O G G L E
-///////////////////////////////////////////////////////////////////////////////
-
-function field_toggle_enable_disable($name, $default, $label, $readonly = FALSE, $ids = NULL)
-{
-    $selected = ($readonly) ? $default : set_value($name, $default);
-    $error = form_error($name);
-
-    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
-
-    $options = array(
-        '0' => lang('base_disabled'),
-        '1' => lang('base_enabled')
-    );
-
-    if ($readonly) {
-        $value = $options[$default];
-        $html = theme_field_view($label, $options[$selected], $name, $selected, $input_id, $ids);
-    } else {
-        $html = theme_field_toggle_enable_disable($name, $selected, $label, $error, $options, $input_id, $ids);
-    }
-
-    return $html;
-} 
-
-///////////////////////////////////////////////////////////////////////////////
-// F I E L D  C H E C K B O X E S
-///////////////////////////////////////////////////////////////////////////////
-
-function field_checkbox($name, $default, $label, $readonly = FALSE, $ids = NULL)
-{
-    // An input ID is required for the label.  See why @
-    // http://www.clearfoundation.com/docs/developer/framework/widgets/field_class_-_why
-
-    $input_id = (isset($ids['input'])) ? $ids['input'] : 'clearos' . mt_rand();
-
-    $value = ($readonly) ? $default : set_value($name, $default);
-    $error = form_error($name);
-
-    // FIXME: this needs to be improved of course
-    $text = ($value) ? 'X' : '';
-
-    if ($readonly)
-        $html = theme_field_view($label, $text, $name, $value, $input_id, $ids);
-    else
-        $html = theme_field_checkbox($name, $value, $label, $error, $input_id, $ids);
-
-    return $html;
-} 
 
 ///////////////////////////////////////////////////////////////////////////////
 // P R O G R E S S  B A R S
@@ -383,9 +614,7 @@ function field_checkbox($name, $default, $label, $readonly = FALSE, $ids = NULL)
 
 function field_progress_bar($label, $id, $options)
 {
-    $html = theme_field_progress_bar($label, $id, $options);
-
-    return $html;
+    return theme_field_progress_bar($label, $id, $options);
 }
 
 /**
@@ -399,41 +628,158 @@ function field_progress_bar($label, $id, $options)
 
 function progress_bar($id, $options)
 {
-    $html = theme_progress_bar($id, $options);
-
-    return $html;
+    return theme_progress_bar($id, $options);
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
 // F O R M  H E A D E R / F O O T E R
 ///////////////////////////////////////////////////////////////////////////////
 
-function form_header($title, $id = NULL)
+/**
+ * Form header.
+ *
+ * @param string $title   form title
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function form_header($title, $options = NULL)
 {
-    return theme_form_header($title, $id);
+    return theme_form_header($title, $options);
 }
 
-function form_footer($d = NULL)
+/**
+ * Form footer.
+ *
+ * @param array $options options
+ *
+ * @return string HTML
+ */
+
+function form_footer($options = NULL)
 {
-    return theme_form_footer($id);
+    return theme_form_footer($options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // S U M M A R Y  T A B L E
 ///////////////////////////////////////////////////////////////////////////////
 
-function summary_table($title, $anchors, $headers, $items, $legend = NULL)
+/**
+ * Summary table.
+ *
+ * @param string $title   table title
+ * @param array  $anchors list anchors
+ * @param array  $headers headers
+ * @param array  $items   items
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function summary_table($title, $anchors, $headers, $items, $options = NULL)
 {
-    return theme_summary_table($title, $anchors, $headers, $items, $legend);
+    return theme_summary_table($title, $anchors, $headers, $items, $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // L I S T  T A B L E
 ///////////////////////////////////////////////////////////////////////////////
 
-function list_table($title, $anchors, $headers, $items, $legend = NULL)
+/**
+ * List table.
+ *
+ * @param string $title   table title
+ * @param array  $anchors list anchors
+ * @param array  $headers headers
+ * @param array  $items   items
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function list_table($title, $anchors, $headers, $items, $options = NULL)
 {
-    return theme_list_table($title, $anchors, $headers, $items, $legend);
+    return theme_list_table($title, $anchors, $headers, $items, $options);
+}
+
+//////////////////////////////////////////////////////////////////////////////
+// D I A L O G  B O X E S
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Confirm delete dialog box.
+ *
+ * @param string $message delete message
+ * @param array  $items   list of items to delete
+ * @param string $confirm_anchor URL  $headers headers
+ * @param array  $items   items
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function dialogbox_confirm_delete($message, $items, $confirm_anchor, $cancel_anchor)
+{
+    if (! is_array($items))
+        $items = array($items);
+
+    return theme_dialogbox_confirm_delete($message, $items, $confirm_anchor, $cancel_anchor);
+}
+
+function dialogbox_confirm($message, $confirm_anchor, $cancel_anchor)
+{
+    return theme_dialogbox_confirm($message, $confirm_anchor, $cancel_anchor);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// I N F O  B O X E S
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Critical infobox.
+ *
+ * @param string $title   table title
+ * @param string $message message
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function infobox_critical($title, $message, $options = NULL)
+{
+    return theme_infobox('critical', $title, $message, $options);
+}
+
+/**
+ * Warning infobox.
+ *
+ * @param string $title   table title
+ * @param string $message message
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function infobox_warning($title, $message, $options = NULL)
+{
+    return theme_infobox('warning', $title, $message, $options);
+}
+
+/**
+ * Highlight infobox.
+ *
+ * @param string $title   table title
+ * @param string $message message
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function infobox_highlight($title, $message, $options = NULL)
+{
+    return theme_infobox('highlight', $title, $message, $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -442,61 +788,6 @@ function list_table($title, $anchors, $headers, $items, $legend = NULL)
 
 function control_panel($links) {
     echo theme_control_panel($links);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// D I A L O G  B O X E S
-///////////////////////////////////////////////////////////////////////////////
-
-function dialogbox_confirm_delete($message, $items, $ok_anchor, $cancel_anchor)
-{
-    if (! is_array($items))
-        $items = array($items);
-
-    return theme_dialogbox_confirm_delete($message, $items, $ok_anchor, $cancel_anchor);
-}
-
-function dialogbox_confirm($message, $ok_anchor, $cancel_anchor)
-{
-    return theme_dialogbox_confirm($message, $ok_anchor, $cancel_anchor);
-}
-
-///////////////////////////////////////////////////////////////////////////////
-// I N F O  B O X E S
-///////////////////////////////////////////////////////////////////////////////
-
-function infobox_critical($title, $message)
-{
-    return theme_infobox('critical', $title, $message);
-}
-
-function infobox_warning($title, $message)
-{
-    return theme_infobox('warning', $title, $message);
-}
-
-function infobox_highlight($title, $message)
-{
-    return theme_infobox('highlight', $title, $message);
-}
-
-
-function helpbox($message)
-{
-    // FIXME - make this a standalone widget
-    return infobox('help', $message);
-}
-
-
-function dialogbox($id, $title, $message)
-{
-    $dialog = "
-<div class='dialogbox' id='$id' title='$title'>
-    <p>$message</p>
-</div>
-";
-
-    return $dialog;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
