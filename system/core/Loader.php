@@ -78,8 +78,10 @@ class CI_Loader {
 	{
         // ClearFoundation method
 
-        if ($object_name === NULL)
+        if ($object_name === NULL) {
             $object_name = preg_replace('/.*\//', '', $factory);
+            $object_name = preg_replace('/_Factory$/', '', $object_name);
+        }
 
         // Use two underscores just to avoid name conflicts
         $factory_object = strtolower($object_name . '__factory');
