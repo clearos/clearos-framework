@@ -63,12 +63,12 @@ class CI_Form_validation {
 	// --------------------------------------------------------------------
 
 	// ClearFoundation -- add a function similiar to set_rules
-	function set_policy($field, $library, $method, $is_required = FALSE)
+	function set_policy($field, $library, $method, $is_required = FALSE, $check_existence = FALSE)
 	{
 		// Prefix rule to make it possible to identify it in execute()
-		$rule = 'clearos.' . $library . '.' . $method;
+		$rule = 'clearos.' . $library . '.' . $method . '.' . $check_existence;
 
-		// Add 
+		// Add required hook
 		if ($is_required)
 			$rule = 'required|' . $rule;
 
@@ -623,7 +623,7 @@ class CI_Form_validation {
 
 					$matches = array();
 
-					if (!preg_match("/([^\.]+)\.(\w+)/", $rule, $matches)) {
+					if (!preg_match("/([^\.]+)\.(\w+)\.(.*)/", $rule, $matches)) {
 						show_error("Ooops.  The validation rule is borked -  $rule");
 						continue;
 					}
@@ -633,6 +633,7 @@ class CI_Form_validation {
 
 					$clear_library = $matches[1];
 					$clear_method = $matches[2];
+                    $clear_check_exists = $matches[3];
 
 					$clear_class_name = preg_replace('/\//', '\\', $clear_library);
 					$clear_class_name = "\\clearos\\apps\\$clear_class_name";
@@ -641,7 +642,10 @@ class CI_Form_validation {
 
 					$clear_object = new $clear_class_name;
 
-					$error_message = $clear_object->$clear_method($postdata);
+                    if ((bool)$clear_check_exists)
+                        $error_message = $clear_object->$clear_method($postdata, (bool)$clear_check_exists);
+                    else
+                        $error_message = $clear_object->$clear_method($postdata);
 
 					$result = ($error_message) ? FALSE : TRUE;	
 
