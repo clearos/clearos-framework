@@ -192,7 +192,7 @@ function clearos_load_language($lang_file)
 
             $translation = $clearos_lang->line($key);
 
-            $translation = (!empty($translation)) ? $translation : 'Translation missing';
+            $translation = (!empty($translation)) ? $translation : 'Translation missing (' . $key . ')';
 
             return $translation;
         }
