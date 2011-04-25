@@ -229,6 +229,29 @@ function clearos_load_library($library)
 }
 
 /**
+ * Returns the error code from any Exception object
+ *
+ * This function makes it possible to return the error code from
+ * an Exception object regardless if it is ours (derived from Engine_Exception),
+ * or if comes from some other third-party code (with only getCode()).
+ *
+ * @param   object $exception exception object
+ * @return  int exception code
+ */
+
+function clearos_exception_code($exception)
+{
+    if (is_object($exception)) {
+        if 
+            (method_exists($exception, 'get_code')) return $exception->get_code();
+        else if 
+            (method_exists($exception, 'getCode')) return $exception->getCode();
+    }
+
+    return -1; // TODO - what to return if there is no method to get error code
+}
+
+/**
  * Returns the error message from any Exception object
  *
  * This function makes it possible to return the error message from
