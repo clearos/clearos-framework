@@ -55,11 +55,8 @@ define('CLEAROS_WARNING', -2);
 define('CLEAROS_INFO', -4);
 define('CLEAROS_DEBUG', -8);
 
-// FIXME: COMMON_CORE_DIR remove references to this
-define('COMMON_CORE_DIR', Config::$framework_path . '/application/libraries');
-
-// FIXME: move to Config if still required
-define("COMMON_TEMP_DIR", "/usr/webconfig/tmp");
+define('CLEAROS_TEMP_DIR', '/var/clearos/framework/tmp');
+define('CLEAROS_CACHE_DIR', '/var/clearos/framework/cache');
 
 ///////////////////////////////////////////////////////////////////////////////
 // G L O B A L  I N I T I A L I Z A T I O N
