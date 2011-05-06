@@ -727,11 +727,13 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         // If timestamps are okay, use the cache file
         //-------------------------------------------
 
-        $stat = stat(CLEAROS_TEMP_DIR . '/menu_cache');
-        $cache_time = $stat['ctime'];
+        if (file_exists(CLEAROS_TEMP_DIR . '/menu_cache')) {
+            $stat = stat(CLEAROS_TEMP_DIR . '/menu_cache');
+            $cache_time = $stat['ctime'];
 
-        if ($cache_time > $most_recent)
-            return unserialize( file_get_contents(CLEAROS_TEMP_DIR . '/menu_cache') );
+            if ($cache_time > $most_recent)
+                return unserialize( file_get_contents(CLEAROS_TEMP_DIR . '/menu_cache') );
+        }
 
         // Load menu order preferences
         //----------------------------
