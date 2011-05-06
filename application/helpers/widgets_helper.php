@@ -73,7 +73,7 @@ function anchor_dialog($id, $text, $importance, $options = NULL)
 {
     $options['id'] = $id;
 
-    return theme_anchor('#', $text, $importance, 'theme-anchor-dialog', $options);
+    return theme_anchor_dialog('#', $text, $importance, 'theme-anchor-dialog', $options);
 }
 
 /**
