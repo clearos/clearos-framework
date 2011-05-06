@@ -700,6 +700,8 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         // Create a list of apps to check
         //-------------------------------
 
+        clearstatcache();
+
         $apps_list = array();
 
         foreach (Config::$apps_paths as $path) {
