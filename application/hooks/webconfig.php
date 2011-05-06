@@ -74,8 +74,19 @@ function webconfig_cache()
     $lang_actual_time = $stat['ctime'];
 
     if ($lang_cache_time < $lang_actual_time) {
+        $raw_contents =
+        $lines = preg_split("/\n/", file_get_contents('/etc/sysconfig/i18n'));
+
+        foreach ($lines as $line) {
+            if (preg_match('/^LANG=/', $line)) {
+                $lang = preg_replace('/^LANG=/', '', $line);
+                $lang = preg_replace('/\..*/', '', $lang);
+                $lang = preg_replace('/["\']/', '', $lang);
+            }
+        } 
+
         // Concatenation is to avoid breaking syntax highlighting
-        $contents = "<?php \$language = 'fr_FR'; ?" . ">\n";
+        $contents = "<?php \$language = '$lang'; ?" . ">\n";
         file_put_contents(CLEAROS_TEMP_DIR . '/language_cache.php', $contents);
     }
 }
