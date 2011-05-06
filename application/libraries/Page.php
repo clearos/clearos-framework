@@ -674,8 +674,14 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         $info_file = clearos_app_base($app_name) . '/deploy/info.php';
 
         if (file_exists($info_file)) {
+
+            // Load metadata file
             clearos_load_language($app_name);
             include $info_file;
+
+            // Add timestamp
+            $stat = stat($info_file);
+            $app['modified'] = $stat['ctime'];
 
             return $app;
         }
@@ -691,29 +697,51 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        // Load info files in app directory
-        //---------------------------------
+        // Create a list of apps to check
+        //-------------------------------
 
         $apps_list = array();
 
         foreach (Config::$apps_paths as $path) {
-            $path = (preg_match('/apps$/', $path)) ? $path : $path . '/apps'; // FIXME: temporary workaround for old version
+            // TODO: remove - it's just a temporary workaround for a pre-release version
+            $path = (preg_match('/apps$/', $path)) ? $path : $path . '/apps';
 
             $raw_list = scandir($path);
+            $most_recent = 0;
+
             foreach ($raw_list as $dir) {
-                if (! preg_match('/^\./', $dir))
-                    $apps_list[] = $dir;
+                if (! preg_match('/^\./', $dir)) {
+                    $info_file = clearos_app_base($dir) . '/deploy/info.php';
+                    if (file_exists($info_file)) {
+                        $apps_list[] = $dir;
+
+                        $stat = stat($info_file);
+
+                        if ($stat['ctime'] > $most_recent)
+                            $most_recent = $stat['ctime'];
+                    }
+                }
             }
         }
+
+        // If timestamps are okay, use the cache file
+        //-------------------------------------------
+
+        $stat = stat(CLEAROS_TEMP_DIR . '/menu_cache');
+        $cache_time = $stat['ctime'];
+
+        if ($cache_time > $most_recent)
+            return unserialize( file_get_contents(CLEAROS_TEMP_DIR . '/menu_cache') );
 
         // Load menu order preferences
         //----------------------------
 
         $order = array(
-            lang('base_category_system')  => '010',
-            lang('base_category_network') => '020',
-            lang('base_category_gateway') => '030',
-            lang('base_category_server')  => '040',
+            lang('base_category_marketplace') => '010',
+            lang('base_category_server')  => '020',
+            lang('base_category_network') => '030',
+            lang('base_category_gateway') => '040',
+            lang('base_category_system')  => '050',
         );
 
         // Create an array with the sort key
@@ -757,6 +785,11 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
             foreach ($sort_details as $url => $details)
                 $menu_data[$url] = $details;
         }
+
+        // Cache the data and return it
+        //-----------------------------
+
+        file_put_contents(CLEAROS_TEMP_DIR . '/menu_cache', serialize($menu_data));
 
         return $menu_data;
     }
