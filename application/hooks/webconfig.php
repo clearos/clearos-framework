@@ -51,6 +51,36 @@ use \clearos\apps\base\Webconfig as Webconfig;
 clearos_load_library('base/Webconfig');
 
 ///////////////////////////////////////////////////////////////////////////////
+// C A C H E
+///////////////////////////////////////////////////////////////////////////////
+
+function webconfig_cache()
+{
+    Logger::profile_framework(__METHOD__, __LINE__, 'Webconfig Cache Hook');
+
+    // Language setting cache
+    //----------------------- 
+
+    clearstatcache();
+
+    $lang_cache_time = 0;
+
+    if (file_exists(CLEAROS_TEMP_DIR . '/language_cache.php')) {
+        $stat = stat(CLEAROS_TEMP_DIR . '/language_cache.php');
+        $lang_cache_time = $stat['ctime'];
+    }
+
+    $stat = stat('/etc/sysconfig/i18n');
+    $lang_actual_time = $stat['ctime'];
+
+    if ($lang_cache_time < $lang_actual_time) {
+        // Concatenation is to avoid breaking syntax highlighting
+        $contents = "<?php \$language = 'fr_FR'; ?" . ">\n";
+        file_put_contents(CLEAROS_TEMP_DIR . '/language_cache.php', $contents);
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // S E S S I O N
 ///////////////////////////////////////////////////////////////////////////////
 

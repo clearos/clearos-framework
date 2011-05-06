@@ -18,6 +18,13 @@ $hook['pre_controller'][] = array(
 );
 
 $hook['pre_controller'][] = array(
+	'class'    => '',
+	'function' => 'webconfig_cache',
+	'filename' => 'webconfig.php',
+	'filepath' => 'hooks'
+);
+
+$hook['pre_controller'][] = array(
 	'class'    => 'MY_Setup',
 	'function' => 'check',
 	'filename' => 'Setup.php',

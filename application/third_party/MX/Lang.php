@@ -39,19 +39,34 @@ class MX_Lang extends CI_Lang
 		
 		if (is_array($langfile)) return $this->load_many($langfile);
 			
-		$deft_lang = CI::$APP->config->item('language');
-		$idiom = ($lang == '') ? $deft_lang : $lang;
+        // ClearFoundation 
+        // use /etc/sysconfig/i18n which is cached in PHP format to keep things snappy.
+        if (file_exists(CLEAROS_TEMP_DIR . '/language_cache.php')) {
+            include CLEAROS_TEMP_DIR . '/language_cache.php';
+            $idiom = $language;
+        } else {
+            $deft_lang = CI::$APP->config->item('language');
+            $idiom = ($lang == '') ? $deft_lang : $lang;
+        }
 	
 		if (in_array($langfile.'_lang', $this->is_loaded, TRUE))
 			return $this->language;
 	
 		$_module OR $_module = CI::$APP->router->fetch_module();
-		list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/'.$idiom.'/');
 
-		if ($path === FALSE) {
-			// ClearFoundation - support short form tags, e.g. load('date') is equivalent to load('date/date')
-			$newlangfile = "$langfile/$langfile";
-			list($path, $_langfile) = Modules::find($newlangfile.'_lang', $_module, 'language/'.$idiom.'/');
+		// ClearFoundation - fall back to en_US if translation is unavailable
+		$languages = array($idiom, 'en_US');
+
+		foreach ($languages as $idiom) {
+			list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/'.$idiom.'/');
+
+			if ($path === FALSE) {
+				// ClearFoundation - support short form tags, e.g. load('date') is equivalent to load('date/date')
+				$newlangfile = "$langfile/$langfile";
+				list($path, $_langfile) = Modules::find($newlangfile.'_lang', $_module, 'language/'.$idiom.'/');
+			} else {
+				break;
+			}
 		}
 
 		if ($path === FALSE) {
