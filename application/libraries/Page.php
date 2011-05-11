@@ -740,12 +740,16 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         // Load menu order preferences
         //----------------------------
 
-        $order = array(
+        $primary_order = array(
             lang('base_category_marketplace') => '010',
             lang('base_category_server')  => '020',
             lang('base_category_network') => '030',
             lang('base_category_gateway') => '040',
             lang('base_category_system')  => '050',
+        );
+
+        $secondary_order = array(
+            lang('base_subcategory_settings') => '010',
         );
 
         // Create an array with the sort key
@@ -763,8 +767,8 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
             if (isset($app['menu_enabled']) && (!$app['menu_enabled']))
                 continue;
 
-            $primary_sort = empty($order[$app['category']]) ? '500' : $order[$app['category']];
-            $secondary_sort = empty($order[$app['subcategory']]) ? $app['subcategory'] : $order[$app['subcategory']];
+            $primary_sort = empty($primary_order[$app['category']]) ? '500' : $primary_order[$app['category']];
+            $secondary_sort = empty($secondary_order[$app['subcategory']]) ? $app['subcategory'] : $secondary_order[$app['subcategory']];
             $page_sort = empty($app['priority']) ? '500' : $app['priority'];
 
             $menu_info = array();
@@ -777,6 +781,7 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
 
             $sorted[$primary_sort . '.' . $secondary_sort . '.' . $page_sort . '.' . $app['name']] = $menu_info;
         }
+print_r($sorted);
 
         // Use the sorted array to generate the menu array
         //------------------------------------------------
