@@ -703,13 +703,13 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         clearstatcache();
 
         $apps_list = array();
+        $most_recent = 0;
 
         foreach (Config::$apps_paths as $path) {
             // TODO: remove - it's just a temporary workaround for a pre-release version
             $path = (preg_match('/apps$/', $path)) ? $path : $path . '/apps';
 
             $raw_list = scandir($path);
-            $most_recent = 0;
 
             foreach ($raw_list as $dir) {
                 if (! preg_match('/^\./', $dir)) {
