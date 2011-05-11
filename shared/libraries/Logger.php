@@ -132,15 +132,17 @@ class Logger
                 error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
 
                 foreach ($error->get_trace() as $traceinfo) {
-                    // Backtrace log format
-                    $alt_filename = preg_replace('/.*\//', '', $traceinfo['file']);
-                    $logline = sprintf(
-                        "$typestring: debug backtrace: %s (%d): %s",
-                        $alt_filename,
-                        $traceinfo['line'],
-                        $traceinfo['function']
-                    );
-                    error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
+                    if (isset($traceinfo['file'])) {
+                        // Backtrace log format
+                        $alt_filename = preg_replace('/.*\//', '', $traceinfo['file']);
+                        $logline = sprintf(
+                            "$typestring: debug backtrace: %s (%d): %s",
+                            $alt_filename,
+                            $traceinfo['line'],
+                            $traceinfo['function']
+                        );
+                        error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
+                    }
                 }
             }
         } else {
