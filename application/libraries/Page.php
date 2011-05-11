@@ -750,6 +750,7 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
 
         $secondary_order = array(
             lang('base_subcategory_settings') => '010',
+            lang('base_subcategory_accounts') => '020',
         );
 
         // Create an array with the sort key
