@@ -150,6 +150,25 @@ class Config
     }
 
     /**
+     * Returns the app base path.
+     *
+     * @param string $app app name
+     *
+     * @return string app base path
+     */
+
+    public static function get_app_root($app)
+    {
+        // Logging is verbose, don't bother
+        $base_path = Config::get_app_base($app);
+
+        $base_path = preg_replace('/\/webconfig\/apps\/.*/', '', $base_path);
+        $base_path = preg_replace('/.*\//', '', $base_path);
+
+        return '/' . $base_path . '/approot';
+    }
+
+    /**
      * Returns the app URL.
      *
      * @param string $app app name
@@ -166,9 +185,16 @@ class Config
         else if (isset(Config::$clearos_devel_versions['app']['default']))
             $app_version = Config::$clearos_devel_versions['app']['default'] . '/';
         else
-            $app_version = "";
+            $app_version = '';
 
-        return '/approot/' . $app . '/' . $app_version . 'htdocs';
+        // FIXME
+        if (TRUE) { //devel mode only
+            $approot = Config::get_app_root($app);
+        } else {
+            $approot = '/approot';
+        }
+
+        return $approot . '/' . $app . '/' . $app_version . 'htdocs';
     }
 
     /**
