@@ -781,7 +781,6 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
 
             $sorted[$primary_sort . '.' . $secondary_sort . '.' . $page_sort . '.' . $app['name']] = $menu_info;
         }
-print_r($sorted);
 
         // Use the sorted array to generate the menu array
         //------------------------------------------------
