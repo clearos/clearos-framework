@@ -765,6 +765,27 @@ function dialogbox_confirm($message, $confirm_anchor, $cancel_anchor)
     return theme_dialogbox_confirm($message, $confirm_anchor, $cancel_anchor);
 }
 
+//////////////////////////////////////////////////////////////////////////////
+// D A E M O N  B O X E S
+///////////////////////////////////////////////////////////////////////////////
+
+function daemonbox($daemon)
+{
+    // FIXME: need to merge with theme
+    $html = 
+        form_open('') .
+        form_header('Status')  .
+        "<input id='clearos_daemon_name' value='$daemon' type='hidden'>" .
+        "Status: <span id='clearos_daemon_status'></span> &nbsp; &nbsp; " .
+        anchor_javascript('clearos_daemon_start', 'Start', 'high') .
+        anchor_javascript('clearos_daemon_stop', 'Stop', 'high') . 
+        form_footer() .
+        form_close()
+    ;
+
+    return $html;
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // I N F O  B O X E S
 ///////////////////////////////////////////////////////////////////////////////

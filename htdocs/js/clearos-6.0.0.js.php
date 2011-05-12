@@ -4,12 +4,12 @@
  * Global ajax helpers.
  *
  * @category   ClearOS
- * @package    Base
+ * @package    Framework
  * @subpackage Javascript
  * @author     ClearFoundation <developer@clearfoundation.com>
  * @copyright  2011 ClearFoundation
  * @license    http://www.gnu.org/copyleft/gpl.html GNU General Public License version 3 or later
- * @link       http://www.clearfoundation.com/docs/developer/framework/base/
+ * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -43,13 +43,27 @@ require_once $bootstrap . '/bootstrap.php';
 clearos_load_language('base');
 
 ///////////////////////////////////////////////////////////////////////////////
-// J A V A S C R I P T  
+// J A V A S C R I P T
 ///////////////////////////////////////////////////////////////////////////////
 
 header('Content-Type:application/x-javascript');
 ?>
 
+///////////////////////////////////////////////////////////////////////////
+// M A I N
+///////////////////////////////////////////////////////////////////////////
+
 $(document).ready(function() {
+    var clearos_daemon_name = $('#clearos_daemon_name').val();
+    if (clearos_daemon_name)
+        clearosDaemon(clearos_daemon_name);
+});
+
+///////////////////////////////////////////////////////////////////////////
+// D A E M O N
+///////////////////////////////////////////////////////////////////////////
+
+function clearosDaemon(daemon) {
 
     // Translations
     //-------------
@@ -63,13 +77,13 @@ $(document).ready(function() {
     //-------------
 
     $('#clearos_daemon_start').click(function() {
-        startDaemon('squid');
-        getData('squid', 1000);
+        clearosStartDaemon(daemon);
+        clearosGetDaemonStatus(daemon, 1000);
     });
 
     $('#clearos_daemon_stop').click(function() {
-        stopDaemon('squid');
-        getData('squid', 1000);
+        clearosStopDaemon(daemon);
+        clearosGetDaemonStatus(daemon, 1000);
     });
 
     // Main
@@ -79,73 +93,71 @@ $(document).ready(function() {
     $("#clearos_daemon_stop").hide();
     $('#clearos_daemon_status').html('');
 
-    getData('squid', 5000);
+    clearosGetDaemonStatus(daemon, 5000);
+}
 
-    // Functions
-    //----------
+// Functions
+//----------
 
-    function startDaemon(daemon) {
-        $.ajax({
-            url: 'base/daemon/start/squid',
-            method: 'GET',
-            dataType: 'json',
-            success : function(payload) {
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-            }
-        });
-    }
-
-    function stopDaemon(daemon) {
-        $.ajax({
-            url: 'base/daemon/stop/squid',
-            method: 'GET',
-            dataType: 'json',
-            success : function(payload) {
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-            }
-
-        });
-    }
-
-    function getData(daemon, timeout) {
-    //    var url = 'base/daemon/status/' + String(daemon);
-        var url = 'base/daemon/status/squid' + '/' + String(daemon);
-        $.ajax({
-            url: url,
-            method: 'GET',
-            dataType: 'json',
-            success : function(payload) {
-                showData(payload);
-                window.setTimeout(getData, timeout);
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                window.setTimeout(getData, timeout);
-            }
-
-        });
-    }
-
-    function showData(payload) {
-        if (payload.status == 'running') {
-            $("#clearos_daemon_start").hide();
-            $("#clearos_daemon_stop").show();
-            $("#clearos_daemon_status").html(lang_running);
-        } else if (payload.status == 'stopped') {
-            $("#clearos_daemon_start").show();
-            $("#clearos_daemon_stop").hide();
-            $("#clearos_daemon_status").html(lang_stopped);
-        } if (payload.status == 'starting') {
-            $("#clearos_daemon_start").hide();
-            $("#clearos_daemon_stop").hide();
-            $('#clearos_daemon_status').html(lang_starting + '<span class="theme-loading"></span>');
-        } if (payload.status == 'stopping') {
-            $("#clearos_daemon_start").hide();
-            $("#clearos_daemon_stop").hide();
-            $('#clearos_daemon_status').html(lang_stopping + '<span class="theme-loading"></span>');
+function clearosStartDaemon(daemon) {
+    $.ajax({
+        url: 'base/daemon/start/' + daemon, 
+        method: 'GET',
+        dataType: 'json',
+        success : function(payload) {
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
         }
+    });
+}
+
+function clearosStopDaemon(daemon) {
+    $.ajax({
+        url: 'base/daemon/stop/' + daemon, 
+        method: 'GET',
+        dataType: 'json',
+        success : function(payload) {
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+        }
+
+    });
+}
+
+function clearosGetDaemonStatus(daemon, timeout) {
+    $.ajax({
+        url: 'base/daemon/status/' + daemon, 
+        method: 'GET',
+        dataType: 'json',
+        success : function(payload) {
+            clearosShowDeamonStatus(payload);
+            window.setTimeout(clearosGetDaemonStatus(daemon), timeout);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            window.setTimeout(clearosGetDaemonStatus(daemon), timeout);
+        }
+
+    });
+}
+
+function clearosShowDeamonStatus(payload) {
+    if (payload.status == 'running') {
+        $("#clearos_daemon_start").hide();
+        $("#clearos_daemon_stop").show();
+        $("#clearos_daemon_status").html(lang_running);
+    } else if (payload.status == 'stopped') {
+        $("#clearos_daemon_start").show();
+        $("#clearos_daemon_stop").hide();
+        $("#clearos_daemon_status").html(lang_stopped);
+    } if (payload.status == 'starting') {
+        $("#clearos_daemon_start").hide();
+        $("#clearos_daemon_stop").hide();
+        $('#clearos_daemon_status').html(lang_starting + '<span class="theme-loading"></span>');
+    } if (payload.status == 'stopping') {
+        $("#clearos_daemon_start").hide();
+        $("#clearos_daemon_stop").hide();
+        $('#clearos_daemon_status').html(lang_stopping + '<span class="theme-loading"></span>');
     }
-});
+}
 
 // vim: syntax=javascript
