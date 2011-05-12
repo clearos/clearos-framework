@@ -99,7 +99,7 @@ if (Config::$debug_mode) {
 
 function clearos_app_htdocs($app = NULL)
 {
-    // FIXME: fix inconsistent naming
+    // FIXME: uri_string is CodeIgniter-ism and not always loaded
     if (is_null($app))
         $app = uri_string();
 
