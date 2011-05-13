@@ -54,6 +54,7 @@ header('Content-Type:application/x-javascript');
 ///////////////////////////////////////////////////////////////////////////
 
 $(document).ready(function() {
+    var clearos_daemon_id = 0;
     var clearos_daemon_name = $('#clearos_daemon_name').val();
     if (clearos_daemon_name)
         clearosDaemon(clearos_daemon_name);
@@ -77,13 +78,22 @@ function clearosDaemon(daemon) {
     //-------------
 
     $('#clearos_daemon_start').click(function() {
+        $('#clearos_daemon_status_lock').val('on');
+        $("#clearos_daemon_start").hide();
+        $("#clearos_daemon_stop").hide();
+        $('#clearos_daemon_status').html(lang_starting + '<span class="theme-loading"></span>');
+
         clearosStartDaemon(daemon);
-        clearosGetDaemonStatus(daemon, 1000);
+
     });
 
     $('#clearos_daemon_stop').click(function() {
+        $('#clearos_daemon_status_lock').val('on');
+        $("#clearos_daemon_start").hide();
+        $("#clearos_daemon_stop").hide();
+        $('#clearos_daemon_status').html(lang_stopping + '<span class="theme-loading"></span>');
+
         clearosStopDaemon(daemon);
-        clearosGetDaemonStatus(daemon, 1000);
     });
 
     // Main
@@ -93,7 +103,7 @@ function clearosDaemon(daemon) {
     $("#clearos_daemon_stop").hide();
     $('#clearos_daemon_status').html('');
 
-    clearosGetDaemonStatus(daemon, 5000);
+    clearosGetDaemonStatus();
 }
 
 // Functions
@@ -105,6 +115,7 @@ function clearosStartDaemon(daemon) {
         method: 'GET',
         dataType: 'json',
         success : function(payload) {
+            $('#clearos_daemon_status_lock').val('off');
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
         }
@@ -117,6 +128,7 @@ function clearosStopDaemon(daemon) {
         method: 'GET',
         dataType: 'json',
         success : function(payload) {
+            $('#clearos_daemon_status_lock').val('off');
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
         }
@@ -125,22 +137,26 @@ function clearosStopDaemon(daemon) {
 }
 
 function clearosGetDaemonStatus(daemon, timeout) {
+
+    var clearos_daemon_name = $('#clearos_daemon_name').val();
+
     $.ajax({
-        url: 'base/daemon/status/' + daemon, 
+        url: 'base/daemon/status/' + clearos_daemon_name, 
         method: 'GET',
         dataType: 'json',
         success : function(payload) {
-            clearosShowDeamonStatus(payload);
-            window.setTimeout(clearosGetDaemonStatus(daemon), timeout);
+            var clearos_daemon_status_lock = $('#clearos_daemon_status_lock').val();
+            if (clearos_daemon_status_lock == 'off')
+                clearosShowDaemonStatus(payload);
+
+            window.setTimeout(clearosGetDaemonStatus, 1000);
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
-            window.setTimeout(clearosGetDaemonStatus(daemon), timeout);
         }
-
     });
 }
 
-function clearosShowDeamonStatus(payload) {
+function clearosShowDaemonStatus(payload) {
     if (payload.status == 'running') {
         $("#clearos_daemon_start").hide();
         $("#clearos_daemon_stop").show();

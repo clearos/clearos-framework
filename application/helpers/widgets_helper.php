@@ -776,6 +776,7 @@ function daemonbox($daemon)
         form_open('') .
         form_header('Status')  .
         "<input id='clearos_daemon_name' value='$daemon' type='hidden'>" .
+        "<input id='clearos_daemon_status_lock' value='off' type='hidden'>" .
         "Status: <span id='clearos_daemon_status'></span> &nbsp; &nbsp; " .
         anchor_javascript('clearos_daemon_start', 'Start', 'high') .
         anchor_javascript('clearos_daemon_stop', 'Stop', 'high') . 
