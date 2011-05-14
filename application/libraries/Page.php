@@ -379,11 +379,11 @@ class MY_Page
 
             // Now we set form_only back to the default
             $this->form_only = FALSE; 
-        }
 
-        $this->data['page_help'] = $this->_get_help_view($form);
-        $this->data['page_summary'] = $this->_get_summary_view($form);
-        $this->data['page_report'] = $this->_get_report_view($form);
+            $this->data['page_help'] = $this->_get_help_view($form);
+            $this->data['page_summary'] = $this->_get_summary_view($form);
+            $this->data['page_report'] = $this->_get_report_view($form);
+        }
 
         $this->_display_page();
     }
