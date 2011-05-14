@@ -70,37 +70,29 @@ function clearosDaemon(daemon) {
     //-------------
 
     lang_running = '<?php echo lang("base_running"); ?>';
+    lang_start = '<?php echo lang("base_start"); ?>';
     lang_starting = '<?php echo lang("base_starting"); ?>';
+    lang_stop = '<?php echo lang("base_stop"); ?>';
     lang_stopping = '<?php echo lang("base_stopping"); ?>';
     lang_stopped = '<?php echo lang("base_stopped"); ?>';
 
     // Click Events
     //-------------
 
-    $('#clearos_daemon_start').click(function() {
+    $('#clearos_daemon_action').click(function() {
         $('#clearos_daemon_status_lock').val('on');
-        $("#clearos_daemon_start").hide();
-        $("#clearos_daemon_stop").hide();
+        $("#clearos_daemon_action").hide();
         $('#clearos_daemon_status').html(lang_starting + '<span class="theme-loading"></span>');
 
-        clearosStartDaemon(daemon);
-
-    });
-
-    $('#clearos_daemon_stop').click(function() {
-        $('#clearos_daemon_status_lock').val('on');
-        $("#clearos_daemon_start").hide();
-        $("#clearos_daemon_stop").hide();
-        $('#clearos_daemon_status').html(lang_stopping + '<span class="theme-loading"></span>');
-
-        clearosStopDaemon(daemon);
+        if ($("#clearos_daemon_action").html() == lang_stop)
+            clearosStopDaemon(daemon);
+        else
+            clearosStartDaemon(daemon);
     });
 
     // Main
     //-----
 
-    $("#clearos_daemon_start").hide();
-    $("#clearos_daemon_stop").hide();
     $('#clearos_daemon_status').html('');
 
     clearosGetDaemonStatus();
@@ -158,21 +150,19 @@ function clearosGetDaemonStatus(daemon, timeout) {
 
 function clearosShowDaemonStatus(payload) {
     if (payload.status == 'running') {
-        $("#clearos_daemon_start").hide();
-        $("#clearos_daemon_stop").show();
         $("#clearos_daemon_status").html(lang_running);
+        $("#clearos_daemon_action").html(lang_stop);
+        $("#clearos_daemon_action").show();
     } else if (payload.status == 'stopped') {
-        $("#clearos_daemon_start").show();
-        $("#clearos_daemon_stop").hide();
         $("#clearos_daemon_status").html(lang_stopped);
+        $("#clearos_daemon_action").html(lang_start);
+        $("#clearos_daemon_action").show();
     } if (payload.status == 'starting') {
-        $("#clearos_daemon_start").hide();
-        $("#clearos_daemon_stop").hide();
         $('#clearos_daemon_status').html(lang_starting + '<span class="theme-loading"></span>');
+        $("#clearos_daemon_action").hide();
     } if (payload.status == 'stopping') {
-        $("#clearos_daemon_start").hide();
-        $("#clearos_daemon_stop").hide();
         $('#clearos_daemon_status').html(lang_stopping + '<span class="theme-loading"></span>');
+        $("#clearos_daemon_action").hide();
     }
 }
 
