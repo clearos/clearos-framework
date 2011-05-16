@@ -301,7 +301,7 @@ class MY_Page
 */
 
         if (empty($this->data))
-            $this->_load_meta_data();
+            $this->_load_meta_data(array($form));
 
         $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
@@ -332,7 +332,7 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $this->_load_meta_data();
+        $this->_load_meta_data($forms);
 
         $this->data['title'] = $title;
 
@@ -521,8 +521,8 @@ class MY_Page
 
         $page_auto_head = '';
 
-        if (file_exists($doc_base . '/' . $js))
-            $page_auto_head .= "<script type='text/javascript' src='" . $app_url . '/' . $js . "'></script>\n";
+        foreach ($page_data['javascript'] as $javascript)
+            $page_auto_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
 
         if (file_exists($doc_base . '/' . $css))
             $page_auto_head .= "<link type='text/css' href='" . $app_url . '/' . $css ."' rel='stylesheet'>\n";
@@ -810,11 +810,11 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
      * @return void
      */
 
-    protected function _load_meta_data()
+    protected function _load_meta_data($forms = NULL)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $view_data = $this->_load_view_data();
+        $view_data = $this->_load_view_data($forms);
         $menu_data['menus'] = $this->_load_menu_data();
         $session_data = $this->_load_session_data();
 
@@ -854,14 +854,34 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
      * @return array view meta data
      */
 
-    protected function _load_view_data()
+    protected function _load_view_data($forms = NULL)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
         $view_data = array();
 
+        // Page layout type
+        //-----------------
+
         if (empty($this->data['type']))
             $view_data['type'] = MY_Page::TYPE_CONFIGURATION;
+
+        // Javascript hooks
+        //-----------------
+
+        $view_data['javascript'] = array();
+
+        foreach ($forms as $form) {
+            $app = preg_replace('/\/.*/', '', $form);
+            $javascript_basename = preg_replace('/.*\//', '', $form) . '.js.php';
+
+            $javascript = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
+
+            if (file_exists($javascript)) {
+                $app_url = Config::get_app_url($app);
+                $view_data['javascript'][] = $app_url . '/' . $javascript_basename;
+            }
+        }
 
         return $view_data;
     }
