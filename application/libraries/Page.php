@@ -371,8 +371,16 @@ class MY_Page
             foreach ($forms as $form) {
                 $basename = preg_replace('/.*\//', '', $form);
 
+                // TODO: this is a hack for the "daemon" widget
+                // This should be generalized of course
+                if (preg_match('/\/index\//', $form)) {
+                    $params = preg_replace('/.*index\//', '', $form);
+                } else {
+                    $params = '';
+                }
+
                 $this->framework->load->module($form);
-                $this->framework->$basename->index('view');
+                $this->framework->$basename->index($params);
             }
 
             $this->data['app_view'] = ob_get_clean();
@@ -544,8 +552,8 @@ class MY_Page
 
 <!-- Jquery -->
 <script type='text/javascript' src='/js/jquery-1.4.4.min.js'></script>
-<script type='text/javascript' src='/js/clearos-6.0.0.js.php'></script>
 ";
+        // FIXME: do we need a global JS file? <script type='text/javascript' src='/js/clearos-6.0.0.js.php'></script>
 
         // <head> extras defined in theme (head.php)
         //------------------------------------------
@@ -872,8 +880,9 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         $view_data['javascript'] = array();
 
         foreach ($forms as $form) {
-            $app = preg_replace('/\/.*/', '', $form);
-            $javascript_basename = preg_replace('/.*\//', '', $form) . '.js.php';
+            $segments = preg_split('/\//', $form);
+            $app = $segments[0];
+            $javascript_basename = $segments[1] . '.js.php';
 
             $javascript = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
 
