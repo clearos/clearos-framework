@@ -69,6 +69,8 @@ function clearosDaemon(daemon) {
     // Translations
     //-------------
 
+    lang_busy = '<?php echo lang("base_busy"); ?>';
+    lang_restarting = '<?php echo lang("base_restarting"); ?>';
     lang_running = '<?php echo lang("base_running"); ?>';
     lang_start = '<?php echo lang("base_start"); ?>';
     lang_starting = '<?php echo lang("base_starting"); ?>';
@@ -162,6 +164,12 @@ function clearosShowDaemonStatus(payload) {
         $("#clearos_daemon_action").hide();
     } if (payload.status == 'stopping') {
         $('#clearos_daemon_status').html(lang_stopping + '<span class="theme-loading"></span>');
+        $("#clearos_daemon_action").hide();
+    } if (payload.status == 'restarting') {
+        $('#clearos_daemon_status').html(lang_restarting + '<span class="theme-loading"></span>');
+        $("#clearos_daemon_action").hide();
+    } if (payload.status == 'busy') {
+        $('#clearos_daemon_status').html(lang_busy + '<span class="theme-loading"></span>');
         $("#clearos_daemon_action").hide();
     }
 }
