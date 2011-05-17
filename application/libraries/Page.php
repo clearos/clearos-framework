@@ -881,8 +881,14 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
 
         foreach ($forms as $form) {
             $segments = preg_split('/\//', $form);
-            $app = $segments[0];
-            $javascript_basename = $segments[1] . '.js.php';
+
+            if (isset($segments[1])) {
+                $app = $segments[0];
+                $javascript_basename = $segments[1] . '.js.php';
+            } else {
+                $app = $segments[0];
+                $javascript_basename = $segments[0] . '.js.php';
+            }
 
             $javascript = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
 
