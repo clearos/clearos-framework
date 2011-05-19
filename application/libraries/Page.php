@@ -145,6 +145,24 @@ class MY_Page
     }
 
     /**
+     * Clears the cache directory
+     */
+
+    public function clear_cache()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id');
+
+        if ($handle = opendir(CLEAROS_TEMP_DIR)) {
+            while (false !== ($file = readdir($handle))) {
+                if (preg_match('/^menu_cache_/', $file))
+                    unlink(CLEAROS_TEMP_DIR . '/' . $file);
+            }
+        }
+    }
+
+    /**
      * Loads the required theme files. 
      *
      * The theme hooks are loaded after the controller has been initialized.
