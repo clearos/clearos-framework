@@ -165,10 +165,10 @@ class Config
         $base_path = preg_replace('/\/webconfig\/apps\/.*/', '', $base_path);
         $base_path = preg_replace('/.*\//', '', $base_path);
 
-	if (empty($base_path)))
-		return '/approot';
-	else
-		return '/' . $base_path . '/approot';
+        if (empty($base_path))
+            return '/approot';
+        else
+            return '/' . $base_path . '/approot';
     }
 
     /**
