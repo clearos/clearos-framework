@@ -738,12 +738,14 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         // If timestamps are okay, use the cache file
         //-------------------------------------------
 
-        if (file_exists(CLEAROS_TEMP_DIR . '/menu_cache')) {
-            $stat = stat(CLEAROS_TEMP_DIR . '/menu_cache');
+        $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id');
+
+        if (file_exists($menu_cache)) {
+            $stat = stat($menu_cache);
             $cache_time = $stat['ctime'];
 
             if ($cache_time > $most_recent)
-                return unserialize( file_get_contents(CLEAROS_TEMP_DIR . '/menu_cache') );
+                return unserialize( file_get_contents($menu_cache) );
         }
 
         // Load menu order preferences
@@ -767,14 +769,19 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
 
         $sorted = array();
 
-        foreach ($apps_list as $app) {
-            $app = $this->_load_app_data($app);
+        foreach ($apps_list as $app_name) {
+            $app = $this->_load_app_data($app_name);
 
             if (! isset($app['basename'])) 
                 continue;
 
-            // If this is just a library, skip it
+            // If menu is disabled, skip it
             if (isset($app['menu_enabled']) && (!$app['menu_enabled']))
+                continue;
+
+            // If this is just a library, skip it
+            $views_dir = Config::get_app_base($app_name) . '/views';
+            if (! is_dir($views_dir))
                 continue;
 
             $primary_sort = empty($primary_order[$app['category']]) ? '500' : $primary_order[$app['category']];
@@ -807,7 +814,7 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
         // Cache the data and return it
         //-----------------------------
 
-        file_put_contents(CLEAROS_TEMP_DIR . '/menu_cache', serialize($menu_data));
+        file_put_contents($menu_cache, serialize($menu_data));
 
         return $menu_data;
     }
