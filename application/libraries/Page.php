@@ -672,13 +672,6 @@ class MY_Page
         // FIXME: fake data here
         $data['subscription_expiration'] = 'July 1, 2011';
         $data['install_status'] = 'Update available';
-        $data['marketplace_chart'] = "
-<div id='theme-chart-info-box' style='height:200px; width:200px;'></div>
-<script type='text/javascript'>
-$.jqplot.config.enablePlugins = true;
-$.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[11,219.9]]]);
-</script>
-";
 
         return theme_summary_box($data);
     }
