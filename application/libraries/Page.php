@@ -698,7 +698,10 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
             $app_name = $segments[2];
         }
 
-        $info_file = clearos_app_base($app_name) . '/deploy/info.php';
+		$app = array();
+		$app_base = clearos_app_base($app_name);
+
+        $info_file = $app_base . '/deploy/info.php';
 
         if (file_exists($info_file)) {
 
@@ -709,9 +712,17 @@ $.jqplot('theme-chart-info-box', [[[1, 2],[3,5.12],[5,13.1],[7,33.6],[9,85.9],[1
             // Add timestamp
             $stat = stat($info_file);
             $app['modified'] = $stat['ctime'];
-
-            return $app;
         }
+
+		$icon_basename = $app_name . '_50x50.png';
+		$icon_path = $app_base . '/htdocs/' . $icon_basename;
+
+		if (file_exists($icon_path))
+			$app['icon_path'] = clearos_app_htdocs($app_name) . '/' . $icon_basename;
+		else
+			$app['icon_path'] = '/assets/app_default_50x50.png';
+
+		return $app;
     }
 
     /**
