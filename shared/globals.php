@@ -120,6 +120,22 @@ function clearos_app_base($app)
 }
 
 /**
+ * Common boolean validation for ClearOS.
+ *
+ * @param string $boolean boolean
+ *
+ * @return boolean TRUE if boolean is valid
+ */
+
+function clearos_is_valid_boolean($boolean)
+{
+    if (is_bool($boolean) || preg_match('/^(yes|TRUE|1|no|FALSE|0)$/i', $boolean))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+/**
  * Generates profiling data. 
  *
  * @param string $method  method name
