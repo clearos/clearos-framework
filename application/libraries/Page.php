@@ -621,10 +621,10 @@ class MY_Page
 
         // FIXME: Move this to a driver package
         if (empty($data['user_guide_url']))
-            $data['user_guide_url'] = 'http://www.clearcenter.com/support/documentation/FIXME';
+            $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS_Enterprise/6.0.0/userguide/' . $data['basename'];
 
         if (empty($data['support_url']))
-            $data['support_url'] = 'http://www.clearcenter.com/getsupport/FIXME';
+            $data['support_url'] = 'http://www.clearcenter.com/getsupport';
 
         return theme_help_box($data);
     }
