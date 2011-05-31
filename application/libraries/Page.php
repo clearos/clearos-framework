@@ -111,22 +111,8 @@ class MY_Page
     // V A R I A B L E S
     ///////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * @var object framework instance
-     */
-
     protected $framework = NULL;
-
-    /**
-     * @var array page information
-     */
-
     public $data = array();
-
-    /**
-     * @var boolean form_only
-     */
-
     public $form_only = FALSE;
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -142,6 +128,7 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__, 'Page Class Initialized');
 
         $this->framework =& get_instance();
+        $this->framework->lang->load('framework');
     }
 
     /**
@@ -206,7 +193,7 @@ class MY_Page
     { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $message = 'Added.'; // FIXME translate 
+        $message = lang('framework_item_was_added');
 
         $this->framework->session->set_userdata('status_success', $message);
     }
@@ -221,7 +208,7 @@ class MY_Page
     { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $message = 'Delete completed.'; // FIXME translate 
+        $message = lang('framework_item_was_deleted');
 
         $this->framework->session->set_userdata('status_success', $message);
     }
@@ -236,7 +223,7 @@ class MY_Page
     { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $message = 'System Updated'; // FIXME translate 
+        $message = lang('framework_system_updated');
 
         $this->framework->session->set_userdata('status_success', $message);
     }
@@ -291,9 +278,9 @@ class MY_Page
 
         $app = $this->framework->uri->segment(1);
 
-        $message = isset($options['message']) ? $options['message'] : 'Are you sure you want to delete the following?'; // FIXME translate
+        $message = isset($options['message']) ? $options['message'] : lang('framework_are_you_sure_delete');
 
-        $this->data['title'] = 'Confirm Delete'; // FIXME: translate
+        $this->data['title'] = lang('framework_confirm_delete');
         $this->data['app_view'] = theme_confirm_delete($confirm, $cancel, $items, $message, $options);
         $this->data['page_help'] = $this->_get_help_view($app);
         $this->data['page_summary'] = $this->_get_summary_view($app);
@@ -368,8 +355,8 @@ class MY_Page
 
             // Add common widgets
             $basename = preg_replace('/\/.*/', '', $form);
-            $data[$basename . '/summary']['title'] = 'Summary'; // FIXME: Translate
-            $data[$basename . '/help']['title'] = 'Help'; // FIXME: Translate
+            $data[$basename . '/summary']['title'] = lang('framework_summary');
+            $data[$basename . '/help']['title'] = lang('framework_help');
 
             $this->data['app_view'] = theme_control_panel($data);
 
@@ -429,12 +416,16 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data();
 
-        // FIXME: might want to make this a splash type
-        $this->data['type'] = MY_Page::TYPE_REPORT;
-        $this->data['title'] = 'Ooops';
-        $this->data['app_view'] = theme_dialog_warning($exception->GetMessage());
-
-        $this->_display_page();
+        if ($this->form_only) {
+            echo "<div style='clear: both'>"; // FIXME - div should not be necessary
+            echo infobox_critical(clearos_exception_message($exception));
+            echo "</div>";
+        } else {
+            $this->data['type'] = MY_Page::TYPE_REPORT;
+            $this->data['title'] = 'Ooops';
+            $this->data['app_view'] = theme_dialog_warning(clearos_exception_message($exception));
+            $this->_display_page();
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////////
@@ -458,7 +449,7 @@ class MY_Page
         $this->data = array();
         $this->_load_meta_data();
 
-        $this->data['title'] = 'Help'; // FIXME
+        $this->data['title'] = lang('framework_help');
         $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_help_view($form);
 
@@ -478,7 +469,7 @@ class MY_Page
         $this->data = array();
         $this->_load_meta_data();
 
-        $this->data['title'] = 'Dashboard Report'; // FIXME
+        $this->data['title'] = lang('framework_dashboard_report');
         $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_report_view($form);
 
@@ -498,7 +489,7 @@ class MY_Page
         $this->data = array();
         $this->_load_meta_data();
 
-        $this->data['title'] = 'Summary'; // FIXME
+        $this->data['title'] = lang('framework_summary');
         $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_summary_view($form);
 
@@ -571,8 +562,6 @@ class MY_Page
 <!-- Jquery -->
 <script type='text/javascript' src='/js/jquery-1.4.4.min.js'></script>
 ";
-        // FIXME: do we need a global JS file? <script type='text/javascript' src='/js/clearos-6.0.0.js.php'></script>
-
         // <head> extras defined in theme (head.php)
         //------------------------------------------
 
@@ -670,8 +659,7 @@ class MY_Page
         $data['tooltip'] = (isset($data['controllers'][$form]['tooltip'])) ? $data['controllers'][$form]['tooltip'] : '';
 
         // FIXME: fake data here
-        $data['subscription_expiration'] = 'July 1, 2011';
-        $data['install_status'] = 'Update available';
+        $data['subscription_expiration'] = 'August 1, 2011';
 
         return theme_summary_box($data);
     }
@@ -908,7 +896,7 @@ class MY_Page
 
         $view_data['javascript'] = array();
 
-		// FIXME: clean up logic - quick hack
+		// TODO: clean up logic - quick hack
         foreach ($forms as $form) {
             $segments = preg_split('/\//', $form);
 			$app = $segments[0];
