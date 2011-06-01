@@ -537,7 +537,6 @@ function field_toggle_enable_disable($name, $value, $label, $read_only = FALSE, 
     );
 
     if ($read_only) {
-        $value = $values[$value];
         $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
     } else {
         $html = theme_field_toggle_enable_disable($name, $value, $label, $error, $values, $input_id, $options);
