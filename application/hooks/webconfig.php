@@ -42,13 +42,14 @@ require_once $bootstrap . '/bootstrap.php';
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
-// FIXME - consider moving boostrap and dependencies since sessions only need
-// to load one time at the start of the process
+// Dependencies are loaded below since it is only necessary on session start.
 
 use \clearos\framework\Logger as Logger;
+use \clearos\apps\base\OS as OS;
+use \clearos\apps\base\Product as Product;
 use \clearos\apps\base\Webconfig as Webconfig;
-
-clearos_load_library('base/Webconfig');
+use \clearos\apps\language\Locale as Locale;
+use \clearos\apps\network\Hostname as Hostname;
 
 ///////////////////////////////////////////////////////////////////////////////
 // C A C H E
@@ -104,18 +105,18 @@ function webconfig_session()
     if ($framework->session->userdata('session_started') == '1')
         return;
 
-    Logger::profile_framework(__METHOD__, __LINE__, 'Loading base session data');
+    ///////////////////////////////////////////////////////////////////////////
+    // D E P E N D E N C I E S . . . A G A I N
+    ///////////////////////////////////////////////////////////////////////////
 
-    $webconfig = new Webconfig();
+    Logger::profile_framework(__METHOD__, __LINE__, 'Loading base session data');
 
     // Hostname
     //---------
 
     $session['hostname'] = '';
 
-    if (file_exists(COMMON_CORE_DIR . "/api/Hostname.php")) {
-        require_once(COMMON_CORE_DIR . "/api/Hostname.php");
-
+    if (clearos_load_library('network/Hostname')) {
         try {
             $hostname = new Hostname();
             $session['hostname'] = $hostname->Get();
@@ -127,7 +128,10 @@ function webconfig_session()
     // Check registration
     //-------------------
 
+    // FIXME
     $session['registered'] = FALSE;
+    $session['sdn_redirect'] = 'https://secure.clearcenter.com/redirect';
+    $session['online_help'] = 'https://secure.clearcenter.com/redirect/userguide';
 
     if (file_exists(COMMON_CORE_DIR . "/api/Register.php")) {
         require_once(COMMON_CORE_DIR . "/api/Register.php");
@@ -144,17 +148,15 @@ function webconfig_session()
     //---------
 
     $session['locale'] = 'en_US';
-    $session['charset'] = 'utf-8';
+    $session['encoding'] = 'utf-8';
     $session['textdir'] = 'LTR';
 
-    if (file_exists(COMMON_CORE_DIR . "/api/Locale.php")) {
-        require_once(COMMON_CORE_DIR . "/api/Locale.php");
-
+    if (clearos_load_library('language/Locale')) {
         try {
             $locale = new Locale();
-            $session['locale'] = $locale->GetLanguageCode();
-            $session['charset'] = $locale->GetCharacterSet();
-            $session['textdir'] = $locale->GetTextDirection();
+            $session['locale'] = $locale->get_language_code();
+            $session['textdir'] = $locale->get_text_direction();
+            $session['encoding'] = $locale->get_encoding();
         } catch (Exception $e) {
             // Use default
         }
@@ -169,41 +171,19 @@ function webconfig_session()
     $session['osversion'] = '2.6';
     $session['redirect'] = '';
 
-    if (file_exists(COMMON_CORE_DIR . "/api/Product.php")) {
-        require_once(COMMON_CORE_DIR . "/api/Product.php");
-
+    if (clearos_load_library('base/Product')) {
         try {
             $product = new Product();
-            $session['osname'] = $product->GetName();
-            $session['osversion'] = $product->GetVersion();
-            $session['redirect'] = $product->GetRedirectUrl() . "/" . preg_replace("/ /", "_", $osname) . "/" . $osversion;
+            $session['osname'] = $product->get_name();
+            $session['osversion'] = $product->get_version();
         } catch (Exception $e) {
             // Use default
         }
-    } else if (file_exists(COMMON_CORE_DIR . "/api/Os.php")) {
-        require_once(COMMON_CORE_DIR . "/api/Os.php");
-
+    } else if (clearos_load_library('base/OS')) {
         try {
-            $os = new Os();
-            $osname = $os->GetName();
-            $osversion = $os->GetVersion();
-        } catch (Exception $e) {
-            // Use default
-        }
-    }
-
-    // Hostkey
-    //--------
-
-    // FIXME: avoid this
-    $session['hostkey'] = "hostkey";
-
-    if (file_exists(COMMON_CORE_DIR . "/api/Suva.php")) {
-        require_once(COMMON_CORE_DIR . "/api/Suva.php");
-
-        try {
-            $suva = new Suva();
-            $session['hostkey'] = $suva->GetHostkey();
+            $os = new OS();
+            $session['osname'] = $os->get_name();
+            $session['osversion'] = $os->get_version();
         } catch (Exception $e) {
             // Use default
         }
@@ -212,30 +192,24 @@ function webconfig_session()
     // Theme
     //------
 
-    $session['theme'] = "clearos6x";
-    $session['theme_mode'] = 'normal'; // FIXME: use Page::MODE_NORMAL
+    $session['theme'] = 'clearos6x';
+    $session['theme_mode'] = 'normal';
 
-    if (file_exists(COMMON_CORE_DIR . "/api/Webconfig.php")) {
-        require_once(COMMON_CORE_DIR . "/api/Webconfig.php");
+    if (clearos_load_library('base/Webconfig')) {
+        $webconfig = new Webconfig();
 
         try {
-            $session['theme'] = $webconfig->GetTemplate();
-            $session['theme_mode'] = 'normal'; // FIXME: use Page::MODE_NORMAL
+            $session['theme'] = $webconfig->get_theme();
+            $session['theme_mode'] = $webconfig->get_theme_mode();
         } catch (Exception $e) {
             // Use default
         }
     }
 
-    // Other
-    //------
-
-    // FIXME - messy?
-    $session['sdn_redirect'] = 'https://secure.clearcenter.com/redirect';
-    $session['online_help'] = 'https://secure.clearcenter.com/redirect/userguide';
-    $session['session_started'] = TRUE;
-
     // Set the session
     //----------------
+
+    $session['session_started'] = TRUE;
 
     $framework->session->set_userdata($session);
 }
