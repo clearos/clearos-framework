@@ -618,7 +618,7 @@ class CI_Form_validation {
 						continue;
 
 					// Empty rule -- used in special cases 
-					if ($rule === '.')
+					if (($rule === '.') || ($rule === '..'))
 						continue;
 
 					$matches = array();
