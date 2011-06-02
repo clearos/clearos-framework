@@ -156,6 +156,8 @@ class MY_Authorize
         Logger::profile_framework(__METHOD__, __LINE__);
 
         clearos_load_library('base/Webconfig');
+// FIXME - devel
+return TRUE;
 
         try {
             $webconfig = new Webconfig();
