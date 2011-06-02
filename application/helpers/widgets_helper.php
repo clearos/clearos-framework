@@ -898,3 +898,18 @@ function menu($app, $tag)
 
     return $translation;
 }
+
+/**
+ * Console helper
+ */
+
+function is_console()
+{
+    $framework =& get_instance();
+
+    // FIXME: remove debug - echo $framework->agent->agent_string();
+    if (preg_match('/ClearOS/', $framework->agent->agent_string()))
+        return TRUE;
+    else
+        return FALSE;
+}

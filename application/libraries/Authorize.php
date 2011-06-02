@@ -40,7 +40,26 @@ require_once $bootstrap . '/bootstrap.php';
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
+// Framework
+//----------
+
 use \clearos\framework\Logger as Logger;
+
+// Factories
+//----------
+
+use \clearos\apps\users\User_Factory as User;
+
+// clearos_load_library('users/User_Factory');
+
+// Classes
+//--------
+
+use \clearos\apps\base\Webconfig as Webconfig;
+use \clearos\apps\organization\Organization as Organization;
+
+// clearos_load_library('base/Webconfig');
+// clearos_load_library('organization/Organization');
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -102,16 +121,11 @@ class MY_Authorize
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        // FIXME - the redirects create a dependency on app-base.  Fix this (by moving into application directory?)
-
         $username = $this->framework->session->userdata('username');
         $logged_in = (bool)$this->framework->session->userdata('logged_in');
 
         // Return right away if access granted
         //------------------------------------
-
-        // FIXME: disabled authentication 
-        return;
 
         if ($this->check_acl($username, $_SERVER['PHP_SELF']))
             return;
@@ -146,9 +160,9 @@ class MY_Authorize
         try {
             $webconfig = new Webconfig();
 
-            $valid_urls = $webconfig->GetValidPages($username);
-            $allow_users = $webconfig->GetUserAccessState();
-            $allow_subadmins = $webconfig->GetAdminAccessState();
+            $valid_urls = $webconfig->get_valid_pages($username);
+            $allow_users = $webconfig->get_user_access_state();
+            $allow_subadmins = $webconfig->get_admin_access_state();
         } catch (Exception $e) {
             // Good security practice is to stop right away on error
             echo "Could not get authorization settings: ";

@@ -231,14 +231,21 @@ function clearos_load_language($lang_file)
  *
  * @param string $library library path
  *
- * @return void
+ * @return boolean TRUE if library file exists
  */
 
 function clearos_load_library($library)
 {
     list($app, $library) = preg_split('/\//', $library, 2);
 
-    include_once clearos_app_base($app) . "/libraries/$library.php";
+    $library_file = clearos_app_base($app) . "/libraries/$library.php";
+
+    if (file_exists($library_file)) {
+        include_once clearos_app_base($app) . "/libraries/$library.php";
+        return TRUE;
+    } else {
+        return FALSE;
+    }
 }
 
 /**
