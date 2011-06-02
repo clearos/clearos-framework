@@ -139,7 +139,8 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id');
+        $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id') . 
+            $_SERVER['SERVER_PORT'];
 
         if ($handle = opendir(CLEAROS_TEMP_DIR)) {
             while (false !== ($file = readdir($handle))) {
@@ -748,7 +749,8 @@ class MY_Page
         // If timestamps are okay, use the cache file
         //-------------------------------------------
 
-        $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id');
+        $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id') . 
+            $_SERVER['SERVER_PORT'];
 
         if (file_exists($menu_cache)) {
             $stat = stat($menu_cache);
