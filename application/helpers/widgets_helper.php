@@ -140,6 +140,21 @@ function anchor_delete($url, $importance = 'low', $options = NULL)
 }
 
 /**
+ * Disable anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function anchor_disable($url, $importance = 'high', $options = NULL)
+{
+    return theme_anchor($url, lang('base_disable'), $importance, 'theme-anchor-disable', $options);
+}
+
+/**
  * Edit anchor.
  *
  * @param string $url        URL of anchor
@@ -152,6 +167,21 @@ function anchor_delete($url, $importance = 'low', $options = NULL)
 function anchor_edit($url, $importance = 'high', $options = NULL)
 {
     return theme_anchor($url, lang('base_edit'), $importance, 'theme-anchor-edit', $options);
+}
+
+/**
+ * Enable anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function anchor_enable($url, $importance = 'high', $options = NULL)
+{
+    return theme_anchor($url, lang('base_enable'), $importance, 'theme-anchor-enable', $options);
 }
 
 /**
