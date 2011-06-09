@@ -125,6 +125,21 @@ function anchor_cancel($url, $importance = 'low', $options = NULL)
 }
 
 /**
+ * Configure anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function anchor_configure($url, $importance = 'high', $options = NULL)
+{
+    return theme_anchor($url, lang('base_configure'), $importance, 'theme-anchor-configure', $options);
+}
+
+/**
  * Delete anchor.
  *
  * @param string $url        URL of anchor
