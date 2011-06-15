@@ -977,8 +977,8 @@ function menu($app, $tag)
 function is_console()
 {
     $framework =& get_instance();
+    $framework->load->library('user_agent');
 
-    // FIXME: remove debug - echo $framework->agent->agent_string();
     if (preg_match('/ClearOS/', $framework->agent->agent_string()))
         return TRUE;
     else

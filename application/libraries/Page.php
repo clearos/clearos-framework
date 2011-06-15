@@ -43,6 +43,8 @@ require_once $bootstrap . '/bootstrap.php';
 use \clearos\framework\Logger as Logger;
 use \clearos\framework\Config as Config;
 
+clearos_load_language('framework');
+
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
 ///////////////////////////////////////////////////////////////////////////////
@@ -215,6 +217,36 @@ class MY_Page
     }
 
     /**
+     * Handles status disabled message.
+     *
+     * @return void
+     */
+
+    public function set_status_disabled()
+    { 
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $message = lang('framework_item_was_disabled');
+
+        $this->framework->session->set_userdata('status_success', $message);
+    }
+
+    /**
+     * Handles status enabled message.
+     *
+     * @return void
+     */
+
+    public function set_status_enabled()
+    { 
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $message = lang('framework_item_was_enabled');
+
+        $this->framework->session->set_userdata('status_success', $message);
+    }
+
+    /**
      * Handles status updated message.
      *
      * @return void
@@ -230,18 +262,25 @@ class MY_Page
     }
 
     /**
-     * Handles a page success message.
+     * Handles a page message.
      *
-     * @param string $message success message
+     * @param string $message message
+     * @param string $code    code
+     * @param string $title   $title
      *
      * @return void
      */
 
-    public function set_status_success($message)
+    public function set_message($message, $code = 'warning', $title = NULL)
     { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $this->framework->session->set_userdata('status_success', $message);
+        if (empty($title))
+            $title = ($code === 'warning') ? lang('framework_warning') : lang('framework_information');
+
+        $this->framework->session->set_userdata('message_code', $code);
+        $this->framework->session->set_userdata('message_text', $message);
+        $this->framework->session->set_userdata('message_title', $title);
     }
 
     /**
@@ -343,6 +382,21 @@ class MY_Page
         if ($this->form_only) {
             $this->framework->load->view($form, $data);
         } else {
+            // More non-intuitive stuff.  When we are *not* running in "control panel" mode,
+            // the user should see a full page summary once an action (e.g. adding a port
+            // forward firewall) takes place.
+            if ($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL) {
+                $segments = preg_split('/\//', uri_string());
+                $app_name = $segments[1];
+                $controller = $segments[2];
+                $action = $segments[3];
+
+                $app_data = $this->_load_app_data();
+
+                if (!$action && isset($app_data['controllers'][$controller]['title']))
+                    redirect('/' . $app_name);
+            }
+
             $this->data['app_view'] = $this->framework->load->view($form, $data, TRUE);
             $this->data['page_help'] = $this->_get_help_view($form);
             $this->data['page_summary'] = $this->_get_summary_view($form);
