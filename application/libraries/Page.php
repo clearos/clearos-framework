@@ -265,6 +265,30 @@ class MY_Page
     }
 
     /**
+     * Displays generic confirmation.
+     *
+     * @return view
+     */
+
+    public function view_confirm($message, $confirm, $cancel, $options = array())
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+   
+        if (empty($this->data))
+            $this->_load_meta_data();
+
+        $app = $this->framework->uri->segment(1);
+
+        $this->data['title'] = lang('framework_confirm');
+        $this->data['app_view'] = theme_confirm($confirm, $cancel, $message, $options);
+        $this->data['page_help'] = $this->_get_help_view($app);
+        $this->data['page_summary'] = $this->_get_summary_view($app);
+        $this->data['page_report'] = $this->_get_report_view($app);
+
+        $this->_display_page();
+    }
+
+    /**
      * Displays delete confirmation.
      *
      * @return view
