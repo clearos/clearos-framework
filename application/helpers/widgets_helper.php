@@ -53,7 +53,7 @@ require_once $bootstrap . '/bootstrap.php';
  * @return string HTML
  */
 
-function anchor_custom($url, $text, $importance, $options = NULL)
+function anchor_custom($url, $text, $importance = 'high', $options = NULL)
 {
     return theme_anchor($url, $text, $importance, 'theme-anchor-custom', $options);
 }
@@ -69,7 +69,7 @@ function anchor_custom($url, $text, $importance, $options = NULL)
  * @return string HTML
  */
 
-function anchor_dialog($id, $text, $importance, $options = NULL)
+function anchor_dialog($id, $text, $importance = 'high', $options = NULL)
 {
     $options['id'] = $id;
 
@@ -87,7 +87,7 @@ function anchor_dialog($id, $text, $importance, $options = NULL)
  * @return string HTML
  */
 
-function anchor_javascript($id, $text, $importance, $options = NULL)
+function anchor_javascript($id, $text, $importance = 'high', $options = NULL)
 {
     $options['id'] = $id;
 
@@ -274,7 +274,7 @@ function anchor_view($url, $importance = 'high', $options = NULL)
  * @return string HTML
  */
 
-function form_submit_custom($name, $text, $importance, $options = NULL)
+function form_submit_custom($name, $text, $importance = 'high', $options = NULL)
 {
     return theme_form_submit($name, $text, $importance, 'theme-form-submit-custom', $options);
 }
