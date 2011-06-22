@@ -429,7 +429,12 @@ class MY_Page
 
             foreach ($forms as $form) {
                 $basename = preg_replace('/.*\//', '', $form);
-                $data[$form]['title'] = $app_data['controllers'][$basename]['title'];
+                if (isset($$app_data['controllers'][$basename]['title']))
+                    $data[$form]['title'] = $app_data['controllers'][$basename]['title'];
+                else if (isset($$app_data['controllers'][$form]['title']))
+                    $data[$form]['title'] = $app_data['controllers'][$form]['title'];
+                else
+                    $data[$form]['title'] = $form;
             }
 
             // Add common widgets
@@ -639,7 +644,7 @@ class MY_Page
 <meta http-equiv='Content-Type' content='text/html; charset=" . $this->framework->session->userdata('charset') . "'>
 
 <!-- Jquery -->
-<script type='text/javascript' src='/js/jquery-1.4.4.min.js'></script>
+<script type='text/javascript' src='/js/jquery-1.6.1.min.js'></script>
 ";
         // <head> extras defined in theme (head.php)
         //------------------------------------------
