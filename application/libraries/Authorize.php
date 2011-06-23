@@ -48,18 +48,17 @@ use \clearos\framework\Logger as Logger;
 // Factories
 //----------
 
-use \clearos\apps\users\User_Factory as User;
+use \clearos\apps\users\User_Factory as User_Factory;
 
 // clearos_load_library('users/User_Factory');
 
 // Classes
 //--------
 
-use \clearos\apps\base\Webconfig as Webconfig;
-use \clearos\apps\organization\Organization as Organization;
+use \clearos\apps\access_control\Access_Control as Access_Control;
+use \clearos\apps\base\Posix_User as Posix_User;
 
-// clearos_load_library('base/Webconfig');
-// clearos_load_library('organization/Organization');
+// clearos_load_library('access_control/Access_Control');
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -112,6 +111,55 @@ class MY_Authorize
     }
 
     /**
+     * Authenticates user.
+     *
+     * @param string $username username
+     * @param string $password password
+     *
+     * @return TRUE if authentication is successful
+     * @throws Engine_Exception
+     */
+
+    public function authenticate($username, $password)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        $is_valid = FALSE;
+
+        // Check Posix first
+        //------------------
+
+        if (clearos_load_library('base/Posix_User')) {
+            $user = new Posix_User($username);
+
+            if ($user->check_password($password))
+                $is_valid = TRUE;
+        }
+
+        // Then check via user factory
+        //----------------------------
+
+        if (! $is_valid) {
+            if (clearos_load_library('users/User_Factory')) {
+                $user = User_Factory::create($username);
+
+                if ($user->check_password($password))
+                    $is_valid = TRUE;
+            }
+        }
+
+        // Set login session variables
+        //----------------------------
+
+        if ($is_valid) {
+            $this->framework->session->set_userdata('logged_in', 'TRUE');
+            $this->framework->session->set_userdata('username', $username);
+        }
+
+        return $is_valid;
+    }
+
+    /**
      * Checks the page authorization.
      *
      * @return void
@@ -155,14 +203,31 @@ class MY_Authorize
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        clearos_load_library('base/Webconfig');
+        // root - allow everything
+        //------------------------
+
+        if ($username === 'root') {
+            Logger::SysLog("webconfig", "access control - full access granted for $username on $url");
+            return TRUE;
+        }
+
+        // Bail if access control is not installed
+        //----------------------------------------
+
+        if (! clearos_load_library('access_control/Access_Control')) {
+            Logger::SysLog("webconfig", "access control - access denied on $url");
+            return FALSE;
+        }
+
+        // Access control (if installed)
+        //------------------------------
 
         try {
-            $webconfig = new Webconfig();
+            $access = new Access_Control();
 
-            $valid_urls = $webconfig->get_valid_pages($username);
-            $allow_users = $webconfig->get_user_access_state();
-            $allow_subadmins = $webconfig->get_admin_access_state();
+            $allow_authenticted = $access->get_authenticated_access_state();
+            $allow_custom = $access->get_custom_access_state();
+            $valid_urls = $access->get_valid_pages_details($username);
         } catch (Exception $e) {
             // Good security practice is to stop right away on error
             echo "Could not get authorization settings: ";
@@ -170,19 +235,9 @@ class MY_Authorize
             exit();
         }
 
-        $valid_public_urls = $valid_urls[Webconfig::ACCESS_TYPE_PUBLIC];
-        $valid_subadmin_urls = $valid_urls[Webconfig::ACCESS_TYPE_SUBADMIN];
-        $valid_user_urls = $valid_urls[Webconfig::ACCESS_TYPE_USER];
-
-        // root - allow everything
-        //------------------------
-
-        // FIXME: move this above the potential exception above?
-
-        if ($username === 'root') {
-            Logger::SysLog("webconfig", "access control - full access granted for $username on $url");
-            return TRUE;
-        }
+        $valid_authenticated_urls = $valid_urls[Access_Control::TYPE_AUTHENTICATED];
+        $valid_custom_urls = $valid_urls[Access_Control::TYPE_CUSTOM];
+        $valid_public_urls = $valid_urls[Access_Control::TYPE_PUBLIC];
 
         // TODO: local administrators group? or add flag for * in sub-administrators?
         /*
@@ -194,12 +249,12 @@ class MY_Authorize
         // local sub-administrator - allow access to configured URLs
         //----------------------------------------------------------
 
-        if ($allow_subadmins && $username) {
-            foreach ($valid_subadmin_urls as $valid_url) {
+        if ($allow_custom && $username) {
+            foreach ($valid_custom_urls as $valid_url) {
                 $valid_url_regex = preg_quote($valid_url, '/');
 
                 if (preg_match("/$valid_url_regex/", $url)) {
-                    Logger::SysLog("webconfig", "access control - local subadmin access granted for $username on $url (matched $valid_url)");
+                    Logger::SysLog("webconfig", "access control - custom access granted for $username on $url (matched $valid_url)");
                     return TRUE;
                 }
             }
@@ -208,8 +263,8 @@ class MY_Authorize
         // normal user - allow access to user-specific URLs
         //------------------------------------------------------------
 
-        if ($allow_users && $username) {
-            foreach ($valid_user_urls as $valid_url) {
+        if ($allow_authenticted && $username) {
+            foreach ($valid_authenticated_urls as $valid_url) {
                 $valid_url_regex = preg_quote($valid_url, '/');
 
                 if (preg_match("/$valid_url_regex/", $url)) {
@@ -240,6 +295,45 @@ class MY_Authorize
         return FALSE;
     }
 
+    /**
+     * Checks authentication.
+     */
+
+    function is_authenticated()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        if ($this->framework->session->userdata('logged_in'))
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    /**
+     * Login.
+     *
+     */
+
+    function login()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $this->framework->session->unset_userdata('logged_in');
+        $this->framework->session->unset_userdata('username');
+    }
+    /**
+     * Logout.
+     *
+     */
+
+    function logout()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $this->framework->session->unset_userdata('logged_in');
+        $this->framework->session->unset_userdata('username');
+    }
+    
     /**
      * Sets session variables when authenticated.
      *
