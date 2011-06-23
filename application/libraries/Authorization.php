@@ -55,10 +55,10 @@ use \clearos\apps\users\User_Factory as User_Factory;
 // Classes
 //--------
 
-use \clearos\apps\access_control\Access_Control as Access_Control;
+use \clearos\apps\base\Access_Control as Access_Control;
 use \clearos\apps\base\Posix_User as Posix_User;
 
-// clearos_load_library('access_control/Access_Control');
+// clearos_load_library('base/Access_Control');
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -83,7 +83,7 @@ use \clearos\apps\base\Posix_User as Posix_User;
  * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
 
-class MY_Authorize
+class MY_Authorization
 {
     ///////////////////////////////////////////////////////////////////////////////
     // V A R I A B L E S
@@ -100,12 +100,12 @@ class MY_Authorize
     ///////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Authorize constructor.
+     * Authorization constructor.
      */
 
     public function __construct()
     {
-        Logger::profile_framework(__METHOD__, __LINE__, 'Authorize Class Initialized');
+        Logger::profile_framework(__METHOD__, __LINE__, 'Authorization Class Initialized');
 
         $this->framework =& get_instance();
     }
@@ -214,7 +214,7 @@ class MY_Authorize
         // Bail if access control is not installed
         //----------------------------------------
 
-        if (! clearos_load_library('access_control/Access_Control')) {
+        if (! clearos_load_library('base/Access_Control')) {
             Logger::SysLog("webconfig", "access control - access denied on $url");
             return FALSE;
         }
@@ -239,15 +239,8 @@ class MY_Authorize
         $valid_custom_urls = $valid_urls[Access_Control::TYPE_CUSTOM];
         $valid_public_urls = $valid_urls[Access_Control::TYPE_PUBLIC];
 
-        // TODO: local administrators group? or add flag for * in sub-administrators?
-        /*
-        } else if ($username === 'root') {
-            $log_message = "local admin access granted for $username on $url";
-            $is_valid = TRUE;
-        */
-
-        // local sub-administrator - allow access to configured URLs
-        //----------------------------------------------------------
+        // custom access - allow access to configured URLs
+        //------------------------------------------------
 
         if ($allow_custom && $username) {
             foreach ($valid_custom_urls as $valid_url) {

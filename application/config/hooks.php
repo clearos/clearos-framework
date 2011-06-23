@@ -32,9 +32,9 @@ $hook['pre_controller'][] = array(
 );
 
 $hook['pre_controller'][] = array(
-	'class'    => 'MY_Authorize',
+	'class'    => 'MY_Authorization',
 	'function' => 'check',
-	'filename' => 'Authorize.php',
+	'filename' => 'Authorization.php',
 	'filepath' => 'libraries'
 );
 

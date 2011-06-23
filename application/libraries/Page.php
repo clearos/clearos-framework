@@ -42,6 +42,7 @@ require_once $bootstrap . '/bootstrap.php';
 
 use \clearos\framework\Logger as Logger;
 use \clearos\framework\Config as Config;
+use \clearos\apps\base\Access_Control as Access_Control;
 
 clearos_load_language('framework');
 
@@ -835,6 +836,7 @@ class MY_Page
         $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id') . 
             $_SERVER['SERVER_PORT'];
 
+/*
         if (file_exists($menu_cache)) {
             $stat = stat($menu_cache);
             $cache_time = $stat['ctime'];
@@ -842,6 +844,7 @@ class MY_Page
             if ($cache_time > $most_recent)
                 return unserialize( file_get_contents($menu_cache) );
         }
+*/
 
         // Load menu order preferences
         //----------------------------
@@ -858,6 +861,17 @@ class MY_Page
             lang('base_subcategory_settings') => '010',
             lang('base_subcategory_accounts') => '020',
         );
+
+        // Load valid pages for given users
+        //---------------------------------
+
+        $username = ($this->framework->session->userdata('username')) ? $this->framework->session->userdata('username') : '';
+        $valid_pages = array();
+
+        if (clearos_load_library('base/Access_Control')) {
+            $access = new Access_Control();
+            $valid_pages = $access->get_valid_pages($username);
+        }
 
         // Create an array with the sort key
         //----------------------------------
@@ -879,6 +893,14 @@ class MY_Page
             if (! is_dir($views_dir))
                 continue;
 
+            // If this page is not allowed, skip it
+            if ($username !== 'root') {
+                $full_name = '/app/' . $app_name;
+                if (! in_array($full_name, $valid_pages))
+                    continue;
+            }
+
+            // Sort stuff
             $primary_sort = empty($primary_order[$app['category']]) ? '500' : $primary_order[$app['category']];
             $secondary_sort = empty($secondary_order[$app['subcategory']]) ? $app['subcategory'] : $secondary_order[$app['subcategory']];
             $page_sort = empty($app['priority']) ? '500' : $app['priority'];
