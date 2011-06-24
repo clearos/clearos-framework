@@ -41,7 +41,9 @@ class MX_Lang extends CI_Lang
 			
         // ClearFoundation 
         // use /etc/sysconfig/i18n which is cached in PHP format to keep things snappy.
-        if (file_exists(CLEAROS_TEMP_DIR . '/language_cache.php')) {
+        if (CI::$APP->session->userdata('lang_code')) {
+            $idiom = CI::$APP->session->userdata('lang_code');
+        } else if (file_exists(CLEAROS_TEMP_DIR . '/language_cache.php')) {
             include CLEAROS_TEMP_DIR . '/language_cache.php';
             $idiom = $language;
         } else {

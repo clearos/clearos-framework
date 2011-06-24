@@ -11,8 +11,8 @@
 */
 
 $hook['pre_controller'][] = array(
-	'class'    => '',
-	'function' => 'webconfig_session',
+	'class'    => 'MY_Login_Session',
+	'function' => 'start',
 	'filename' => 'webconfig.php',
 	'filepath' => 'hooks'
 );
