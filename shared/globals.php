@@ -224,6 +224,26 @@ function clearos_load_language($lang_file)
 }
 
 /**
+ * Checks the existence of an app.
+ *
+ * @param string $app app name
+ *
+ * @return boolean TRUE if app is installed
+ */
+
+function is_library_installed($library)
+{
+    list($app, $library) = preg_split('/\//', $library, 2);
+
+    $library_file = clearos_app_base($app) . "/libraries/$library.php";
+
+    if (file_exists($library_file))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+/**
  * Pulls in a library.
  *
  * This function makes it possible to load different library versions -
