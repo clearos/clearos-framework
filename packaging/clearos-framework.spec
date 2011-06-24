@@ -5,7 +5,7 @@
 Name: clearos-framework
 Group: Development/Languages
 Version: 5.9.9.2
-Release: 2.2%{dist}
+Release: 3%{dist}
 Summary: ClearOS framework
 License: CodeIgniter and LGPLv3
 Packager: ClearFoundation
