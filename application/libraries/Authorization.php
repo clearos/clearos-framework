@@ -50,15 +50,12 @@ use \clearos\framework\Logger as Logger;
 
 use \clearos\apps\users\User_Factory as User_Factory;
 
-// clearos_load_library('users/User_Factory');
-
 // Classes
 //--------
 
 use \clearos\apps\base\Access_Control as Access_Control;
 use \clearos\apps\base\Posix_User as Posix_User;
-
-// clearos_load_library('base/Access_Control');
+use \clearos\apps\accounts\Accounts_Unavailable_Exception as Accounts_Unavailable_Exception;
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -141,10 +138,14 @@ class MY_Authorization
 
         if (! $is_valid) {
             if (clearos_load_library('users/User_Factory')) {
-                $user = User_Factory::create($username);
+                try {
+                    $user = User_Factory::create($username);
 
-                if ($user->check_password($password))
-                    $is_valid = TRUE;
+                    if ($user->check_password($password))
+                        $is_valid = TRUE;
+                } catch (Accounts_Unavailable_Exception $e) {
+                    // Not fatal
+                }
             }
         }
 
