@@ -143,7 +143,7 @@ class MY_Authorization
 
                     if ($user->check_password($password))
                         $is_valid = TRUE;
-                } catch (Accounts_Unavailable_Exception $e) {
+                } catch (Exception $e) {
                     // Not fatal
                 }
             }
