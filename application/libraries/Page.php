@@ -1004,7 +1004,9 @@ class MY_Page
         $view_data['javascript'] = array();
 
         // Automatically pull in app basename Javascript
+        // TODO: review
         $app = preg_replace('/^\//', '', uri_string());
+        $app = preg_replace('/\/.*/', '', $app);
         
         $javascript_basename = $app . '.js.php';
         $javascript = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
