@@ -1003,28 +1003,15 @@ class MY_Page
 
         $view_data['javascript'] = array();
 
-		// TODO: clean up logic - quick hack
-        foreach ($forms as $form) {
-            $segments = preg_split('/\//', $form);
-			$app = $segments[0];
+        // Automatically pull in app basename Javascript
+        $app = preg_replace('/^\//', '', uri_string());
+        
+        $javascript_basename = $app . '.js.php';
+        $javascript = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
 
-            if (isset($segments[1])) {
-                $javascript_basename = $segments[1] . '.js.php';
-				$javascript = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
-
-				if (file_exists($javascript)) {
-					$app_url = Config::get_app_url($app);
-					$view_data['javascript'][] = $app_url . '/' . $javascript_basename;
-				}
-			}
-
-			$javascript_basename = $segments[0] . '.js.php';
-			$javascript = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
-
-			if (file_exists($javascript)) {
-				$app_url = Config::get_app_url($app);
-				$view_data['javascript'][] = $app_url . '/' . $javascript_basename;
-			}
+        if (file_exists($javascript)) {
+            $app_url = Config::get_app_url($app);
+            $view_data['javascript'][] = $app_url . '/' . $javascript_basename;
         }
 
         return $view_data;
