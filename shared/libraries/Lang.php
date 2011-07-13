@@ -78,7 +78,7 @@ class Lang
         $langfile .= '_lang.php';
 
         $deft_lang = ( ! isset($config['language'])) ? 'en_US' : $config['language'];
-        $idiom = ($deft_lang == '') ? 'en_US' : $deft_lang;
+        $language = ($deft_lang == '') ? 'en_US' : $deft_lang;
 
         // use /etc/sysconfig/i18n which is cached in PHP format to keep things snappy.
         if (file_exists(CLEAROS_TEMP_DIR . '/language_cache.php'))
