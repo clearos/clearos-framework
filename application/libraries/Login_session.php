@@ -43,6 +43,7 @@ require_once $bootstrap . '/bootstrap.php';
 // Dependencies are loaded below since it is only necessary on session start.
 
 use \clearos\framework\Logger as Logger;
+use \clearos\apps\base\Authorization as Authorization;
 use \clearos\apps\base\OS as OS;
 use \clearos\apps\base\Product as Product;
 use \clearos\apps\base\Webconfig as Webconfig;
@@ -53,8 +54,37 @@ use \clearos\apps\network\Hostname as Hostname;
 // C L A S S
 ///////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Webconfig login session handling.
+ *
+ * The security model is simple - all protected pages start with a call to
+ * WebAuthenticate().  The function does one of three things:
+ *
+ *  - 1) Returns (quietly) on success
+ *  - 2) Returns a "login failed" username/password web form
+ *  - 3) Returns an "access denied" page if user is accessing an unauthorized page
+ *
+ * @category   Framework
+ * @package    Application
+ * @subpackage Hooks
+ * @author     ClearFoundation <developer@clearfoundation.com>
+ * @copyright  2011 ClearFoundation
+ * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
+ * @link       http://www.clearfoundation.com/docs/developer/apps/
+ */
+
 class MY_Login_Session
 {
+    ///////////////////////////////////////////////////////////////////////////////
+    // V A R I A B L E S
+    ///////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * @var object framework instance
+     */
+
+    protected $framework = NULL;
+
     ///////////////////////////////////////////////////////////////////////////////
     // M E T H O D S
     ///////////////////////////////////////////////////////////////////////////////
@@ -66,57 +96,109 @@ class MY_Login_Session
     public function __construct()
     {
         Logger::profile_framework(__METHOD__, __LINE__, 'Login Session Class Initialized');
+
+        $this->framework =& get_instance();
     }
 
     /**
-     * Reloads translations for given app.
+     * Authenticates user.
      *
-     * When changing the language, we need to reload language files in order
-     * to display the right language!  This little helper does the trick.
+     * @param string $username username
+     * @param string $password password
+     *
+     * @return TRUE if authentication is successful
+     * @throws Engine_Exception
+     */
+
+    public function authenticate($username, $password)
+    {
+        clearos_profile(__METHOD__, __LINE__);
+
+        $is_valid = FALSE;
+
+        if (clearos_load_library('base/Authorization')) {
+            $authorization = new Authorization();
+
+            if ($authorization->authenticate($username, $password))
+                $is_valid = TRUE;
+        }
+
+        return $is_valid;
+    }
+
+    /**
+     * Checks the page authorization.
+     *
+     * This method is called by CodeIgniter before any controller is loaded.
      *
      * @return void
      */
 
-    public function reload_language($app)
+    public function check_acl()
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $framework =& get_instance();
+        $username = $this->framework->session->userdata('username');
+        $logged_in = (bool)$this->framework->session->userdata('logged_in');
 
-        $loaded = $framework->session->CI->lang->is_loaded;
+        // Return right away if access granted
+        //------------------------------------
 
-        $new_loaded = array();
-        $app_file = $app . '_lang';
+        if (! clearos_load_library('base/Authorization'))
+            redirect('base/session/login');
 
-        foreach ($loaded as $loaded_lang) {
-            if ($loaded_lang !== $app_file)
-                $new_loaded[] = $loaded_lang;
+        $authorization = new Authorization();
+
+        if ($authorization->check_acl($username, $_SERVER['PHP_SELF']))
+            return;
+
+        // If logged in but denied access, point the user in the right direction.
+        // If not logged in, send the user to the login page.
+        //-----------------------------------------------------------------------
+
+        if ($logged_in) {
+            redirect('base/session/access_denied');
+        } else {
+            if (!($_SERVER['PHP_SELF'] === '/app/base/session/login'))
+                redirect('base/session/login');
         }
+    }
 
-        $framework->session->CI->lang->is_loaded = $new_loaded;
+    /**
+     * Checks authentication.
+     *
+     * @return void
+     */
 
-        $framework->lang->load($app);
+    public function is_authenticated()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        if ($this->framework->session->userdata('logged_in'))
+            return TRUE;
+        else
+            return FALSE;
     }
 
     /**
      * Changes session locale.
      *
+     * @param string $code language code
+     *
      * @return void
      */
 
-    public function set_locale($code)
+    public function set_language($code)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $framework =& get_instance();
-
         // Set session
-        $framework->session->set_userdata('lang_code', $code);
+        $this->framework->session->set_userdata('lang_code', $code);
 
         // FIXME: text direction and character set need to be updated too
 
         // Clear the cache when changing the session language
-        $framework->page->clear_cache();
+        $this->framework->page->clear_cache();
     }
 
     /**
@@ -129,9 +211,7 @@ class MY_Login_Session
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $framework =& get_instance();
-
-        if ($framework->session->userdata('session_started') == '1')
+        if ($this->framework->session->userdata('session_started') == '1')
             return;
 
         ///////////////////////////////////////////////////////////////////////////
@@ -148,7 +228,7 @@ class MY_Login_Session
         if (clearos_load_library('network/Hostname')) {
             try {
                 $hostname = new Hostname();
-                $session['hostname'] = $hostname->Get();
+                $session['hostname'] = $hostname->get();
             } catch (Exception $e) {
                 // Use default
             }
@@ -159,26 +239,13 @@ class MY_Login_Session
 
         // FIXME
         $session['registered'] = FALSE;
-        $session['sdn_redirect'] = 'https://secure.clearcenter.com/redirect';
-        $session['online_help'] = 'https://secure.clearcenter.com/redirect/userguide';
-
-        if (file_exists(COMMON_CORE_DIR . "/api/Register.php")) {
-            require_once(COMMON_CORE_DIR . "/api/Register.php");
-
-            try {
-                $register = new Register();
-                $session['registered'] = $register->GetStatus();
-            } catch (Exception $e) {
-                // Use default
-            }
-        }
 
         // Language
         //---------
 
         // The language code can left alone if it is already set.
 
-        if (! $framework->session->userdata('lang_code')) {
+        if (! $this->framework->session->userdata('lang_code')) {
             $session['lang_code'] = 'en_US';
             $session['encoding'] = 'utf-8';
             $session['textdir'] = 'LTR';
@@ -244,6 +311,70 @@ class MY_Login_Session
 
         $session['session_started'] = TRUE;
 
-        $framework->session->set_userdata($session);
+        $this->framework->session->set_userdata($session);
+    }
+
+    /**
+     * Starts a login session.
+     * 
+     * @param string $username username
+     *
+     * @return void
+     */
+
+    public function start_authenticated($username)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $this->framework->session->set_userdata('logged_in', 'TRUE');
+        $this->framework->session->set_userdata('username', $username);
+        // FIXME: add user's full name
+    }
+
+    /**
+     * Stops a login session.
+     *
+     * @return void
+     */
+
+    public function stop_authenticated()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $this->framework->session->unset_userdata('logged_in');
+        $this->framework->session->unset_userdata('username');
+        $this->framework->session->unset_userdata('session_started');
+    }
+    
+    /**
+     * Reloads translations for given app.
+     *
+     * When changing the language, we need to reload language files in order
+     * to display the right language!  This little helper does the trick.
+     *
+     * @param string $app app name
+     *
+     * @return void
+     */
+
+    public function reload_language($app)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $framework =& get_instance();
+
+        $loaded = $framework->session->CI->lang->is_loaded;
+
+        $new_loaded = array();
+        $app_file = $app . '_lang';
+
+        foreach ($loaded as $loaded_lang) {
+            if ($loaded_lang !== $app_file)
+                $new_loaded[] = $loaded_lang;
+        }
+
+        $framework->session->CI->lang->is_loaded = $new_loaded;
+
+        $framework->lang->load($app);
     }
 }

@@ -25,16 +25,9 @@ $hook['pre_controller'][] = array(
 );
 
 $hook['pre_controller'][] = array(
-	'class'    => 'MY_Setup',
-	'function' => 'check',
-	'filename' => 'Setup.php',
-	'filepath' => 'libraries'
-);
-
-$hook['pre_controller'][] = array(
-	'class'    => 'MY_Authorization',
-	'function' => 'check',
-	'filename' => 'Authorization.php',
+	'class'    => 'MY_Login_Session',
+	'function' => 'check_acl',
+	'filename' => 'Login_session.php',
 	'filepath' => 'libraries'
 );
 
