@@ -319,9 +319,12 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data();
 
+        $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
+
         $app = $this->framework->uri->segment(1);
 
         $this->data['title'] = lang('framework_confirm');
+        $this->data['type'] = $type;
         $this->data['app_view'] = theme_confirm($confirm, $cancel, $message, $options);
         $this->data['page_help'] = $this->_get_help_view($app);
         $this->data['page_summary'] = $this->_get_summary_view($app);
@@ -343,11 +346,14 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data();
 
+        $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
+
         $app = $this->framework->uri->segment(1);
 
         $message = isset($options['message']) ? $options['message'] : lang('framework_are_you_sure_delete');
 
         $this->data['title'] = lang('framework_confirm_delete');
+        $this->data['type'] = $type;
         $this->data['app_view'] = theme_confirm_delete($confirm, $cancel, $items, $message, $options);
         $this->data['page_help'] = $this->_get_help_view($app);
         $this->data['page_summary'] = $this->_get_summary_view($app);
@@ -508,7 +514,7 @@ class MY_Page
             echo infobox_critical(clearos_exception_message($exception));
             echo "</div>";
         } else {
-            $this->data['type'] = MY_Page::TYPE_REPORT;
+            $this->data['type'] = MY_Page::TYPE_SPLASH;
             $this->data['title'] = 'Ooops';
             $this->data['app_view'] = theme_dialog_warning(clearos_exception_message($exception));
             $this->_display_page();
