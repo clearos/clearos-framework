@@ -136,6 +136,8 @@ class MY_Page
 
     /**
      * Clears the cache directory
+     *
+     * @return void
      */
 
     public function clear_cache()
@@ -146,7 +148,7 @@ class MY_Page
             $_SERVER['SERVER_PORT'];
 
         if ($handle = opendir(CLEAROS_TEMP_DIR)) {
-            while (false !== ($file = readdir($handle))) {
+            while (FALSE !== ($file = readdir($handle))) {
                 if (preg_match('/^menu_cache_/', $file))
                     unlink(CLEAROS_TEMP_DIR . '/' . $file);
             }
@@ -364,11 +366,11 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-/*
+        /*
         // FIXME: what to do with help and summary widgets 
         if ($this->framework->session->userdata['theme_mode'] === self::MODE_CONTROL_PANEL) {
         }
-*/
+        */
 
         if (empty($this->data))
             $this->_load_meta_data(array($form));
@@ -445,8 +447,8 @@ class MY_Page
 
             $this->data['app_view'] = theme_control_panel($data);
 
-        // Full desktop style
-        //-------------------
+            // Full desktop style
+            //-------------------
 
         } else {
             // Non-intuitive, but this saves app developers from handling a 
@@ -525,6 +527,7 @@ class MY_Page
      * Display help box.
      *
      * @access private
+     * @return HTML
      */
 
     public function view_help($form)
@@ -545,6 +548,7 @@ class MY_Page
      * Display report box.
      *
      * @access private
+     * @return HTML
      */
 
     public function view_report($form)
@@ -565,6 +569,7 @@ class MY_Page
      * Display summary box.
      *
      * @access private
+     * @return HTML
      */
 
     public function view_summary($form)
@@ -687,7 +692,7 @@ class MY_Page
      * @return string HTML for help view
      */
 
-    public function _get_help_view($form)
+    protected function _get_help_view($form)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -735,7 +740,7 @@ class MY_Page
      * @return string HTML for summary view
      */
 
-    public function _get_summary_view($form)
+    protected function _get_summary_view($form)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -764,8 +769,8 @@ class MY_Page
             $app_name = $segments[2];
         }
 
-		$app = array();
-		$app_base = clearos_app_base($app_name);
+        $app = array();
+        $app_base = clearos_app_base($app_name);
 
         $info_file = $app_base . '/deploy/info.php';
 
@@ -780,15 +785,15 @@ class MY_Page
             $app['modified'] = $stat['ctime'];
         }
 
-		$icon_basename = $app_name . '_50x50.png';
-		$icon_path = $app_base . '/htdocs/' . $icon_basename;
+        $icon_basename = $app_name . '_50x50.png';
+        $icon_path = $app_base . '/htdocs/' . $icon_basename;
 
-		if (file_exists($icon_path))
-			$app['icon_path'] = clearos_app_htdocs($app_name) . '/' . $icon_basename;
-		else
-			$app['icon_path'] = '/assets/app_default_50x50.png';
+        if (file_exists($icon_path))
+            $app['icon_path'] = clearos_app_htdocs($app_name) . '/' . $icon_basename;
+        else
+            $app['icon_path'] = '/assets/app_default_50x50.png';
 
-		return $app;
+        return $app;
     }
 
     /**
@@ -836,7 +841,8 @@ class MY_Page
         $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id') . 
             $_SERVER['SERVER_PORT'];
 
-/*
+        // FIXME - re-enable cache
+        /*
         if (file_exists($menu_cache)) {
             $stat = stat($menu_cache);
             $cache_time = $stat['ctime'];
@@ -844,7 +850,7 @@ class MY_Page
             if ($cache_time > $most_recent)
                 return unserialize( file_get_contents($menu_cache) );
         }
-*/
+        */
 
         // Load menu order preferences
         //----------------------------
