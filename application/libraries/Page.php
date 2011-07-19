@@ -654,7 +654,7 @@ class MY_Page
 
 <!-- Basic Head Information -->
 <title>$title</title>
-<meta http-equiv='Content-Type' content='text/html; charset=" . $this->framework->session->userdata('charset') . "'>
+<meta http-equiv='Content-Type' content='text/html; charset=" . $this->framework->session->userdata('encoding') . "'>
 
 <!-- Jquery -->
 <script type='text/javascript' src='/js/jquery-1.6.1.min.js'></script>
