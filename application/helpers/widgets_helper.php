@@ -385,6 +385,34 @@ function form_submit_update($name, $importance = 'high', $options = NULL)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// F I E L D S E T S
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Field set header.
+ *
+ * @param string $title title
+ *
+ * @return string HTML
+ */
+
+function fieldset_header($title)
+{
+    return theme_fieldset_header($title);
+}
+
+/**
+ * Field set footer.
+ *
+ * @return string HTML
+ */
+
+function fieldset_footer()
+{
+    return theme_fieldset_footer();
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // B U T T O N  S E T S
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -400,6 +428,24 @@ function form_submit_update($name, $importance = 'high', $options = NULL)
 function button_set($buttons, $options = NULL)
 {
     return theme_button_set($buttons, $options);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  B U T T O N  S E T S
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Button set.
+ *
+ * @param array $buttons buttons array
+ * @param array $options options
+ *
+ * @return string HTML
+ */
+
+function field_button_set($buttons, $options = NULL)
+{
+    return theme_field_button_set($buttons, $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
