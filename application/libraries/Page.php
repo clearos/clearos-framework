@@ -363,13 +363,18 @@ class MY_Page
         $this->_display_page();
     }
 
+    public function view_form($form, $data, $title, $options = array())
+    {
+        $this->display_view($form, $data, $title, $options);
+    }
+
     /**
      * Displays a page with a single form.
      *
      * @return view
      */
 
-    public function view_form($form, $data, $title, $options = array())
+    public function display_view($form, $data, $title, $options = array())
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -382,10 +387,10 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data(array($form));
 
-        $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
-
+//        $this->data['javascript'] = (isset($options['javascript'])) ? $options['javascript'] : array();
+        $this->data['javascript'] = (isset($options['javascript'])) ? $options['javascript'] : array();
         $this->data['title'] = $title;
-        $this->data['type'] = $type;
+        $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         // Non-intuitive: see view_forms for form_only explanation
         
@@ -416,13 +421,18 @@ class MY_Page
         }
     }
 
+    public function view_forms($forms, $title)
+    {
+        $this->display_controllers($forms, $title);
+    }
+
     /**
      * Displays a page with multiple forms.
      *
      * @return view
      */
 
-    public function view_forms($forms, $title)
+    public function display_controllers($forms, $title)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -600,19 +610,17 @@ class MY_Page
     /**
      * Returns the HTML head section.
      *
-     * @param array $page_data page data
-     *
      * @return string HTML head section
      */
 
-    protected function _build_page_head($page_data)
+    protected function _build_page_head()
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
         // Adding hostname to the title is handy when managing multiple systems
         //---------------------------------------------------------------------
 
-        $title = $page_data['title'];
+        $title = $this->data['title'];
 
         if ($this->framework->session->userdata('hostname'))
             $title = $this->framework->session->userdata('hostname') . " - " . $title;
@@ -627,19 +635,40 @@ class MY_Page
         $app_url = Config::get_app_url($app);
         $theme_path = Config::get_theme_url($this->framework->session->userdata('theme'));
 
-        // Add page-specific head links
-        //-----------------------------
+        // Add page-specific CSS
+        //----------------------
 
+        $css_head = '';
         $css =  $app . '.css';
-        $js = $app . '.js.php';
-
-        $page_auto_head = '';
-
-        foreach ($page_data['javascript'] as $javascript)
-            $page_auto_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
 
         if (file_exists($doc_base . '/' . $css))
-            $page_auto_head .= "<link type='text/css' href='" . $app_url . '/' . $css ."' rel='stylesheet'>\n";
+            $css_head .= "<link type='text/css' href='" . $app_url . '/' . $css ."' rel='stylesheet'>\n";
+
+        // Add Javascript hooks
+        //---------------------
+
+        $javascript_list = array();
+
+        // Automatically pull in app basename Javascript
+        $app = preg_replace('/^\//', '', uri_string());
+        $app = preg_replace('/\/.*/', '', $app);
+        
+        $javascript_basename = $app . '.js.php';
+        $javascript = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
+
+        if (file_exists($javascript)) {
+            $app_url = Config::get_app_url($app);
+            $javascript_list[] = $app_url . '/' . $javascript_basename;
+        }
+
+        $javascript_head = '';
+
+        foreach ($javascript_list as $javascript)
+            $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
+
+        // Automatically pull in explicit javascript requests
+        foreach ($this->data['javascript'] as $javascript)
+            $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
 
         // <html>
         //-------------------
@@ -667,8 +696,11 @@ class MY_Page
         // <head> extras defined in app
         //------------------------------------------
 
-        if ($page_auto_head)
-            $head .= "<!-- Page-specific Head -->\n$page_auto_head\n";
+        if ($css_head)
+            $head .= "<!-- Page-specific CSS -->\n$css_head\n";
+
+        if ($javascript_head)
+            $head .= "<!-- Page-specific Javascript -->\n$javascript_head\n";
 
         // </head> all done
         //------------------------------------------
@@ -689,7 +721,7 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__);
 
         echo theme_page_doctype() . "\n";
-        echo $this->_build_page_head($this->data);
+        echo $this->_build_page_head();
         echo theme_page($this->data);
     }
 
@@ -1010,24 +1042,6 @@ class MY_Page
 
         if (empty($this->data['type']))
             $view_data['type'] = MY_Page::TYPE_CONFIGURATION;
-
-        // Javascript hooks
-        //-----------------
-
-        $view_data['javascript'] = array();
-
-        // Automatically pull in app basename Javascript
-        // TODO: review
-        $app = preg_replace('/^\//', '', uri_string());
-        $app = preg_replace('/\/.*/', '', $app);
-        
-        $javascript_basename = $app . '.js.php';
-        $javascript = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
-
-        if (file_exists($javascript)) {
-            $app_url = Config::get_app_url($app);
-            $view_data['javascript'][] = $app_url . '/' . $javascript_basename;
-        }
 
         return $view_data;
     }
