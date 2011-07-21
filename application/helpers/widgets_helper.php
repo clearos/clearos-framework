@@ -471,7 +471,8 @@ function field_button_set($buttons, $options = NULL)
 
 function field_view($label, $text, $name = NULL, $value = NULL, $options = NULL)
 {
-    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $implied_id = ($name === NULL) ? 'clearos' . mt_rand() : $name;
+    $input_id = (isset($options['id'])) ? $options['id'] : $implied_id;
 
     return theme_field_view($label, $text, $name, $value, $input_id, $options);
 } 
@@ -494,7 +495,7 @@ function field_view($label, $text, $name = NULL, $value = NULL, $options = NULL)
 
 function field_input($name, $value, $label, $read_only = FALSE, $options = NULL)
 {
-    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $input_id = (isset($options['id'])) ? $options['id'] : $name;
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
 
@@ -524,7 +525,7 @@ function field_input($name, $value, $label, $read_only = FALSE, $options = NULL)
 
 function field_password($name, $value, $label, $read_only = FALSE, $options = NULL)
 {
-    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $input_id = (isset($options['id'])) ? $options['id'] : $name;
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
 
@@ -550,7 +551,7 @@ function field_password($name, $value, $label, $read_only = FALSE, $options = NU
 
 function field_file($name, $value, $label, $read_only = FALSE, $options = NULL)
 {
-    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $input_id = (isset($options['id'])) ? $options['id'] : $name;
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
 
@@ -583,7 +584,7 @@ function field_dropdown($name, $values, $value, $label, $read_only = FALSE, $opt
 {
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
-    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $input_id = (isset($options['id'])) ? $options['id'] : $name;
 
     if ($read_only)
         $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
@@ -614,7 +615,7 @@ function field_simple_dropdown($name, $values, $value, $label, $read_only = FALS
 {
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
-    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $input_id = (isset($options['id'])) ? $options['id'] : $name;
 
     $values = convert_to_hash($values);
 
@@ -646,7 +647,7 @@ function field_toggle_enable_disable($name, $value, $label, $read_only = FALSE, 
 {
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
-    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $input_id = (isset($options['id'])) ? $options['id'] : $name;
 
     $values = array(
         '0' => lang('base_disabled'),
@@ -682,7 +683,7 @@ function field_checkbox($name, $value, $label, $read_only = FALSE, $options = NU
 {
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
-    $input_id = (isset($options['id'])) ? $options['id'] : 'clearos' . mt_rand();
+    $input_id = (isset($options['id'])) ? $options['id'] : $name;
 
     // FIXME: this needs to be improved of course
     $text = ($value) ? 'X' : '';
@@ -879,27 +880,6 @@ function dialogbox_confirm_delete($message, $items, $confirm_anchor, $cancel_anc
 function dialogbox_confirm($message, $confirm_anchor, $cancel_anchor)
 {
     return theme_dialogbox_confirm($message, $confirm_anchor, $cancel_anchor);
-}
-
-//////////////////////////////////////////////////////////////////////////////
-// D A E M O N  B O X E S
-///////////////////////////////////////////////////////////////////////////////
-
-function daemonbox($daemon)
-{
-    // FIXME: need to merge with theme
-    $html = 
-        form_open('') .
-        form_header('Status')  .
-        "<input id='clearos_daemon_name' value='$daemon' type='hidden'>" .
-        "<input id='clearos_daemon_status_lock' value='off' type='hidden'>" .
-        "Status: <span id='clearos_daemon_status'></span> &nbsp; &nbsp; " .
-        anchor_javascript('clearos_daemon_action', '', 'high') . " " .
-        form_footer() .
-        form_close()
-    ;
-
-    return $html;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
