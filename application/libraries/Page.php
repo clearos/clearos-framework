@@ -667,8 +667,10 @@ class MY_Page
             $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
 
         // Automatically pull in explicit javascript requests
-        foreach ($this->data['javascript'] as $javascript)
-            $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
+        if (! empty($this->data['javascript'])) {
+            foreach ($this->data['javascript'] as $javascript)
+                $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
+        }
 
         // <html>
         //-------------------
