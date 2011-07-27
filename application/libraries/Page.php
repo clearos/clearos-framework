@@ -105,6 +105,7 @@ class MY_Page
     const TYPE_CONFIGURATION = 'configuration';
     const TYPE_LOGIN = 'login';
     const TYPE_REPORT = 'report';
+    const TYPE_MARKETPLACE = 'marketplace';
     const TYPE_SPLASH = 'splash';
     const TYPE_WIZARD = 'wizard';
 
