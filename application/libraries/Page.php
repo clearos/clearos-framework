@@ -364,18 +364,13 @@ class MY_Page
         $this->_display_page();
     }
 
-    public function view_form($form, $data, $title, $options = array())
-    {
-        $this->display_view($form, $data, $title, $options);
-    }
-
     /**
      * Displays a page with a single form.
      *
      * @return view
      */
 
-    public function display_view($form, $data, $title, $options = array())
+    public function view_form($form, $data, $title, $options = array())
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -388,7 +383,6 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data(array($form));
 
-//        $this->data['javascript'] = (isset($options['javascript'])) ? $options['javascript'] : array();
         $this->data['javascript'] = (isset($options['javascript'])) ? $options['javascript'] : array();
         $this->data['title'] = $title;
         $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
@@ -424,7 +418,7 @@ class MY_Page
 
     public function view_forms($forms, $title)
     {
-        $this->display_controllers($forms, $title);
+        $this->view_controllers($forms, $title);
     }
 
     /**
@@ -433,7 +427,7 @@ class MY_Page
      * @return view
      */
 
-    public function display_controllers($forms, $title)
+    public function view_controllers($forms, $title)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -481,16 +475,18 @@ class MY_Page
             foreach ($forms as $form) {
                 $basename = preg_replace('/.*\//', '', $form);
 
-                // TODO: this is a hack for the "daemon" widget
+                // FIXME: this is a hack for the "daemon" widget
                 // This should be generalized of course
+/*
                 if (preg_match('/\/index\//', $form)) {
                     $params = preg_replace('/.*index\//', '', $form);
                 } else {
                     $params = '';
                 }
+*/
 
                 $this->framework->load->module($form);
-                $this->framework->$basename->index($params);
+                $this->framework->$basename->index();
             }
 
             $this->data['app_view'] = ob_get_clean();
