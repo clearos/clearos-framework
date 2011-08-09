@@ -495,7 +495,7 @@ function field_view($label, $text, $name = NULL, $value = NULL, $options = NULL)
 
 function field_input($name, $value, $label, $read_only = FALSE, $options = NULL)
 {
-    $input_id = (isset($options['id'])) ? $options['id'] : $name;
+    $input_id = (isset($options['id'])) ? $options['id'] : preg_replace('/[\[\]]/', '', $name);
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
 
