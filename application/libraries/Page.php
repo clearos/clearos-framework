@@ -416,18 +416,13 @@ class MY_Page
         }
     }
 
-    public function view_forms($forms, $title)
-    {
-        $this->view_controllers($forms, $title);
-    }
-
     /**
      * Displays a page with multiple forms.
      *
      * @return view
      */
 
-    public function view_controllers($forms, $title)
+    public function view_forms($forms, $title)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
