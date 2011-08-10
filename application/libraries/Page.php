@@ -801,7 +801,10 @@ echo "route $route";
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $app = preg_replace('/\/.*/', '', $controller);
+        if (preg_match('/\//', $controller))
+            $app = preg_replace('/\/.*/', '', $controller);
+        else
+            $app = NULL;
 
         $data = $this->_load_app_data($app);
 
