@@ -117,6 +117,7 @@ class MY_Page
     ///////////////////////////////////////////////////////////////////////////////
 
     protected $framework = NULL;
+    protected $javascript = array();
     public $data = array();
     public $form_only = FALSE;
 
@@ -192,13 +193,31 @@ class MY_Page
     }
 
     /**
+     * Handles redirect after completing a page action (update, delete, etc).
+     *
+     * This method basically exists to help with creating a wizard.  When
+     * something like the network tool is included in a setup wizard, this
+     * redirect method allows us to control where to go next.
+     *
+     * @return view
+     */
+
+    public function redirect($route)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+echo "route $route";
+        // redirect($route);
+    }
+
+    /**
      * Handles status added message.
      *
      * @return void
      */
 
     public function set_status_added()
-    { 
+    {
         Logger::profile_framework(__METHOD__, __LINE__);
 
         $message = lang('framework_item_was_added');
@@ -383,13 +402,18 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data(array($form));
 
-        $this->data['javascript'] = (isset($options['javascript'])) ? $options['javascript'] : array();
+        if (isset($options['javascript']))
+            $this->javascript = array_merge($options['javascript'], $this->javascript);
+
         $this->data['title'] = $title;
         $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         // Non-intuitive: see view_forms for form_only explanation
         
         if ($this->form_only) {
+            // Convert short form (e.g. view_form('language')) to long form,
+            // (e.g. view_form('language/language').
+            $form = preg_match('/\//', $form) ? $form : "$form/$form";
             $this->framework->load->view($form, $data);
         } else {
             // More non-intuitive stuff.  When we are *not* running in "control panel" mode,
@@ -414,6 +438,63 @@ class MY_Page
 
             $this->_display_page();
         }
+    }
+
+    /**
+     * Displays a controller in wizard mode.
+     *
+     * @return view
+     */
+
+    public function view_wizard($current, $steps, $title)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $controller = $steps[$current]['route'];
+
+        // Load required metadata and widgets
+        //-----------------------------------
+
+        $this->_load_meta_data($controller);
+
+        $this->data['page_help'] = $this->_get_help_view($controller);
+
+        if (isset($steps[$current - 1]))
+            $wizard_nav['previous'] = $steps[$current - 1]['nav'];
+        else
+            $wizard_nav['previous'] = '';
+
+        if (isset($steps[$current + 1]))
+            $wizard_nav['next'] = $steps[$current + 1]['nav'];
+        else
+            $wizard_nav['next'] = '';
+
+        $this->data['wizard_navigation'] = $wizard_nav;
+        $this->data['wizard_menu'] = $steps;
+        $this->data['wizard_current'] = $current;
+
+        // See view_forms for this non-intuitive flag
+        //-------------------------------------------
+
+        $this->form_only = TRUE; 
+
+        ob_start();
+
+        $basename = preg_replace('/.*\//', '', $controller);
+
+        $this->framework->load->module($controller);
+        $this->framework->$basename->index();
+
+        $this->data['app_view'] = ob_get_clean();
+
+        $this->form_only = FALSE; 
+
+        // Show page in wizard mode
+        //-------------------------
+
+        $this->data['type'] = MY_Page::TYPE_WIZARD;
+
+        $this->_display_page();
     }
 
     /**
@@ -469,16 +550,6 @@ class MY_Page
 
             foreach ($forms as $form) {
                 $basename = preg_replace('/.*\//', '', $form);
-
-                // FIXME: this is a hack for the "daemon" widget
-                // This should be generalized of course
-/*
-                if (preg_match('/\/index\//', $form)) {
-                    $params = preg_replace('/.*index\//', '', $form);
-                } else {
-                    $params = '';
-                }
-*/
 
                 $this->framework->load->module($form);
                 $this->framework->$basename->index();
@@ -659,8 +730,8 @@ class MY_Page
             $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
 
         // Automatically pull in explicit javascript requests
-        if (! empty($this->data['javascript'])) {
-            foreach ($this->data['javascript'] as $javascript)
+        if (! empty($this->javascript)) {
+            foreach ($this->javascript as $javascript)
                 $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
         }
 
@@ -725,15 +796,17 @@ class MY_Page
      * @return string HTML for help view
      */
 
-    protected function _get_help_view($form)
+    protected function _get_help_view($controller)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $data = $this->_load_app_data();
+        $app = preg_replace('/\/.*/', '', $controller);
+
+        $data = $this->_load_app_data($app);
 
         // FIXME: Move this to a driver package
         if (empty($data['user_guide_url']))
-            $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS_Enterprise/6.0.0/userguide/' . $data['basename'];
+            $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS_Enterprise/6.1.0/userguide/' . $data['basename'];
 
         if (empty($data['support_url']))
             $data['support_url'] = 'http://www.clearcenter.com/getsupport';
