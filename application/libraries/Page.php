@@ -411,9 +411,10 @@ echo "route $route";
         // Non-intuitive: see view_forms for form_only explanation
         
         if ($this->form_only) {
+            // FIXME
             // Convert short form (e.g. view_form('language')) to long form,
             // (e.g. view_form('language/language').
-            $form = preg_match('/\//', $form) ? $form : "$form/$form";
+            // $form = preg_match('/\//', $form) ? $form : "$form/$form";
             $this->framework->load->view($form, $data);
         } else {
             // More non-intuitive stuff.  When we are *not* running in "control panel" mode,
