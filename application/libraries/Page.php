@@ -423,8 +423,8 @@ echo "route $route";
             if ($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL) {
                 $segments = preg_split('/\//', uri_string());
                 $app_name = $segments[1];
-                $controller = $segments[2];
-                $action = $segments[3];
+                $controller = isset($segments[2]) ? $segments[2] : 'index';
+                $action = isset($segments[3]) ? $segments[3] : '';
 
                 $app_data = $this->_load_app_data();
 
