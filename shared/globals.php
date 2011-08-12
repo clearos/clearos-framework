@@ -96,7 +96,6 @@ if (Config::$debug_mode) {
  * @return string app URL 
  */
 
-
 function clearos_app_htdocs($app = NULL)
 {
     // FIXME: uri_string is CodeIgniter-ism and not always loaded
@@ -117,6 +116,33 @@ function clearos_app_htdocs($app = NULL)
 function clearos_app_base($app)
 {
     return Config::get_app_base($app);
+}
+
+/**
+ * Checks the existence of an app library.
+ *
+ * @param string $app app name
+ *
+ * @return boolean TRUE if app is installed
+ */
+
+function clearos_app_installed($app)
+{
+    if (Config::get_app_base($app))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+/**
+ * Checks the marketplace status.
+ *
+ * @return boolean TRUE if marketplace is available
+ */
+
+function clearos_marketplace_installed()
+{
+    return clearos_app_installed('marketplace');
 }
 
 /**
@@ -224,7 +250,7 @@ function clearos_load_language($lang_file)
 }
 
 /**
- * Checks the existence of an app.
+ * Checks the existence of an app library.
  *
  * @param string $app app name
  *
