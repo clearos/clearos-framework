@@ -159,8 +159,10 @@ class MY_Login_Session
         if ($logged_in) {
             redirect('base/session/access_denied');
         } else {
-            if (!($_SERVER['PHP_SELF'] === '/app/base/session/login'))
-                redirect('base/session/login');
+            if (!($_SERVER['PHP_SELF'] === '/app/base/session/login')) {
+                $post_redirect = base64_encode($_SERVER['PHP_SELF']);
+                redirect('base/session/login/' . $post_redirect);
+            }
         }
     }
 
