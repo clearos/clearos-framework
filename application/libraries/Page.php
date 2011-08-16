@@ -108,6 +108,7 @@ class MY_Page
     const TYPE_MARKETPLACE = 'marketplace';
     const TYPE_SPLASH = 'splash';
     const TYPE_WIZARD = 'wizard';
+    const TYPE_CONSOLE = 'console';
 
     const MODE_CONTROL_PANEL = 'control_panel';
     const MODE_NORMAL = 'normal';
@@ -417,15 +418,15 @@ echo "route $route";
             // $form = preg_match('/\//', $form) ? $form : "$form/$form";
             $this->framework->load->view($form, $data);
         } else {
+            $segments = preg_split('/\//', uri_string());
+            $app_name = $segments[1];
+            $controller = isset($segments[2]) ? $segments[2] : 'index';
+            $action = isset($segments[3]) ? $segments[3] : '';
+
             // More non-intuitive stuff.  When we are *not* running in "control panel" mode,
             // the user should see a full page summary once an action (e.g. adding a port
             // forward firewall) takes place.
             if ($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL) {
-                $segments = preg_split('/\//', uri_string());
-                $app_name = $segments[1];
-                $controller = isset($segments[2]) ? $segments[2] : 'index';
-                $action = isset($segments[3]) ? $segments[3] : '';
-
                 $app_data = $this->_load_app_data();
 
                 if (!$action && isset($app_data['controllers'][$controller]['title']))
@@ -433,9 +434,9 @@ echo "route $route";
             }
 
             $this->data['app_view'] = $this->framework->load->view($form, $data, TRUE);
-            $this->data['page_help'] = $this->_get_help_view($form);
-            $this->data['page_summary'] = $this->_get_summary_view($form);
-            $this->data['page_report'] = $this->_get_report_view($form);
+            $this->data['page_help'] = $this->_get_help_view($app_name);
+            $this->data['page_summary'] = $this->_get_summary_view($app_name);
+            $this->data['page_report'] = $this->_get_report_view($app_name);
 
             $this->_display_page();
         }
