@@ -697,6 +697,36 @@ function field_checkbox($name, $value, $label, $read_only = FALSE, $options = NU
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
+// F I E L D  T E X T A R E A
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Text area field.
+ *
+ * @param string $name      name of text area element
+ * @param string $value     value of text area
+ * @param string $label     label for text area field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_textarea($name, $value, $label, $read_only = FALSE, $options = NULL)
+{
+    $input_id = (isset($options['id'])) ? $options['id'] : preg_replace('/[\[\]]/', '', $name);
+    $value = ($read_only) ? $value : set_value($name, $value);
+    $error = form_error($name);
+
+    if ($read_only)
+        $html = theme_field_view($label, $value, $name, $value, $input_id, $options);
+    else
+        $html = theme_field_textarea($name, $value, $label, $error, $input_id, $options);
+
+    return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
 // R A D I O  S E T S
 ///////////////////////////////////////////////////////////////////////////////
 
