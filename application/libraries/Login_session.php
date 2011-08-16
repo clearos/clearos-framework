@@ -161,6 +161,7 @@ class MY_Login_Session
         } else {
             if (!($_SERVER['PHP_SELF'] === '/app/base/session/login')) {
                 $post_redirect = base64_encode($_SERVER['PHP_SELF']);
+                $post_redirect = strtr($post_redirect, '+/=', '-@_'); // Avoid these characters
                 redirect('base/session/login/' . $post_redirect);
             }
         }
