@@ -613,6 +613,7 @@ function field_dropdown($name, $values, $value, $label, $read_only = FALSE, $opt
 
 function field_simple_dropdown($name, $values, $value, $label, $read_only = FALSE, $options = NULL)
 {
+    // TODO does set_value work on dropdown in CI?
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
     $input_id = (isset($options['id'])) ? $options['id'] : $name;
@@ -623,6 +624,38 @@ function field_simple_dropdown($name, $values, $value, $label, $read_only = FALS
         $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
     else
         $html = theme_field_dropdown($name, $value, $label, $error, $values, $input_id, $options);
+
+    return $html;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  M U L T I S E L E C T  D R O P D O W N
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Dropdown box field for multiselect arrays.
+ *
+ * @param string $name      name of text input element
+ * @param array  $values    hash list of values for dropdown
+ * @param array  $selecgted values to be selected
+ * @param string $label     label for text input field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_multiselect_dropdown($name, $values, $selected, $label, $read_only = FALSE, $options = NULL)
+{
+    $error = form_error($name);
+    $input_id = (isset($options['id'])) ? $options['id'] : $name;
+
+    $values = convert_to_hash($values);
+
+    if ($read_only)
+        $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
+    else
+        $html = theme_field_multiselect_dropdown($name, $value, $label, $error, $values, $input_id, $read_only, $options);
 
     return $html;
 }
