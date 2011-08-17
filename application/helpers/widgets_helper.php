@@ -635,22 +635,24 @@ function field_simple_dropdown($name, $values, $value, $label, $read_only = FALS
 /**
  * Dropdown box field for multiselect arrays.
  *
- * @param string $name      name of text input element
- * @param array  $values    hash list of values for dropdown
- * @param array  $selecgted values to be selected
- * @param string $label     label for text input field
- * @param string $read_only read only flag
- * @param array  $options   options
+ * @param string  $name       name of text input element
+ * @param array   $values     hash list of values for dropdown
+ * @param array   $selected   values to be selected
+ * @param string  $label      label for text input field
+ * @param boolean $use_values use displayed values as key
+ * @param string  $read_only  read only flag
+ * @param array   $options    options
  *
  * @return string HTML
  */
 
-function field_multiselect_dropdown($name, $values, $selected, $label, $read_only = FALSE, $options = NULL)
+function field_multiselect_dropdown($name, $values, $selected, $label, $use_values = FALSE, $read_only = FALSE, $options = NULL)
 {
     $error = form_error($name);
     $input_id = (isset($options['id'])) ? $options['id'] : $name;
 
-    $values = convert_to_hash($values);
+    if ($use_values)
+        $values = convert_to_hash($values);
 
     if ($read_only)
         $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
