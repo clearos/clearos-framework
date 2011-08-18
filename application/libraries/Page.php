@@ -207,7 +207,6 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-echo "route $route";
         // redirect($route);
     }
 
