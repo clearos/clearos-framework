@@ -654,10 +654,15 @@ function field_multiselect_dropdown($name, $values, $selected, $label, $use_valu
     if ($use_values)
         $values = convert_to_hash($values);
 
-    if ($read_only)
-        $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
-    else
-        $html = theme_field_multiselect_dropdown($name, $value, $label, $error, $values, $input_id, $read_only, $options);
+    if ($read_only) {
+        $intersect = array_intersect(array_keys($values), $selected);
+        $value = '';
+        foreach ($intersect as $arr)
+            $value .= $values[$arr] . ', ';
+        $html = theme_field_view($label, substr($value, 0, strlen($value) - 2), $name, $selected, $input_id, $options);
+    } else {
+        $html = theme_field_multiselect_dropdown($name, $selected, $label, $error, $values, $input_id, $read_only, $options);
+    }
 
     return $html;
 }
