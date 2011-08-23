@@ -1065,18 +1065,3 @@ function menu($app, $tag)
 
     return $translation;
 }
-
-/**
- * Console helper
- */
-
-function is_console()
-{
-    $framework =& get_instance();
-    $framework->load->library('user_agent');
-
-    if (preg_match('/ClearOS/', $framework->agent->agent_string()))
-        return TRUE;
-    else
-        return FALSE;
-}

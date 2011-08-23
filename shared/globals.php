@@ -250,6 +250,18 @@ function clearos_load_language($lang_file)
 }
 
 /**
+ * Console helper
+ */
+
+function is_console()
+{
+    if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/ClearOS/', $_SERVER['HTTP_USER_AGENT']))
+        return TRUE;
+    else
+        return FALSE;
+}
+  
+/**
  * Checks the existence of an app library.
  *
  * @param string $app app name
