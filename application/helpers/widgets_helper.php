@@ -873,12 +873,14 @@ function tab($content)
 /**
  * Provide loading graphic for AJAX operations.
  *
+ * @param string $size size
+ *
  * @return string HTML
  */
 
-function loading()
+function loading($size = 'normal')
 {
-    return theme_loading();
+    return theme_loading($size);
 }
 
 ///////////////////////////////////////////////////////////////////////////////

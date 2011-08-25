@@ -854,12 +854,20 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
+        $this->framework->lang->load('marketplace');
+
         $data = $this->_load_app_data();
 
         $data['tooltip'] = (isset($data['controllers'][$form]['tooltip'])) ? $data['controllers'][$form]['tooltip'] : '';
 
-        // FIXME: fake data here
-        $data['subscription_expiration'] = 'August 1, 2011';
+        if (isset($data['controllers'])) {
+            $controller = key($data['controllers']);
+
+            $this->framework->load->module($controller);
+
+            if (method_exists($this->framework->$controller, 'get_marketplace_info'))
+                $data['ajax'] = key($data['controllers']);
+        }
 
         return theme_summary_box($data);
     }
@@ -902,6 +910,8 @@ class MY_Page
             $app['icon_path'] = clearos_app_htdocs($app_name) . '/' . $icon_basename;
         else
             $app['icon_path'] = '/assets/app_default_50x50.png';
+
+        $app['basename'] = $app_name;
 
         return $app;
     }
