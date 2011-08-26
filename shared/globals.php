@@ -155,7 +155,7 @@ function clearos_marketplace_installed()
 
 function clearos_is_valid_boolean($boolean)
 {
-    if (is_bool($boolean) || preg_match('/^(yes|TRUE|1|no|FALSE|0)$/i', $boolean))
+    if (is_bool($boolean) || preg_match('/^(on|yes|TRUE|1|off|no|FALSE|0)$/i', $boolean))
         return TRUE;
     else
         return FALSE;
