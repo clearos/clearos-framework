@@ -878,9 +878,9 @@ function tab($content)
  * @return string HTML
  */
 
-function loading($size = 'normal')
+function loading($size = 'normal', $text = '', $options = NULL)
 {
-    return theme_loading($size);
+    return theme_loading($size, $text, $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
