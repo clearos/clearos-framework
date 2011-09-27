@@ -82,5 +82,6 @@ function webconfig_cache()
         // Concatenation is to avoid breaking syntax highlighting
         $contents = "<?php \$language = '$lang'; ?" . ">\n";
         file_put_contents(CLEAROS_TEMP_DIR . '/language_cache.php', $contents);
+        chmod(CLEAROS_TEMP_DIR . '/language_cache.php', '0644');
     }
 }
