@@ -854,6 +854,9 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
+        if (!clearos_marketplace_installed())
+                return;
+
         $this->framework->lang->load('marketplace');
 
         $data = $this->_load_app_data();
