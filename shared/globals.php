@@ -135,6 +135,17 @@ function clearos_app_installed($app)
 }
 
 /**
+ * Logs message to syslog.
+ *
+ * @return void
+ */
+
+function clearos_log($tag, $message)
+{
+    Logger::syslog($tag, $message);
+}
+
+/**
  * Checks the marketplace status.
  *
  * @return boolean TRUE if marketplace is available
