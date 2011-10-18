@@ -585,9 +585,7 @@ class MY_Page
             $this->_load_meta_data();
 
         if ($this->form_only) {
-            echo "<div style='clear: both'>"; // FIXME - div should not be necessary
-            echo infobox_critical(clearos_exception_message($exception));
-            echo "</div>";
+            echo infobox_critical(lang('base_error'), clearos_exception_message($exception));
         } else {
             $this->data['type'] = MY_Page::TYPE_SPLASH;
             $this->data['title'] = 'Ooops';
