@@ -36,6 +36,7 @@ ClearOS framework
 rm -rf $RPM_BUILD_ROOT
 
 mkdir -p -m 755 $RPM_BUILD_ROOT/usr/clearos/apps
+mkdir -p -m 755 $RPM_BUILD_ROOT/usr/clearos/sandbox
 mkdir -p -m 755 $RPM_BUILD_ROOT/usr/clearos/themes
 mkdir -p -m 755 $RPM_BUILD_ROOT/usr/clearos/framework/htdocs
 mkdir -p -m 755 $RPM_BUILD_ROOT/usr/clearos/webconfig/etc/httpd/conf.d
@@ -78,6 +79,7 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %dir /usr/clearos/apps
 %dir /usr/clearos/framework
+%dir /usr/clearos/sandbox
 %dir /usr/clearos/themes
 %dir /var/clearos/framework
 %dir %attr(1777,root,root) /var/clearos/framework/cache
