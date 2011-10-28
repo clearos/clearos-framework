@@ -344,9 +344,17 @@ class MY_Login_Session
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $this->framework->session->unset_userdata('logged_in');
-        $this->framework->session->unset_userdata('username');
-        $this->framework->session->unset_userdata('session_started');
+        $preserve = array('lang_code', 'theme', 'theme_model');
+
+        foreach ($this->framework->session->userdata as $key => $field) {
+            if (in_array($key, $preserve))
+                continue;
+            $this->framework->session->unset_userdata($key);
+            
+        }
+        //$this->framework->session->unset_userdata('logged_in');
+        //$this->framework->session->unset_userdata('username');
+        //$this->framework->session->unset_userdata('session_started');
     }
     
     /**
