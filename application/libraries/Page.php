@@ -755,10 +755,10 @@ class MY_Page
 <!-- Hidden ClearSDN Authenticdation Dialog -->
 <div id='sdn_login_dialog' title='" . $this->framework->session->userdata('sdn_org') . ' ' . lang('base_sdn_authentication_required') . "' class='theme-hidden'>
     <p style='text-align: left'>" . lang('base_sdn_authentication_required_help') . "</p>
-    <div style='padding: 0 125 10 0; text-align: right'>" . lang('base_username') . "&nbsp;
+    <div style='padding: 0 180 10 0; text-align: right'>" . lang('base_username') . "&nbsp;
         <input id='sdn_username' type='text' style='width: 100px' readonly='readonly' name='sdn_username' value='' />
     </div>
-    <div style='padding: 0 125 10 0; text-align: right'>
+    <div style='padding: 0 180 10 0; text-align: right'>
         " . lang('base_password') . "&nbsp;
         <input id='sdn_password' type='password' style='width: 100px' name='password' value='' class='autofocus' />
         <div id='sdn_login_dialog_message_bar'></div>
