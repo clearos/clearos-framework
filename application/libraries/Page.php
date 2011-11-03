@@ -751,22 +751,8 @@ class MY_Page
 
 <!-- Jquery -->
 <script type='text/javascript' src='/js/jquery-1.6.1.min.js'></script>
-
-<!-- Hidden ClearSDN Authenticdation Dialog -->
-<div id='sdn_login_dialog' title='" . $this->framework->session->userdata('sdn_org') . ' ' . lang('base_sdn_authentication_required') . "' class='theme-hidden'>
-    <p style='text-align: left'>" . lang('base_sdn_authentication_required_help') . "</p>
-    <div style='padding: 0 180 10 0; text-align: right'>" . lang('base_username') . "&nbsp;
-        <input id='sdn_username' type='text' style='width: 100px' readonly='readonly' name='sdn_username' value='' />
-    </div>
-    <div style='padding: 0 180 10 0; text-align: right'>
-        " . lang('base_password') . "&nbsp;
-        <input id='sdn_password' type='password' style='width: 100px' name='password' value='' class='autofocus' />
-        <div id='sdn_login_dialog_message_bar'></div>
-        <div style='padding-top: 2px'>
-            <a href='#' id='sdn_forgot_password' style='font-size: 7pt'>" . lang('base_forgot_password') . "</a>
-        </div>
-    </div>
-</div>
+<!-- Global Functions -->
+<script type='text/javascript' src='/js/globals.js.php'></script>
 ";
         // <head> extras defined in theme (head.php)
         //------------------------------------------
