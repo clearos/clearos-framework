@@ -13,7 +13,7 @@
 */
 // ClearFoundation - automatically detect base URL
 $config['base_url'] = ((isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] == "on") ? "https" : "http");
-$config['base_url'] .= "://".$_SERVER['HTTP_HOST'] . "/app/";
+$config['base_url'] .= '://' . $_SERVER['HTTP_HOST'] . '/app/';
 
 /*
 |--------------------------------------------------------------------------
@@ -208,7 +208,7 @@ $config['log_date_format'] = 'Y-m-d H:i:s';
 | system/cache/ folder.  Use a full server path with trailing slash.
 |
 */
-$config['cache_path'] = '';
+$config['cache_path'] = '/var/clearos/framework/cache';
 
 /*
 |--------------------------------------------------------------------------
@@ -219,7 +219,12 @@ $config['cache_path'] = '';
 | MUST set an encryption key.  See the user guide for info.
 |
 */
-$config['encryption_key'] = "FIXME";
+// ClearFoundation - key generated at install time.
+
+if (file_exists('/var/clearos/framework/session_key'))
+    $config['encryption_key'] = file_get_contents('/var/clearos/framework/session_key');
+else
+    $config['encryption_key'] = 'ClearOSwaCBZzEKA6B5MFKARSZpkMAOb';
 
 /*
 |--------------------------------------------------------------------------
@@ -242,12 +247,12 @@ $config['encryption_key'] = "FIXME";
 $config['sess_cookie_name']		= 'clearos_session';
 $config['sess_expiration']		= 7200;
 $config['sess_expire_on_close']	= TRUE;
-$config['sess_encrypt_cookie']	= FALSE;
+$config['sess_encrypt_cookie']	= TRUE;
 $config['sess_use_database']	= FALSE;
 $config['sess_table_name']		= 'ci_sessions';
 $config['sess_match_ip']		= FALSE;
 $config['sess_match_useragent']	= TRUE;
-$config['sess_time_to_update']	= 7200;
+$config['sess_time_to_update']	= 300;
 
 /*
 |--------------------------------------------------------------------------
@@ -282,7 +287,7 @@ $config['global_xss_filtering'] = TRUE;
 | checked on a submitted form. If you are accepting user data, it is strongly
 | recommended CSRF protection be enabled.
 */
-$config['csrf_protection'] = FALSE;
+$config['csrf_protection'] = TRUE;
 
 
 /*
