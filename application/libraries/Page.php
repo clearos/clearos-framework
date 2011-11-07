@@ -751,6 +751,8 @@ class MY_Page
 
 <!-- Jquery -->
 <script type='text/javascript' src='/js/jquery-1.6.1.min.js'></script>
+<!-- Jquery Cookie Plugin -->
+<script type='text/javascript' src='/js/jquery-1.0.0.cookie.js'></script>
 <!-- Global Functions -->
 <script type='text/javascript' src='/js/globals.js.php'></script>
 ";
