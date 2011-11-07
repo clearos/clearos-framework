@@ -64,8 +64,8 @@ function clearos_is_authenticated() {
     theme_clearos_is_authenticated();
 }
 
-function clearos_dialog_box(id, title, message) {
-    theme_clearos_dialog_box(id, title, message);
+function clearos_dialog_box(id, title, message, options) {
+    theme_clearos_dialog_box(id, title, message, options);
 }
 
 ";
