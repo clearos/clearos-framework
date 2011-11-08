@@ -37,6 +37,7 @@ $bootstrap = getenv('CLEAROS_BOOTSTRAP') ? getenv('CLEAROS_BOOTSTRAP') : '/usr/c
 require_once $bootstrap . '/bootstrap.php';
 
 clearos_load_language('base');
+clearos_load_language('marketplace');
 
 header('Content-Type: application/x-javascript');
 
@@ -55,18 +56,50 @@ var lang_reset_password_and_send = '" . lang("base_reset_password_and_send") . "
 var lang_sdn_email_invalid = '" . lang("base_sdn_email_invalid") . "';
 var lang_sdn_email_mismatch = '" . lang("base_sdn_email_mismatch") . "';
 var lang_sdn_password_reset = '" . lang("base_sdn_password_reset") . "';
+var lang_marketplace_connection_failure = '" . lang('marketplace_connection_failure') . "';
+var lang_status = '" . lang('base_status') . "';
+var lang_marketplace_redemption = '" . lang('marketplace_redemption') . "';
+var lang_marketplace_expired_no_subscription = '" . lang('marketplace_expired_no_subsription') . "';
+var lang_marketplace_billing_cycle_monthly = '" . lang('marketplace_billing_cycle_monthly') . "';
+var lang_marketplace_billing_cycle_yearly = '" . lang('marketplace_billing_cycle_yearly') . "';
+var lang_marketplace_billing_cycle_2_years = '" . lang('marketplace_billing_cycle_2_years') . "';
+var lang_marketplace_billing_cycle_3_years = '" . lang('marketplace_billing_cycle_3_years') . "';
+var lang_marketplace_billing_cycle = '" . lang('marketplace_billing_cycle') . "';
+var lang_marketplace_renewal_date = '" . lang('marketplace_renewal_date') . "';
+var lang_marketplace_upgrade = '" . lang('marketplace_upgrade') . "';
+
+my_location = get_location_info();
 
 $(document).ready(function() {
-    theme_clearos_on_page_ready();
+    theme_clearos_on_page_ready(my_location);
 });
 
-function clearos_is_authenticated() {
-    theme_clearos_is_authenticated();
+function clearos_is_authenticated(action_type) {
+    theme_clearos_is_authenticated(action_type);
 }
 
 function clearos_dialog_box(id, title, message, options) {
     theme_clearos_dialog_box(id, title, message, options);
 }
 
+function get_location_info()
+{
+    my_obj = new Object();
+    my_obj.default_controller = true;
+    regex = /\/app\/(\w+)\/.*/;
+    pathname = document.location.pathname.match(regex);
+    if (pathname == null) {
+        my_obj.default_controller = false;
+        regex = /\/app\/(\w+)$/;
+        pathname = document.location.pathname.match(regex);
+        if (pathname == null)
+            alert('Oh oh...could not determine app basename.');
+        else
+            my_obj.basename = pathname[1];
+    } else {
+        my_obj.basename = pathname[1];
+    }
+    return my_obj;
+}
 ";
 // vim: syntax=php ts=4

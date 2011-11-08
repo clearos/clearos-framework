@@ -857,7 +857,7 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__);
 
         if (!clearos_marketplace_installed())
-                return;
+            return;
 
         $this->framework->lang->load('marketplace');
 
@@ -868,10 +868,6 @@ class MY_Page
         if (isset($data['controllers'])) {
             $controller = key($data['controllers']);
 
-            $this->framework->load->module($controller);
-
-            if (method_exists($this->framework->$controller, 'get_marketplace_info'))
-                $data['ajax'] = key($data['controllers']);
         }
 
         return theme_summary_box($data);
