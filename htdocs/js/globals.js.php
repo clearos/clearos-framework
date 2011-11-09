@@ -67,6 +67,8 @@ var lang_marketplace_billing_cycle_3_years = '" . lang('marketplace_billing_cycl
 var lang_marketplace_billing_cycle = '" . lang('marketplace_billing_cycle') . "';
 var lang_marketplace_renewal_date = '" . lang('marketplace_renewal_date') . "';
 var lang_marketplace_upgrade = '" . lang('marketplace_upgrade') . "';
+var lang_marketplace_sidebar_recommended_apps = '" . lang('marketplace_sidebar_recommended_apps') . "';
+var lang_marketplace_recommended_apps = '" . lang('marketplace_recommended_apps') . "';
 
 my_location = get_location_info();
 
