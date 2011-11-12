@@ -139,7 +139,7 @@ class MY_Page
     }
 
     /**
-     * Clears the cache directory
+     * Clears the cache directory,
      *
      * @return void
      */
@@ -157,57 +157,6 @@ class MY_Page
                     unlink(CLEAROS_TEMP_DIR . '/' . $file);
             }
         }
-    }
-
-    /**
-     * Loads the required theme files. 
-     *
-     * The theme hooks are loaded after the controller has been initialized.
-     * - doctype.php
-     * - head.php
-     * - page.php
-     * - widgets.php
-     *
-     * This is called by a CodeIgniter hook instead of the constructor since
-     * the user session has not been initialized in the constructor.
-     *
-     * @access private
-     * @return void
-     */
-
-    public function load_theme()
-    {
-        Logger::profile_framework(__METHOD__, __LINE__);
-
-        $theme_files = array('doctype.php', 'head.php', 'page.php', 'widgets.php');
-        $path = Config::get_theme_path($this->framework->session->userdata('theme'));
-
-        foreach ($theme_files as $file) {
-            Logger::profile_framework(__METHOD__, __LINE__, "Loading theme file $file");
-            $full_path = $path . '/core/' . $file;
-
-            if (file_exists($full_path))
-                include $full_path;
-            else
-                echo "<p class='alert'>Theme file is missing: $file</p>";
-        }
-    }
-
-    /**
-     * Handles redirect after completing a page action (update, delete, etc).
-     *
-     * This method basically exists to help with creating a wizard.  When
-     * something like the network tool is included in a setup wizard, this
-     * redirect method allows us to control where to go next.
-     *
-     * @return view
-     */
-
-    public function redirect($route)
-    {
-        Logger::profile_framework(__METHOD__, __LINE__);
-
-        // redirect($route);
     }
 
     /**
@@ -288,6 +237,9 @@ class MY_Page
     /**
      * Handles a page message.
      *
+     * Though the family of set_status_x methods are optional for the
+     * a theme developer, set_message is required. 
+     *
      * @param string $message message
      * @param string $code    code
      * @param string $title   $title
@@ -308,27 +260,12 @@ class MY_Page
     }
 
     /**
-     * Redirects depending on theme mode.
+     * Displays generic confirmation box.
      *
-     * @param string $redirect redirect URL
-     *
-     * @return void
-     */
-
-    public function theme_redirect($redirect)
-    {
-        Logger::profile_framework(__METHOD__, __LINE__);
-
-        // Non-intuitive, see view_forms for form_only discussion
-        if ($this->form_only)
-            return;
-
-        if ($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL)
-            redirect($redirect);
-    }
-
-    /**
-     * Displays generic confirmation.
+     * @param string $message message
+     * @param string $confirm confirm URI
+     * @param string $cancel  cancel URI
+     * @param array  $options theme options
      *
      * @return view
      */
@@ -355,7 +292,12 @@ class MY_Page
     }
 
     /**
-     * Displays delete confirmation.
+     * Displays delete confirmation box.
+     *
+     * @param string $confirm confirm URI
+     * @param string $cancel  cancel URI
+     * @param array  $items   list of items to delete
+     * @param array  $options theme options
      *
      * @return view
      */
@@ -386,6 +328,15 @@ class MY_Page
     /**
      * Displays a page with a single form.
      *
+     * Available options:
+     * - $options['type']       - page type (e.g. TYPE_SPLASH)
+     * - $options['javascript'] - URL for additional javascript include
+     *
+     * @param string $form    CodeIgniter form path
+     * @param array  $data    CodeIgniter data array
+     * @param string $title   page title
+     * @param array  $options options array
+     *
      * @return view
      */
 
@@ -394,13 +345,13 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__);
 
         /*
-        // FIXME: what to do with help and summary widgets 
+        // TODO: what to do with help and summary widgets in control panel mode
         if ($this->framework->session->userdata['theme_mode'] === self::MODE_CONTROL_PANEL) {
         }
         */
 
         if (empty($this->data))
-            $this->_load_meta_data(array($form));
+            $this->_load_meta_data();
 
         if (isset($options['javascript']))
             $this->javascript = array_merge($options['javascript'], $this->javascript);
@@ -411,31 +362,28 @@ class MY_Page
         // Non-intuitive: see view_forms for form_only explanation
         
         if ($this->form_only) {
-            // FIXME
-            // Convert short form (e.g. view_form('language')) to long form,
-            // (e.g. view_form('language/language').
-            // $form = preg_match('/\//', $form) ? $form : "$form/$form";
             $this->framework->load->view($form, $data);
         } else {
             $segments = preg_split('/\//', uri_string());
-            $app_name = $segments[1];
+            $app = $segments[1];
             $controller = isset($segments[2]) ? $segments[2] : 'index';
             $action = isset($segments[3]) ? $segments[3] : '';
 
             // More non-intuitive stuff.  When we are *not* running in "control panel" mode,
             // the user should see a full page summary once an action (e.g. adding a port
             // forward firewall) takes place.
+
             if ($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL) {
                 $app_data = $this->_load_app_data();
 
                 if (!$action && isset($app_data['controllers'][$controller]['title']))
-                    redirect('/' . $app_name);
+                    redirect('/' . $app);
             }
 
             $this->data['app_view'] = $this->framework->load->view($form, $data, TRUE);
-            $this->data['page_help'] = $this->_get_help_view($app_name);
-            $this->data['page_summary'] = $this->_get_summary_view($app_name);
-            $this->data['page_report'] = $this->_get_report_view($app_name);
+            $this->data['page_help'] = $this->_get_help_view($app);
+            $this->data['page_summary'] = $this->_get_summary_view($app);
+            $this->data['page_report'] = $this->_get_report_view($app);
 
             $this->_display_page();
         }
@@ -456,7 +404,7 @@ class MY_Page
         // Load required metadata and widgets
         //-----------------------------------
 
-        $this->_load_meta_data($controller);
+        $this->_load_meta_data();
 
         $this->data['page_help'] = $this->_get_help_view($controller);
 
@@ -499,40 +447,55 @@ class MY_Page
     }
 
     /**
-     * Displays a page with multiple forms.
-     *
-     * @return view
+     * FIXME: deprecate this
      */
 
     public function view_forms($forms, $title)
     {
+        $this->view_controllers($forms, $title);
+    }
+
+    /**
+     * Display a page using multiple controllers.
+     *
+     * Available options:
+     * - $options['type']       - page type (e.g. TYPE_SPLASH)
+     *
+     * @param array  $controllers list of controllers
+     * @param string $title       page title
+     * @param array  $options     options array
+     *
+     * @return view
+     */
+
+    public function view_controllers($controllers, $title, $options = array())
+    {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $this->_load_meta_data($forms);
+        $this->_load_meta_data();
 
         $this->data['title'] = $title;
+        $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         // Control panel style
         //--------------------
 
         if ($this->framework->session->userdata['theme_mode'] === self::MODE_CONTROL_PANEL) {
-
             $app_data = $this->_load_app_data();
 
-            foreach ($forms as $form) {
-                $basename = preg_replace('/.*\//', '', $form);
-                if (isset($$app_data['controllers'][$basename]['title']))
-                    $data[$form]['title'] = $app_data['controllers'][$basename]['title'];
-                else if (isset($$app_data['controllers'][$form]['title']))
-                    $data[$form]['title'] = $app_data['controllers'][$form]['title'];
+            foreach ($controllers as $controller) {
+                $basename = preg_replace('/.*\//', '', $controller);
+                if (isset($app_data['controllers'][$basename]['title']))
+                    $data[$controller]['title'] = $app_data['controllers'][$basename]['title'];
+                else if (isset($app_data['controllers'][$controller]['title']))
+                    $data[$controller]['title'] = $app_data['controllers'][$controller]['title'];
                 else
-                    $data[$form]['title'] = $form;
+                    $data[$controller]['title'] = $controller;
             }
 
             // Add common widgets
-            $basename = preg_replace('/\/.*/', '', $form);
-            $data[$basename . '/summary']['title'] = lang('framework_summary');
-            $data[$basename . '/help']['title'] = lang('framework_help');
+            $data[$app_data['basename'] . '/summary']['title'] = lang('framework_summary');
+            $data[$app_data['basename'] . '/help']['title'] = lang('framework_help');
 
             $this->data['app_view'] = theme_control_panel($data);
 
@@ -549,7 +512,7 @@ class MY_Page
 
             ob_start();
 
-            foreach ($forms as $form) {
+            foreach ($controllers as $form) {
                 $basename = preg_replace('/.*\//', '', $form);
 
                 $this->framework->load->module($form);
@@ -561,9 +524,11 @@ class MY_Page
             // Now we set form_only back to the default
             $this->form_only = FALSE; 
 
-            $this->data['page_help'] = $this->_get_help_view($form);
-            $this->data['page_summary'] = $this->_get_summary_view($form);
-            $this->data['page_report'] = $this->_get_report_view($form);
+            $app = $this->framework->uri->segment(1);
+
+            $this->data['page_help'] = $this->_get_help_view($app);
+            $this->data['page_summary'] = $this->_get_summary_view($app);
+            $this->data['page_report'] = $this->_get_report_view($app);
         }
 
         $this->_display_page();
@@ -599,26 +564,66 @@ class MY_Page
     ///////////////////////////////////////////////////////////////////////////////
     //
     // These are for internal framework use and not intended for app developers.
+    // These methods are used in MX/Controller.php and primarily intended for
+    // mobile themes.
     //
     ///////////////////////////////////////////////////////////////////////////////
 
     /**
+     * Loads the required theme files. 
+     *
+     * The theme hooks are loaded after the controller has been initialized.
+     * - doctype.php
+     * - head.php
+     * - page.php
+     * - widgets.php
+     *
+     * This is called by a CodeIgniter hook instead of the constructor since
+     * the user session has not been initialized in the constructor.
+     *
+     * @access private
+     * @return void
+     */
+
+    public function load_theme()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $theme_files = array('doctype.php', 'head.php', 'page.php', 'widgets.php');
+        $path = Config::get_theme_path($this->framework->session->userdata('theme'));
+
+        foreach ($theme_files as $file) {
+            Logger::profile_framework(__METHOD__, __LINE__, "Loading theme file $file");
+            $full_path = $path . '/core/' . $file;
+
+            if (file_exists($full_path))
+                include $full_path;
+            else
+                echo "<p class='alert'>Theme file is missing: $file</p>";
+        }
+    }
+    /**
      * Display help box.
+     *
+     * @param string $uri URI
      *
      * @access private
      * @return HTML
      */
 
-    public function view_help($form)
+    public function view_help($uri)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
+
+        $app = preg_replace('/^\//', '', $uri);
+        $app = preg_replace('/\/.*/', '', $app);
 
         $this->data = array();
         $this->_load_meta_data();
 
         $this->data['title'] = lang('framework_help');
         $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
-        $this->data['app_view'] = $this->_get_help_view($form);
+        $this->data['app_view'] = $this->_get_help_view($app);
 
         $this->_display_page();
     }
@@ -626,20 +631,25 @@ class MY_Page
     /**
      * Display report box.
      *
+     * @param string $uri URI
+     *
      * @access private
      * @return HTML
      */
 
-    public function view_report($form)
+    public function view_report($uri)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
+
+        $app = preg_replace('/^\//', '', $uri);
+        $app = preg_replace('/\/.*/', '', $app);
 
         $this->data = array();
         $this->_load_meta_data();
 
         $this->data['title'] = lang('framework_dashboard_report');
         $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
-        $this->data['app_view'] = $this->_get_report_view($form);
+        $this->data['app_view'] = $this->_get_report_view($app);
 
         $this->_display_page();
     }
@@ -647,20 +657,25 @@ class MY_Page
     /**
      * Display summary box.
      *
+     * @param string $uri URI
+     *
      * @access private
      * @return HTML
      */
 
-    public function view_summary($form)
+    public function view_summary($uri)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
+
+        $app = preg_replace('/^\//', '', $uri);
+        $app = preg_replace('/\/.*/', '', $app);
 
         $this->data = array();
         $this->_load_meta_data();
 
         $this->data['title'] = lang('framework_summary');
         $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
-        $this->data['app_view'] = $this->_get_summary_view($form);
+        $this->data['app_view'] = $this->_get_summary_view($app);
 
         $this->_display_page();
     }
@@ -751,8 +766,8 @@ class MY_Page
 
 <!-- Jquery -->
 <script type='text/javascript' src='/js/jquery-1.6.1.min.js'></script>
-<!-- Jquery Cookie Plugin -->
 <script type='text/javascript' src='/js/jquery-1.0.0.cookie.js'></script>
+
 <!-- Global Functions -->
 <script type='text/javascript' src='/js/globals.js.php'></script>
 ";
@@ -768,7 +783,7 @@ class MY_Page
             $head .= "<!-- Page-specific CSS -->\n$css_head\n";
 
         if ($javascript_head)
-            $head .= "<!-- Page-specific Javascript -->\n$javascript_head\n";
+            $head .= "\n<!-- Page-specific Javascript -->\n$javascript_head\n";
 
         // </head> all done
         //------------------------------------------
@@ -796,21 +811,18 @@ class MY_Page
     /**
      * Returns the help view.
      *
+     * @param string $app app name
+     *
      * @return string HTML for help view
      */
 
-    protected function _get_help_view($controller)
+    protected function _get_help_view($app)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        if (preg_match('/\//', $controller))
-            $app = preg_replace('/\/.*/', '', $controller);
-        else
-            $app = NULL;
-
         $data = $this->_load_app_data($app);
 
-        // FIXME: Move this to a driver package
+        // FIXME: Move these to a driver package
         if (empty($data['user_guide_url']))
             $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS_Enterprise/6.1.0/userguide/' . $data['basename'];
 
@@ -825,22 +837,22 @@ class MY_Page
      *
      * Returns NULL if no report exists for the given form.
      *
+     * @param string $app app name
+     *
      * @return string HTML for report box
      */
 
-    protected function _get_report_view($form)
+    protected function _get_report_view($app)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $basename = preg_replace('/.*\//', '', $form);
+        $this->framework->load->module($app);
 
-        $this->framework->load->module($form);
-
-        if (! method_exists($this->framework->$basename, 'report'))
+        if (! method_exists($this->framework->$app, 'report'))
             return;
 
         ob_start();
-        $this->framework->$basename->report();
+        $this->framework->$app->report();
         $report = ob_get_clean();
 
         return $report;
@@ -849,32 +861,29 @@ class MY_Page
     /**
      * Returns the summary view.
      *
+     * @param string $app app name
+     *
      * @return string HTML for summary view
      */
 
-    protected function _get_summary_view($form)
+    protected function _get_summary_view($app)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        if (!clearos_marketplace_installed())
+        if (!clearos_app_installed('marketplace'))
             return;
 
         $this->framework->lang->load('marketplace');
 
         $data = $this->_load_app_data();
 
-        $data['tooltip'] = (isset($data['controllers'][$form]['tooltip'])) ? $data['controllers'][$form]['tooltip'] : '';
-
-        if (isset($data['controllers'])) {
-            $controller = key($data['controllers']);
-
-        }
-
         return theme_summary_box($data);
     }
 
     /**
      * Returns app data in an array.
+     *
+     * @param string $app_name app name
      *
      * @return array app meta data
      */
@@ -1069,11 +1078,11 @@ class MY_Page
      * @return void
      */
 
-    protected function _load_meta_data($forms = NULL)
+    protected function _load_meta_data()
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $view_data = $this->_load_view_data($forms);
+        $view_data = $this->_load_view_data();
         $menu_data['menus'] = $this->_load_menu_data();
         $session_data = $this->_load_session_data();
 
@@ -1113,7 +1122,7 @@ class MY_Page
      * @return array view meta data
      */
 
-    protected function _load_view_data($forms = NULL)
+    protected function _load_view_data()
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
