@@ -71,8 +71,8 @@ define('CLEAROS_CACHE_DIR', '/var/clearos/framework/cache');
 // Set error and exception handlers
 //---------------------------------
 
-set_error_handler("_clearos_error_handler");
-set_exception_handler("_clearos_exception_handler");
+set_error_handler('_clearos_error_handler');
+set_exception_handler('_clearos_exception_handler');
 
 // Logging
 //--------
@@ -135,27 +135,68 @@ function clearos_app_installed($app)
 }
 
 /**
- * Logs message to syslog.
+ * Checks to see if the request is coming from the console.
  *
- * @return void
+ * @return boolean TRUE if request is coming from the console
  */
 
-function clearos_log($tag, $message)
+function clearos_console()
 {
-    Logger::syslog($tag, $message);
+    if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/ClearOS/', $_SERVER['HTTP_USER_AGENT']))
+        return TRUE;
+    else
+        return FALSE;
 }
 
 /**
- * Checks the marketplace status.
+ * Returns the error code from any Exception object
  *
- * @return boolean TRUE if marketplace is available
+ * This function makes it possible to return the error code from
+ * an Exception object regardless if it is ours (derived from Engine_Exception),
+ * or if comes from some other third-party code (with only getCode()).
+ *
+ * @param object $exception exception object
+ *
+ * @return integer exception code
  */
 
-function clearos_marketplace_installed()
+function clearos_exception_code($exception)
 {
-    return clearos_app_installed('marketplace');
+    if (is_object($exception)) {
+        if 
+            (method_exists($exception, 'get_code')) return $exception->get_code();
+        else if 
+            (method_exists($exception, 'getCode')) return $exception->getCode();
+    }
+
+    return -1; // TODO - what to return if there is no method to get error code
 }
 
+/**
+ * Returns the error message from any Exception object
+ *
+ * This function makes it possible to return the error message from
+ * an Exception object regardless if it is ours (derived from Engine_Exception),
+ * or if comes from some other third-party code (with only getMessage()).
+ *
+ * @param object $exception exception object
+ *
+ * @return string exception message
+ */
+
+function clearos_exception_message($exception)
+{
+    if (is_object($exception)) {
+        if 
+            (method_exists($exception, 'get_message')) return $exception->get_message();
+        else if 
+            (method_exists($exception, 'getMessage')) return $exception->getMessage();
+    }
+
+    return '';
+}
+
+  
 /**
  * Common boolean validation for ClearOS.
  *
@@ -173,33 +214,23 @@ function clearos_is_valid_boolean($boolean)
 }
 
 /**
- * Generates profiling data. 
+ * Checks to see if a library is installed.
  *
- * @param string $method  method name
- * @param string $line    line number
- * @param string $message additional profiling information
+ * @param string $library library
  *
- * @return void
+ * @return boolean TRUE if library is installed
  */
 
-function clearos_profile($method, $line, $message = NULL)
+function clearos_library_installed($library)
 {
-    Logger::profile($method, $line, $message);
-}
+    list($app, $library) = preg_split('/\//', $library, 2);
 
-/**
- * Emits deprecated method call warnings
- *
- * @param string $method  method name
- * @param string $line    line number
- * @param string $message additional profiling information
- *
- * @return void
- */
+    $library_file = clearos_app_base($app) . "/libraries/$library.php";
 
-function clearos_deprecated($method, $line, $message = 'called deprecated method')
-{
-    Logger::deprecated($method, $line, $message);
+    if (file_exists($library_file))
+        return TRUE;
+    else
+        return FALSE;
 }
 
 /**
@@ -261,38 +292,6 @@ function clearos_load_language($lang_file)
 }
 
 /**
- * Console helper
- */
-
-function is_console()
-{
-    if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/ClearOS/', $_SERVER['HTTP_USER_AGENT']))
-        return TRUE;
-    else
-        return FALSE;
-}
-  
-/**
- * Checks the existence of an app library.
- *
- * @param string $app app name
- *
- * @return boolean TRUE if app is installed
- */
-
-function is_library_installed($library)
-{
-    list($app, $library) = preg_split('/\//', $library, 2);
-
-    $library_file = clearos_app_base($app) . "/libraries/$library.php";
-
-    if (file_exists($library_file))
-        return TRUE;
-    else
-        return FALSE;
-}
-
-/**
  * Pulls in a library.
  *
  * This function makes it possible to load different library versions -
@@ -318,49 +317,32 @@ function clearos_load_library($library)
 }
 
 /**
- * Returns the error code from any Exception object
+ * Logs message to syslog.
  *
- * This function makes it possible to return the error code from
- * an Exception object regardless if it is ours (derived from Engine_Exception),
- * or if comes from some other third-party code (with only getCode()).
+ * @param string $tag     syslog tag
+ * @param string $message log message
  *
- * @param   object $exception exception object
- * @return  int exception code
+ * @return void
  */
 
-function clearos_exception_code($exception)
+function clearos_log($tag, $message)
 {
-    if (is_object($exception)) {
-        if 
-            (method_exists($exception, 'get_code')) return $exception->get_code();
-        else if 
-            (method_exists($exception, 'getCode')) return $exception->getCode();
-    }
-
-    return -1; // TODO - what to return if there is no method to get error code
+    Logger::syslog($tag, $message);
 }
 
 /**
- * Returns the error message from any Exception object
+ * Generates profiling data. 
  *
- * This function makes it possible to return the error message from
- * an Exception object regardless if it is ours (derived from Engine_Exception),
- * or if comes from some other third-party code (with only getMessage()).
+ * @param string $method  method name
+ * @param string $line    line number
+ * @param string $message additional profiling information
  *
- * @param   object $exception exception object
- * @return  string exception message
+ * @return void
  */
 
-function clearos_exception_message($exception)
+function clearos_profile($method, $line, $message = NULL)
 {
-    if (is_object($exception)) {
-        if 
-            (method_exists($exception, 'get_message')) return $exception->get_message();
-        else if 
-            (method_exists($exception, 'getMessage')) return $exception->getMessage();
-    }
-
-    return '';
+    Logger::profile($method, $line, $message);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
