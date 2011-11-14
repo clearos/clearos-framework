@@ -42,6 +42,8 @@ clearos_load_language('marketplace');
 header('Content-Type: application/x-javascript');
 
 echo "
+// Globally defined object for changing the way the SDN auth dialog handles
+var auth_options = new Object();
 var sdn_org = '';
 var lang_close = '" . lang("base_close") . "';
 var lang_authenticate = '" . lang("base_authenticate") . "';
@@ -76,8 +78,8 @@ $(document).ready(function() {
     theme_clearos_on_page_ready(my_location);
 });
 
-function clearos_is_authenticated(action_type) {
-    theme_clearos_is_authenticated(action_type);
+function clearos_is_authenticated() {
+    theme_clearos_is_authenticated();
 }
 
 function clearos_dialog_box(id, title, message, options) {
