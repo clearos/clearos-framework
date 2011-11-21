@@ -87,29 +87,31 @@ class Logger
         // In debug mode, all errors are logged. In production mode, only important
         // messages are logged.
 
-        if (! getenv('CLEAROS_BOOTSTRAP')) {
-            if ($type == Error::TYPE_EXCEPTION) {
-                 if ($errno <= Error::CODE_WARNING)
+        if (! Config::$debug_mode) {
+            if ($type == Error::TYPE_PROFILE) {
+                return;
+            } else if ($type == Error::TYPE_EXCEPTION) {
+                 if ($errno !== Error::CODE_ERROR)
                     return;
             } else if ($type == Error::TYPE_ERROR) {
                 // if (($errno === E_NOTICE) || ($errno === E_STRICT))
                 //    return;
-                // TODO: things like ldap_read generate errors... but that's
-                // an expected error.  Unfortunately, it still gets logged
-                return;
+
+                // Skip errors suppressed with @
+                if (error_reporting() === 0)
+                    return;
             }
         }
 
         // Specify log line format
-        $alt_filename = preg_replace('/.*\//', '', $file);
-        $logline = sprintf("$typestring: %s: %s (%d): %s", $errstring, $alt_filename, $line, $errmsg);
+        $logline = sprintf("$typestring: %s: %s (%d): %s", $errstring, $file, $line, $errmsg);
 
-        // FIXME -- ignore strict errors coming out of CodeIgniter for now.
+        // TODO -- ignore strict errors coming out of CodeIgniter for now.
         if (($errno === E_STRICT) && preg_match('/\/framework\//', $file))
             return;
 
         // Perform extra goodness in debug mode
-        if (getenv('CLEAROS_BOOTSTRAP')) {
+        if (Config::$debug_mode) {
             // Append timestamp to log line
             if ($basetime == 0) {
                 $basetime = microtime(TRUE);
@@ -127,17 +129,16 @@ class Logger
 
             // Log messages to custom log file (if set) and standard out on
             if (ini_get('error_log')) {
-                date_default_timezone_set('EST');
+                // date_default_timezone_set('EST');
                 $timestamp = date('M j G:i:s T Y');
                 error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
 
                 foreach ($error->get_trace() as $traceinfo) {
                     if (isset($traceinfo['file'])) {
                         // Backtrace log format
-                        $alt_filename = preg_replace('/.*\//', '', $traceinfo['file']);
                         $logline = sprintf(
                             "$typestring: debug backtrace: %s (%d): %s",
-                            $alt_filename,
+                            $traceinfo['file'],
                             $traceinfo['line'],
                             $traceinfo['function']
                         );
@@ -152,11 +153,13 @@ class Logger
 
             // Log backtrace
             foreach ($error->get_trace() as $traceinfo) {
+                $tracefile = isset($traceinfo['file']) ? $traceinfo['file'] : 'GUI';
+                $traceline = isset($traceinfo['line']) ? $traceinfo['line'] : '';
                 // Backtrace log format
                 $logline = sprintf(
                     "$typestring: debug backtrace: %s (%d): %s",
-                    preg_replace('/.*\//', '', $traceinfo['file']),
-                    $traceinfo['line'],
+                    $tracefile,
+                    $traceline,
                     $traceinfo['function']
                 );
                 syslog(LOG_INFO, $logline);
