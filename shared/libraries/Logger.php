@@ -106,8 +106,13 @@ class Logger
         // Specify log line format
         $logline = sprintf("$typestring: %s: %s (%d): %s", $errstring, $file, $line, $errmsg);
 
-        // TODO -- ignore strict errors coming out of CodeIgniter and PEAR.
-        if (($errno === E_STRICT) && (preg_match('/\/framework\//', $file) || preg_match('/\/share\/pear\//', $file)))
+        // Ignore strict errors coming out of CodeIgniter.
+        if (preg_match('/\/framework\//', $file) && ($errno === E_STRICT))
+            return;
+
+        // Ignore strict, notice and deprecated errors coming out of PEAR
+        if (preg_match('/\/share\/pear\//', $file) 
+            && (($errno === E_STRICT) || ($errno === E_NOTICE) || ($errno === E_DEPRECATED)))
             return;
 
         // Perform extra goodness in debug mode

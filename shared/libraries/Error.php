@@ -58,6 +58,9 @@ namespace clearos\framework;
  *  512  => user warning
  *  1024 => user notice
  *  2048 => strict
+ *  4096 => recoverable error
+ *  8192 => deprecated
+ *  16384 => user deprecated
  *
  * CodeIgniter defines 3 levels (which get mapped to the CODE_X tags here)
  *  1 => ERROR
@@ -103,7 +106,6 @@ class Error
         Error::CODE_WARNING => 'warning',
         Error::CODE_INFO => 'info',
         Error::CODE_DEBUG => 'debug',
-        E_STRICT => 'PHP strict',   
         E_ERROR => 'PHP error',
         E_WARNING => 'PHP warning',
         E_PARSE => 'PHP parse error',
@@ -114,7 +116,11 @@ class Error
         E_COMPILE_WARNING => 'PHP compile warning',
         E_USER_ERROR => 'PHP user error',
         E_USER_WARNING => 'PHP user warning',
-        E_USER_NOTICE => 'PHP user notice'
+        E_USER_NOTICE => 'PHP user notice',
+        E_STRICT => 'PHP strict',   
+        E_RECOVERABLE_ERROR => 'PHP recoverable error',
+        E_DEPRECATED => 'PHP deprecated',
+        E_USER_DEPRECATED => 'PHP user deprecated'
     );
 
     /**
