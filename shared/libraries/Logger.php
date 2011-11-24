@@ -94,8 +94,9 @@ class Logger
                  if ($errno !== Error::CODE_ERROR)
                     return;
             } else if ($type == Error::TYPE_ERROR) {
-                // if (($errno === E_NOTICE) || ($errno === E_STRICT))
-                //    return;
+                // FIXME: disable this error level until RC/final
+                if (($errno === E_NOTICE) || ($errno === E_STRICT))
+                    return;
 
                 // Skip errors suppressed with @
                 if (error_reporting() === 0)
