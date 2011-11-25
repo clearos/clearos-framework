@@ -471,7 +471,7 @@ function field_button_set($buttons, $options = NULL)
 
 function field_view($label, $text, $name = NULL, $value = NULL, $options = NULL)
 {
-    $implied_id = ($name === NULL) ? 'clearos' . mt_rand() : $name;
+    $implied_id = ($name === NULL) ? 'clearos' . mt_rand() : convert_to_id($name);
     $input_id = (isset($options['id'])) ? $options['id'] : $implied_id;
 
     return theme_field_view($label, $text, $name, $value, $input_id, $options);
@@ -495,7 +495,7 @@ function field_view($label, $text, $name = NULL, $value = NULL, $options = NULL)
 
 function field_input($name, $value, $label, $read_only = FALSE, $options = NULL)
 {
-    $input_id = (isset($options['id'])) ? $options['id'] : preg_replace('/[\[\]]/', '', $name);
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
 
@@ -525,7 +525,7 @@ function field_input($name, $value, $label, $read_only = FALSE, $options = NULL)
 
 function field_password($name, $value, $label, $read_only = FALSE, $options = NULL)
 {
-    $input_id = (isset($options['id'])) ? $options['id'] : $name;
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
 
@@ -551,7 +551,7 @@ function field_password($name, $value, $label, $read_only = FALSE, $options = NU
 
 function field_file($name, $value, $label, $read_only = FALSE, $options = NULL)
 {
-    $input_id = (isset($options['id'])) ? $options['id'] : $name;
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
 
@@ -584,7 +584,7 @@ function field_dropdown($name, $values, $value, $label, $read_only = FALSE, $opt
 {
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
-    $input_id = (isset($options['id'])) ? $options['id'] : $name;
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
 
     if ($read_only)
         $html = theme_field_view($label, $values[$value], $name, $value, $input_id, $options);
@@ -616,7 +616,7 @@ function field_simple_dropdown($name, $values, $value, $label, $read_only = FALS
     // TODO does set_value work on dropdown in CI?
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
-    $input_id = (isset($options['id'])) ? $options['id'] : $name;
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
 
     $values = convert_to_hash($values);
 
@@ -649,7 +649,7 @@ function field_simple_dropdown($name, $values, $value, $label, $read_only = FALS
 function field_multiselect_dropdown($name, $values, $selected, $label, $use_values = FALSE, $read_only = FALSE, $options = NULL)
 {
     $error = form_error($name);
-    $input_id = (isset($options['id'])) ? $options['id'] : $name;
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
 
     if ($use_values)
         $values = convert_to_hash($values);
@@ -687,7 +687,7 @@ function field_toggle_enable_disable($name, $value, $label, $read_only = FALSE, 
 {
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
-    $input_id = (isset($options['id'])) ? $options['id'] : $name;
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
 
     $values = array(
         '0' => lang('base_disabled'),
@@ -723,7 +723,7 @@ function field_checkbox($name, $value, $label, $read_only = FALSE, $options = NU
 {
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
-    $input_id = (isset($options['id'])) ? $options['id'] : $name;
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
 
     // FIXME: this needs to be improved of course
     $text = ($value) ? 'X' : '';
@@ -754,7 +754,7 @@ function field_checkbox($name, $value, $label, $read_only = FALSE, $options = NU
 
 function field_textarea($name, $value, $label, $read_only = FALSE, $options = NULL)
 {
-    $input_id = (isset($options['id'])) ? $options['id'] : preg_replace('/[\[\]]/', '', $name);
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
     $value = ($read_only) ? $value : set_value($name, $value);
     $error = form_error($name);
 
@@ -1063,6 +1063,31 @@ function convert_to_hash($items) {
         $hash_array[$item] = $item;
 
     return $hash_array;
+}
+
+/**
+ * Converts an HTML name to a valid ID.
+ *
+ * By default, the HTML ID will be automatically set tto the HTML name if
+ * an ID is not specified.  e.g.: <input name='ip_address' value='1.2.3.4'> 
+ * will be changed to <input name='ip_address' id='ip_address' ...>
+ * In PHP, it's common to use arrays for an input name:
+ *
+ * <input name='user_info[address][street]' ...>
+ *
+ * The [] characters are not valid, so these are converted to periods:
+ *
+ * <input name='user_info.addres.street' ...>
+ */
+
+function convert_to_id($name) {
+    $id = $name;
+
+    $id = preg_replace('/\]\[/', '.', $id);
+    $id = preg_replace('/\[/', '.', $id);
+    $id = preg_replace('/\]/', '', $id);
+
+    return $id;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
