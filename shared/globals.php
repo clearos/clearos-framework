@@ -128,7 +128,9 @@ function clearos_app_base($app)
 
 function clearos_app_installed($app)
 {
-    if (Config::get_app_base($app))
+    $base = Config::get_app_base($app);
+
+    if ((!empty($base) && file_exists($base . '/controllers')))
         return TRUE;
     else
         return FALSE;
