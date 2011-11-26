@@ -95,7 +95,7 @@ class Logger
                     return;
             } else if ($type == Error::TYPE_ERROR) {
                 // FIXME: disable this error level until RC/final
-                if (($errno === E_NOTICE) || ($errno === E_STRICT))
+                if (($errno === E_NOTICE) || ($errno === E_STRICT) || ($errno === E_WARNING))
                     return;
 
                 // Skip errors suppressed with @
