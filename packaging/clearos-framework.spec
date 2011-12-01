@@ -1,6 +1,6 @@
 Name: clearos-framework
 Group: Development/Languages
-Version: 6.1.0.beta2
+Version: 6.1.0.beta2.1
 Release: 1%{dist}
 Summary: ClearOS framework
 License: CodeIgniter and LGPLv3
@@ -85,6 +85,8 @@ for NEWCONF in $NEWCONFS; do
     fi
 done
 
+# FIXME: just a beta hack - need to undo clearos-base change
+chkconfig auditd on
 exit 0
 
 %clean
