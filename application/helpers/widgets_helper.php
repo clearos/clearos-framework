@@ -725,11 +725,8 @@ function field_checkbox($name, $value, $label, $read_only = FALSE, $options = NU
     $error = form_error($name);
     $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
 
-    // FIXME: this needs to be improved of course
-    $text = ($value) ? 'X' : '';
-
     if ($read_only)
-        $html = theme_field_view($label, $text, $name, $value, $input_id, $options);
+        $html = theme_field_view($label, (bool)$value, $name, $value, $input_id, $options);
     else
         $html = theme_field_checkbox($name, $value, $label, $error, $input_id, $options);
 
