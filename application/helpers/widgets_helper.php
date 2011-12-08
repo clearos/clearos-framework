@@ -392,13 +392,14 @@ function form_submit_update($name, $importance = 'high', $options = NULL)
  * Field set header.
  *
  * @param string $title title
+ * @param array  $options    options
  *
  * @return string HTML
  */
 
-function fieldset_header($title)
+function fieldset_header($title, $options = NULL)
 {
-    return theme_fieldset_header($title);
+    return theme_fieldset_header($title, $options);
 }
 
 /**

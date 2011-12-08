@@ -944,6 +944,9 @@ class MY_Page
 
         $apps_list = array();
         $most_recent = 0;
+        // Used to display newly installed/upgraded apps for 1 day
+        $one_day_ago = strtotime('-1 day');
+
 
         foreach (Config::$apps_paths as $path) {
             // TODO: remove - it's just a temporary workaround for a pre-release version
@@ -955,7 +958,9 @@ class MY_Page
                 if (! preg_match('/^\./', $dir)) {
                     $info_file = clearos_app_base($dir) . '/deploy/info.php';
                     if (file_exists($info_file)) {
-                        $apps_list[] = $dir;
+                        $apps_list[$dir] = array(
+                            'installed' => filemtime($info_file)
+                        );
 
                         $stat = stat($info_file);
 
@@ -1015,7 +1020,7 @@ class MY_Page
 
         $sorted = array();
 
-        foreach ($apps_list as $app_name) {
+        foreach ($apps_list as $app_name => $app_info) {
             $app = $this->_load_app_data($app_name);
 
             if (! isset($app['basename'])) 
@@ -1048,6 +1053,7 @@ class MY_Page
                 'title' => $app['name'],
                 'category' => $app['category'],
                 'subcategory' => $app['subcategory'],
+                'new' => ($one_day_ago < $app_info['installed']) ? TRUE : FALSE,
             );
 
             $sorted[$primary_sort . '.' . $secondary_sort . '.' . $page_sort . '.' . $app['name']] = $menu_info;
