@@ -1,6 +1,6 @@
 Name: clearos-framework
 Group: Development/Languages
-Version: 6.1.0.beta2.1
+Version: 6.2.0.beta3
 Release: 1%{dist}
 Summary: ClearOS framework
 License: CodeIgniter and LGPLv3
