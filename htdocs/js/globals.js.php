@@ -45,6 +45,7 @@ echo "
 // Globally defined object for changing the way the SDN auth dialog handles
 var auth_options = new Object();
 var sdn_org = '';
+var internet_connection = false;
 var lang_close = '" . lang("base_close") . "';
 var lang_authenticate = '" . lang("base_authenticate") . "';
 var lang_sdn_authentication_required = '" . lang("base_sdn_authentication_required") . "';
@@ -58,8 +59,9 @@ var lang_reset_password_and_send = '" . lang("base_reset_password_and_send") . "
 var lang_sdn_email_invalid = '" . lang("base_sdn_email_invalid") . "';
 var lang_sdn_email_mismatch = '" . lang("base_sdn_email_mismatch") . "';
 var lang_sdn_password_reset = '" . lang("base_sdn_password_reset") . "';
-var lang_marketplace_connection_failure = '" . lang('marketplace_connection_failure') . "';
 var lang_status = '" . lang('base_status') . "';
+var lang_internet_down = '" . lang('base_check_internet_connection') . "';
+var lang_marketplace_connection_failure = '" . lang('marketplace_connection_failure') . "';
 var lang_marketplace_redemption = '" . lang('marketplace_redemption') . "';
 var lang_marketplace_expired_no_subscription = '" . lang('marketplace_expired_no_subsription') . "';
 var lang_marketplace_billing_cycle_monthly = '" . lang('marketplace_billing_cycle_monthly') . "';
