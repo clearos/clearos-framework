@@ -38,6 +38,7 @@ require_once $bootstrap . '/bootstrap.php';
 
 clearos_load_language('base');
 clearos_load_language('marketplace');
+// TODO: separate marketplace from framework
 
 header('Content-Type: application/x-javascript');
 
