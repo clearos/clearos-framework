@@ -399,22 +399,28 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $controller = $steps[$current]['route'];
+        $module = $steps[$current]['module'];
+        $method = $steps[$current]['method'];
+        $params = $steps[$current]['params']; // FIXME: not working?
+
+        $basename = preg_replace('/.*\//', '', $module);
+        $app = preg_replace('/\/.*/', '', $module);
 
         // Load required metadata and widgets
         //-----------------------------------
 
         $this->_load_meta_data();
 
-        $this->data['page_help'] = $this->_get_help_view($controller);
+        $this->data['page_help'] = $this->_get_help_view($module);
 
+        // TODO: remove hard coded paths
         if (isset($steps[$current - 1]))
-            $wizard_nav['previous'] = $steps[$current - 1]['nav'];
+            $wizard_nav['previous'] = '/app/base/wizard/index/' . ($current - 1);
         else
             $wizard_nav['previous'] = '';
 
         if (isset($steps[$current + 1]))
-            $wizard_nav['next'] = $steps[$current + 1]['nav'];
+            $wizard_nav['next'] = '/app/base/wizard/index/' . ($current + 1);
         else
             $wizard_nav['next'] = '';
 
@@ -429,14 +435,23 @@ class MY_Page
 
         ob_start();
 
-        $basename = preg_replace('/.*\//', '', $controller);
-
-        $this->framework->load->module($controller);
-        $this->framework->$basename->index();
+        $this->framework->load->module($module);
+        $this->framework->$basename->$method($params);
 
         $this->data['app_view'] = ob_get_clean();
 
         $this->form_only = FALSE; 
+
+        // Load in javascript
+        //-------------------
+
+        $javascript_basename = $app . '.js.php';
+        $javascript_file = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
+
+        if (file_exists($javascript_file)) {
+            $app_url = Config::get_app_url($app);
+            $this->javascript = array_merge(array($app_url . '/' . $javascript_basename), $this->javascript);
+        }
 
         // Show page in wizard mode
         //-------------------------
