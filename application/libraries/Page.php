@@ -401,7 +401,6 @@ class MY_Page
 
         $module = $steps[$current]['module'];
         $method = $steps[$current]['method'];
-        $params = $steps[$current]['params']; // FIXME: not working?
 
         $basename = preg_replace('/.*\//', '', $module);
         $app = preg_replace('/\/.*/', '', $module);
@@ -436,7 +435,11 @@ class MY_Page
         ob_start();
 
         $this->framework->load->module($module);
-        $this->framework->$basename->$method($params);
+
+        if (isset($steps[$current]['param']))
+            $this->framework->$basename->$method($steps[$current]['param']);
+        else
+            $this->framework->$basename->$method();
 
         $this->data['app_view'] = ob_get_clean();
 
