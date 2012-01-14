@@ -411,7 +411,7 @@ class MY_Page
 
         $this->_load_meta_data();
 
-        $this->data['page_help'] = $this->_get_help_view($module);
+        $this->data['page_help'] = $this->_get_help_view($app);
 
         // TODO: remove hard coded paths
         if (isset($steps[$current - 1]))
