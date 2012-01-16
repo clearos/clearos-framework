@@ -1038,6 +1038,35 @@ class MY_Page
 
         $sorted = array();
 
+        // TODO - this list should come from a default config file or installer?
+        $core_app_list = array(
+            'accounts',
+            'base',
+            'clearcenter',
+            'configuration-backup',
+            'date',
+            'dhcp',
+            'dns',
+            'graphical-console',
+            'groups',
+            'incoming-firewall',
+            'language',
+            'mail-notification',
+            'marketplace',
+            'network',
+            'organization',
+            'process-viewer',
+            'registration',
+            'users'
+        );
+
+        // Pull from Registration library?
+        $registered = '/var/clearos/registration/registered';
+        if (file_exists($registered))
+            $register_timestamp = filemtime($registered);
+        else
+            $register_timestamp = NULL;
+
         foreach ($apps_list as $app_name => $app_info) {
             $app = $this->_load_app_data($app_name);
 
@@ -1067,11 +1096,26 @@ class MY_Page
 
             $menu_info = array();
 
+            // Determine 'new/updated' icon status
+            $new_status = FALSE;
+            // Don't display any icon if we are not registered
+            if ($register_timestamp != NULL) {
+                if ($one_day_ago < $app_info['installed']) {
+                    // Newly installed app...better check core apps and install time
+                    if (in_array($app_name, $core_app_list)) {
+                        // Don't display TRUE status for any core apps if system was just (1 day) registered
+                        if ($register_timestamp < $one_day_ago)
+                            $new_status = TRUE;
+                    } else {
+                        $new_status = TRUE;
+                    }
+                }
+            }
             $menu_info['/app/' . $app['basename']] = array(
                 'title' => $app['name'],
                 'category' => $app['category'],
                 'subcategory' => $app['subcategory'],
-                'new' => ($one_day_ago < $app_info['installed']) ? TRUE : FALSE,
+                'new' => $new_status
             );
 
             $sorted[$primary_sort . '.' . $secondary_sort . '.' . $page_sort . '.' . $app['name']] = $menu_info;
