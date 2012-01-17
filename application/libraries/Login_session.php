@@ -170,7 +170,7 @@ class MY_Login_Session
     /**
      * Checks authentication.
      *
-     * @return void
+     * @return boolean TRUE if authenticated
      */
 
     public function is_authenticated()
@@ -178,6 +178,22 @@ class MY_Login_Session
         Logger::profile_framework(__METHOD__, __LINE__);
 
         if ($this->framework->session->userdata('logged_in'))
+            return TRUE;
+        else
+            return FALSE;
+    }
+
+    /**
+     * Checks state of install wizard.
+     *
+     * @return boolean TRUE if wizard mode is required
+     */
+
+    public function is_install_wizard_mode()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        if ($this->framework->session->userdata('wizard'))
             return TRUE;
         else
             return FALSE;
@@ -198,7 +214,7 @@ class MY_Login_Session
         // Set session
         $this->framework->session->set_userdata('lang_code', $code);
 
-        // FIXME: text direction and character set need to be updated too
+        // TODO: text direction and character set need to be updated too
 
         // Clear the cache when changing the session language
         $this->framework->page->clear_cache();
@@ -236,12 +252,6 @@ class MY_Login_Session
                 // Use default
             }
         }
-
-        // Check registration
-        //-------------------
-
-        // FIXME
-        $session['registered'] = FALSE;
 
         // Language
         //---------
@@ -332,6 +342,9 @@ class MY_Login_Session
         $this->framework->session->set_userdata('logged_in', 'TRUE');
         $this->framework->session->set_userdata('username', $username);
         // FIXME: add user's full name
+
+        if (file_exists('/var/clearos/base/wizard'))
+            $this->framework->session->set_userdata('wizard', TRUE);
     }
 
     /**
@@ -349,12 +362,9 @@ class MY_Login_Session
         foreach ($this->framework->session->userdata as $key => $field) {
             if (in_array($key, $preserve))
                 continue;
+
             $this->framework->session->unset_userdata($key);
-            
         }
-        //$this->framework->session->unset_userdata('logged_in');
-        //$this->framework->session->unset_userdata('username');
-        //$this->framework->session->unset_userdata('session_started');
     }
     
     /**

@@ -43,6 +43,7 @@ require_once $bootstrap . '/bootstrap.php';
 use \clearos\framework\Logger as Logger;
 use \clearos\framework\Config as Config;
 use \clearos\apps\base\Access_Control as Access_Control;
+use \clearos\apps\base\Install_Wizard as Install_Wizard;
 
 clearos_load_language('framework');
 
@@ -359,7 +360,22 @@ class MY_Page
         $this->data['title'] = $title;
         $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
+        // Load wizard view if enabled
+        //----------------------------
+
+        // TODO: this is weak logic.
+
+        if ((($this->data['type'] === MY_Page::TYPE_CONFIGURATION) 
+            || ($this->data['type'] === MY_Page::TYPE_REPORT)
+            || ($this->data['type'] === MY_Page::TYPE_MARKETPLACE)) 
+            && isset($this->framework->session->userdata['wizard'])) {
+
+            if ($this->_load_wizard_data())
+                $this->data['type'] = MY_Page::TYPE_WIZARD;
+        }
+
         // Non-intuitive: see view_forms for form_only explanation
+        //--------------------------------------------------------
         
         if ($this->form_only) {
             $this->framework->load->view($form, $data);
@@ -395,31 +411,45 @@ class MY_Page
      * @return view
      */
 
-    public function view_wizard($current, $steps, $title)
+    public function _load_wizard_data()
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $module = $steps[$current]['module'];
-        $method = $steps[$current]['method'];
+        if (! clearos_load_library('base/Install_Wizard'))
+            return FALSE;
 
-        $basename = preg_replace('/.*\//', '', $module);
-        $app = preg_replace('/\/.*/', '', $module);
+        $install_wizard = new Install_Wizard();
+        $steps = $install_wizard->get_steps();
 
-        // Load required metadata and widgets
-        //-----------------------------------
+        // Generate previous/next links
+        //-----------------------------
 
-        $this->_load_meta_data();
+        $segments = explode('/', $_SERVER['PHP_SELF']);
+        $app = $segments[2];
+        $current = 0;
 
-        $this->data['page_help'] = $this->_get_help_view($app);
+        foreach ($steps as $step) {
+            // TODO: temporary workaround for marketplace
+            if ($app === 'marketplace') {
+                if ($_SERVER['PHP_SELF'] === $step['nav'])
+                    break;
+            } else {
+                if (preg_match("/\/app\/$app/", $step['nav']))
+                    break;
+            }
 
-        // TODO: remove hard coded paths
+            $current++;
+        }
+
+        // Redirect to wizard if non-wizard page was requested
+
         if (isset($steps[$current - 1]))
-            $wizard_nav['previous'] = '/app/base/wizard/index/' . ($current - 1);
+            $wizard_nav['previous'] = $steps[$current - 1]['nav'];
         else
             $wizard_nav['previous'] = '';
 
         if (isset($steps[$current + 1]))
-            $wizard_nav['next'] = '/app/base/wizard/index/' . ($current + 1);
+            $wizard_nav['next'] = $steps[$current + 1]['nav'];
         else
             $wizard_nav['next'] = '';
 
@@ -427,41 +457,7 @@ class MY_Page
         $this->data['wizard_menu'] = $steps;
         $this->data['wizard_current'] = $current;
 
-        // See view_forms for this non-intuitive flag
-        //-------------------------------------------
-
-        $this->form_only = TRUE; 
-
-        ob_start();
-
-        $this->framework->load->module($module);
-
-        if (isset($steps[$current]['param']))
-            $this->framework->$basename->$method($steps[$current]['param']);
-        else
-            $this->framework->$basename->$method();
-
-        $this->data['app_view'] = ob_get_clean();
-
-        $this->form_only = FALSE; 
-
-        // Load in javascript
-        //-------------------
-
-        $javascript_basename = $app . '.js.php';
-        $javascript_file = clearos_app_base($app) . '/htdocs/' . $javascript_basename;
-
-        if (file_exists($javascript_file)) {
-            $app_url = Config::get_app_url($app);
-            $this->javascript = array_merge(array($app_url . '/' . $javascript_basename), $this->javascript);
-        }
-
-        // Show page in wizard mode
-        //-------------------------
-
-        $this->data['type'] = MY_Page::TYPE_WIZARD;
-
-        $this->_display_page();
+        return TRUE;
     }
 
     /**
