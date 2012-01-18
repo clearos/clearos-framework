@@ -399,6 +399,7 @@ class MY_Page
             $this->data['app_view'] = $this->framework->load->view($form, $data, TRUE);
             $this->data['page_help'] = $this->_get_help_view($app);
             $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
+            $this->data['page_app_helper'] = $this->_get_app_helper_view($app);
             $this->data['page_summary'] = $this->_get_summary_view($app);
             $this->data['page_report'] = $this->_get_report_view($app);
 
@@ -778,6 +779,30 @@ class MY_Page
      * @return string HTML for help view
      */
 
+    protected function _get_app_helper_view($app)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        // TODO: just a quick hack to load the Marketplace filters.
+        // Implement this properly.
+
+        if ($app == 'marketplace') {
+            $callback = $this->framework->load->view('marketplace/filter', $data, TRUE);
+        } else {
+            $callback = '';
+        }
+
+        return $callback;
+    }
+
+    /**
+     * Returns the help view.
+     *
+     * @param string $app app name
+     *
+     * @return string HTML for help view
+     */
+
     protected function _get_help_view($app)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
@@ -849,11 +874,6 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        if (!clearos_app_installed('marketplace'))
-            return;
-
-        $this->framework->lang->load('marketplace');
-
         $data = $this->_load_app_data();
 
         return theme_summary_box($data);
@@ -878,8 +898,12 @@ class MY_Page
 
         $app = array();
         $app_base = clearos_app_base($app_name);
+        $app['basename'] = $app_name;
 
         $info_file = $app_base . '/deploy/info.php';
+
+        // Install/upgrade time indicator
+        //-------------------------------
 
         if (file_exists($info_file)) {
 
@@ -892,6 +916,9 @@ class MY_Page
             $app['modified'] = $stat['ctime'];
         }
 
+        // Icons
+        //------
+
         $icon_basename = $app_name . '_50x50.png';
         $icon_path = $app_base . '/htdocs/' . $icon_basename;
 
@@ -900,7 +927,8 @@ class MY_Page
         else
             $app['icon_path'] = '/assets/app_default_50x50.png';
 
-        $app['basename'] = $app_name;
+        // Done
+        //-----
 
         return $app;
     }
