@@ -398,66 +398,12 @@ class MY_Page
 
             $this->data['app_view'] = $this->framework->load->view($form, $data, TRUE);
             $this->data['page_help'] = $this->_get_help_view($app);
+            $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
             $this->data['page_summary'] = $this->_get_summary_view($app);
             $this->data['page_report'] = $this->_get_report_view($app);
 
             $this->_display_page();
         }
-    }
-
-    /**
-     * Displays a controller in wizard mode.
-     *
-     * @return view
-     */
-
-    public function _load_wizard_data()
-    {
-        Logger::profile_framework(__METHOD__, __LINE__);
-
-        if (! clearos_load_library('base/Install_Wizard'))
-            return FALSE;
-
-        $install_wizard = new Install_Wizard();
-        $steps = $install_wizard->get_steps();
-
-        // Generate previous/next links
-        //-----------------------------
-
-        $segments = explode('/', $_SERVER['PHP_SELF']);
-        $app = $segments[2];
-        $current = 0;
-
-        foreach ($steps as $step) {
-            // TODO: temporary workaround for marketplace
-            if ($app === 'marketplace') {
-                if ($_SERVER['PHP_SELF'] === $step['nav'])
-                    break;
-            } else {
-                if (preg_match("/\/app\/$app/", $step['nav']))
-                    break;
-            }
-
-            $current++;
-        }
-
-        // Redirect to wizard if non-wizard page was requested
-
-        if (isset($steps[$current - 1]))
-            $wizard_nav['previous'] = $steps[$current - 1]['nav'];
-        else
-            $wizard_nav['previous'] = '';
-
-        if (isset($steps[$current + 1]))
-            $wizard_nav['next'] = $steps[$current + 1]['nav'];
-        else
-            $wizard_nav['next'] = '';
-
-        $this->data['wizard_navigation'] = $wizard_nav;
-        $this->data['wizard_menu'] = $steps;
-        $this->data['wizard_current'] = $current;
-
-        return TRUE;
     }
 
     /**
@@ -541,6 +487,7 @@ class MY_Page
             $app = $this->framework->uri->segment(1);
 
             $this->data['page_help'] = $this->_get_help_view($app);
+            $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
             $this->data['page_summary'] = $this->_get_summary_view($app);
             $this->data['page_report'] = $this->_get_report_view($app);
         }
@@ -845,6 +792,23 @@ class MY_Page
             $data['support_url'] = 'http://www.clearcenter.com/getsupport';
 
         return theme_help_box($data);
+    }
+
+    /**
+     * Returns the inline help view.
+     *
+     * @param string $app app name
+     *
+     * @return string HTML for inline help view
+     */
+
+    protected function _get_inline_help_view($app)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $data = $this->_load_app_data($app);
+
+        return theme_inline_help_box($data);
     }
 
     /**
@@ -1200,5 +1164,61 @@ class MY_Page
             $view_data['type'] = MY_Page::TYPE_CONFIGURATION;
 
         return $view_data;
+    }
+
+    /**
+     * Displays a controller in wizard mode.
+     *
+     * @return view
+     */
+
+    public function _load_wizard_data()
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        if (! clearos_load_library('base/Install_Wizard'))
+            return FALSE;
+
+        $install_wizard = new Install_Wizard();
+        $steps = $install_wizard->get_steps();
+
+        // Generate previous/next links
+        //-----------------------------
+
+        $segments = explode('/', $_SERVER['PHP_SELF']);
+        $app = $segments[2];
+        $current = 0;
+
+        foreach ($steps as $step) {
+            // TODO: temporary workaround for marketplace
+            if ($app === 'marketplace') {
+                if ($_SERVER['PHP_SELF'] === $step['nav'])
+                    break;
+            } else {
+                if (preg_match("/\/app\/$app/", $step['nav']))
+                    break;
+            }
+
+            $current++;
+        }
+
+        // FIXME: Redirect to wizard if non-wizard page was requested
+
+        if (isset($steps[$current - 1]))
+            $wizard_nav['previous'] = $steps[$current - 1]['nav'];
+        else
+            $wizard_nav['previous'] = '';
+
+        if (isset($steps[$current + 1]))
+            $wizard_nav['next'] = $steps[$current + 1]['nav'];
+        else
+            $wizard_nav['next'] = '';
+
+        $this->data['wizard_navigation'] = $wizard_nav;
+        $this->data['wizard_menu'] = $steps;
+        $this->data['wizard_current'] = $current;
+        $this->data['wizard_type'] = $steps[$current]['type'];
+
+        return TRUE;
     }
 }
