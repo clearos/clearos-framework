@@ -368,6 +368,7 @@ class MY_Page
         if ((($this->data['type'] === MY_Page::TYPE_CONFIGURATION) 
             || ($this->data['type'] === MY_Page::TYPE_REPORT)
             || ($this->data['type'] === MY_Page::TYPE_MARKETPLACE)) 
+            && !clearos_console()
             && isset($this->framework->session->userdata['wizard'])) {
 
             if ($this->_load_wizard_data())
