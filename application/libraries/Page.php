@@ -537,6 +537,7 @@ class MY_Page
      *
      * The theme hooks are loaded after the controller has been initialized.
      * - doctype.php
+     * - meta.php
      * - head.php
      * - page.php
      * - widgets.php
@@ -552,7 +553,7 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $theme_files = array('doctype.php', 'head.php', 'page.php', 'widgets.php');
+        $theme_files = array('doctype.php', 'meta.php', 'head.php', 'page.php', 'widgets.php');
         $path = Config::get_theme_path($this->framework->session->userdata('theme'));
 
         foreach ($theme_files as $file) {
@@ -712,6 +713,11 @@ class MY_Page
                 $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
         }
 
+        // <meta>
+        //-------------------
+
+        $meta = theme_page_meta_tags();
+       
         // <html>
         //-------------------
         
@@ -726,6 +732,7 @@ class MY_Page
 <!-- Basic Head Information -->
 <title>$title</title>
 <meta http-equiv='Content-Type' content='text/html; charset=" . $this->framework->session->userdata('encoding') . "'>
+$meta
 
 <!-- Jquery -->
 <script type='text/javascript' src='/js/jquery-1.6.1.min.js'></script>
