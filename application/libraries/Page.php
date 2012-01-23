@@ -357,7 +357,6 @@ class MY_Page
         if (isset($options['javascript']))
             $this->javascript = array_merge($options['javascript'], $this->javascript);
 
-        $this->data['title'] = $title;
         $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         // Load wizard view if enabled
@@ -381,6 +380,7 @@ class MY_Page
         if ($this->form_only) {
             $this->framework->load->view($form, $data);
         } else {
+            $this->data['title'] = $title;
             $segments = preg_split('/\//', uri_string());
             $app = $segments[1];
             $controller = isset($segments[2]) ? $segments[2] : 'index';
