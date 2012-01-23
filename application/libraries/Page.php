@@ -841,7 +841,10 @@ $meta
 
         $data = $this->_load_app_data($app);
 
-        return theme_inline_help_box($data);
+        if (empty($data['inline_help']))
+            return '';
+        else
+            return theme_inline_help_box($data);
     }
 
     /**
