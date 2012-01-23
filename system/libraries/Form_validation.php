@@ -75,6 +75,15 @@ class CI_Form_validation {
 		$this->set_rules($field, '', $rule);
 	}
 
+    // ClearFoundation -- add a function to set an error field.
+    // This is handy for more complex validation (e.g. firewall port range
+    // where low port must be smaller than the high port.
+
+    function set_error($field, $error)
+    {
+        $this->_field_data[$field]['error'] = $error;
+    }
+
 	/**
 	 * Set Rules
 	 *
