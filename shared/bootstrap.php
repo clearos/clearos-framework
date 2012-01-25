@@ -88,6 +88,14 @@ if (getenv('CLEAROS_BOOTSTRAP')) {
     Config::$debug_log = '/tmp/clearos_framework_' . $debugname . '_log';
 }
 
+// Quick way to enable debug
+//--------------------------
+
+if (file_exists('/tmp/webconfig.debug')) {
+    Config::$debug_mode = TRUE;
+    Config::$debug_log = '/tmp/webconfig.log';
+}
+
 // If the CLEAROS_CONFIG enviroment variable is set, load the values.
 //------------------------------------------------------------------------
 
