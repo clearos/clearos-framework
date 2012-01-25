@@ -78,7 +78,7 @@ var lang_marketplace_recommended_apps = '" . lang('marketplace_recommended_apps'
 my_location = get_location_info();
 
 $(document).ready(function() {
-    // theme_clearos_on_page_ready(my_location);
+    theme_clearos_on_page_ready(my_location);
 });
 
 function clearos_is_authenticated() {
