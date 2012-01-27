@@ -409,7 +409,7 @@ class MY_Page
     }
 
     /**
-     * FIXME: deprecate this
+     * TODO: deprecate this
      */
 
     public function view_forms($forms, $title)
@@ -818,11 +818,17 @@ $meta
         $data = $this->_load_app_data($app);
 
         // FIXME: Move these to a driver package
-        if (empty($data['user_guide_url']))
-            $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS_Enterprise/6.1.0/userguide/' . $data['basename'];
+        // FIXME: translate
 
-        if (empty($data['support_url']))
+        if (empty($data['user_guide_url'])) {
+            $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS_Enterprise/6.2.0/userguide/' . $data['basename'];
+            $data['user_guide_url_text'] = 'User Guide';
+        }
+
+        if (preg_match('/Professional/', $this->framework->session->userdata('osname'))) {
             $data['support_url'] = 'http://www.clearcenter.com/getsupport';
+            $data['support_url_text'] = 'ClearCARE Support';
+        }
 
         return theme_help_box($data);
     }
