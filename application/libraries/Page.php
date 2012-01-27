@@ -1037,7 +1037,7 @@ $meta
 
         $sorted = array();
 
-        // TODO - this list should come from a default config file or installer?
+        // FIXME - this list should come from a default config file or installer?
         $core_app_list = array(
             'accounts',
             'base',
