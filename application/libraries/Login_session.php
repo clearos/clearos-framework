@@ -280,23 +280,25 @@ class MY_Login_Session
         // Product Info
         //-------------
 
-        $session['osname'] = 'Linux';
-        $session['osversion'] = '2.6';
+        $session['os_name'] = 'Linux';
+        $session['os_version'] = '2.6';
         $session['redirect'] = '';
 
         if (clearos_load_library('base/Product')) {
             try {
                 $product = new Product();
-                $session['osname'] = $product->get_name();
-                $session['osversion'] = $product->get_version();
+                $session['os_name'] = $product->get_name();
+                $session['os_version'] = $product->get_version();
+                $session['os_base_version'] = $product->get_base_version();
             } catch (Exception $e) {
                 // Use default
             }
         } else if (clearos_load_library('base/OS')) {
             try {
                 $os = new OS();
-                $session['osname'] = $os->get_name();
-                $session['osversion'] = $os->get_version();
+                $session['os_name'] = $os->get_name();
+                $session['os_version'] = $os->get_version();
+                $session['os_base_version'] = $session['os_version'];
             } catch (Exception $e) {
                 // Use default
             }

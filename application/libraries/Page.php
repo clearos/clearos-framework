@@ -825,7 +825,7 @@ $meta
             $data['user_guide_url_text'] = 'User Guide';
         }
 
-        if (preg_match('/Professional/', $this->framework->session->userdata('osname'))) {
+        if (preg_match('/Professional/', $this->framework->session->userdata('os_name'))) {
             $data['support_url'] = 'http://www.clearcenter.com/getsupport';
             $data['support_url_text'] = 'ClearCARE Support';
         }
