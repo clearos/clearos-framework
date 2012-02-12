@@ -8,6 +8,7 @@ Vendor: ClearFoundation
 Source: %{name}-%{version}.tar.gz
 Requires: clearos-base
 Requires: webconfig-php >= 5.3.3
+Requires: webconfig-mod_ssl
 Requires(post): /sbin/service
 Buildarch: noarch
 Buildroot: %_tmppath/%name-%version-buildroot
