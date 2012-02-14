@@ -1118,7 +1118,7 @@ $meta
             $new_status = FALSE;
             // Don't display any icon if we are not registered
             if ($register_timestamp != NULL) {
-                if ($one_day_ago < $app_info['installed']) {
+                if ($one_day_ago < $app['modified']) {
                     // Newly installed app...better check core apps and install time
                     if (in_array($app_name, $core_app_list)) {
                         // Don't display TRUE status for any core apps if system was just (1 day) registered
