@@ -307,7 +307,7 @@ class MY_Login_Session
         // Theme
         //------
 
-        $session['theme'] = 'clearos6x';
+        $session['theme'] = 'default';
         $session['theme_mode'] = 'normal';
 
         if (clearos_load_library('base/Webconfig')) {

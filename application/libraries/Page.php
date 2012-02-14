@@ -558,7 +558,14 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__);
 
         $theme_files = array('doctype.php', 'meta.php', 'head.php', 'page.php', 'widgets.php');
+
         $path = Config::get_theme_path($this->framework->session->userdata('theme'));
+
+        // If a theme is deleted but still in a session, we need to fall back to the default
+        if (!file_exists($full_path)) {
+           $this->framework->session->set_userdata('theme', 'default');
+           $path = Config::get_theme_path('default');
+        }
 
         foreach ($theme_files as $file) {
             Logger::profile_framework(__METHOD__, __LINE__, "Loading theme file $file");
@@ -570,6 +577,7 @@ class MY_Page
                 echo "<p class='alert'>Theme file is missing: $file</p>";
         }
     }
+
     /**
      * Display help box.
      *
