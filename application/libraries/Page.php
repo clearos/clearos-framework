@@ -562,7 +562,7 @@ class MY_Page
         $path = Config::get_theme_path($this->framework->session->userdata('theme'));
 
         // If a theme is deleted but still in a session, we need to fall back to the default
-        if (!file_exists($full_path)) {
+        if (!file_exists($path)) {
            $this->framework->session->set_userdata('theme', 'default');
            $path = Config::get_theme_path('default');
         }
@@ -1118,7 +1118,7 @@ $meta
             $new_status = FALSE;
             // Don't display any icon if we are not registered
             if ($register_timestamp != NULL) {
-                if ($one_day_ago < $app['modified']) {
+                if ($one_day_ago < $app_info['installed']) {
                     // Newly installed app...better check core apps and install time
                     if (in_array($app_name, $core_app_list)) {
                         // Don't display TRUE status for any core apps if system was just (1 day) registered
