@@ -833,7 +833,7 @@ $meta
         // FIXME: translate
 
         if (empty($data['user_guide_url'])) {
-            $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS_Enterprise/6.2.0/userguide/' . $data['basename'];
+            $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS/6.2.0/userguide/' . $data['basename'];
             $data['user_guide_url_text'] = 'User Guide';
         }
 
