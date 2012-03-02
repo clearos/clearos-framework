@@ -984,9 +984,6 @@ $meta
 
 
         foreach (Config::$apps_paths as $path) {
-            // TODO: remove - it's just a temporary workaround for a pre-release version
-            $path = (preg_match('/apps$/', $path)) ? $path : $path . '/apps';
-
             $raw_list = scandir($path);
 
             foreach ($raw_list as $dir) {
@@ -1012,7 +1009,7 @@ $meta
         $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id') . 
             $_SERVER['SERVER_PORT'];
 
-        // FIXME - re-enable cache
+        // TODO - re-enable cache
         /*
         if (file_exists($menu_cache)) {
             $stat = stat($menu_cache);
@@ -1027,11 +1024,12 @@ $meta
         //----------------------------
 
         $primary_order = array(
-            lang('base_category_marketplace') => '010',
             lang('base_category_server')  => '020',
             lang('base_category_network') => '030',
             lang('base_category_gateway') => '040',
             lang('base_category_system')  => '050',
+            lang('base_category_spotlight')  => '060',
+            lang('base_category_my_account')  => '070',
         );
 
         $secondary_order = array(
@@ -1061,6 +1059,7 @@ $meta
             'base',
             'clearcenter',
             'configuration_backup',
+            'dashboard',
             'date',
             'dhcp',
             'dns',
