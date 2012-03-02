@@ -287,8 +287,7 @@ $config['global_xss_filtering'] = TRUE;
 | checked on a submitted form. If you are accepting user data, it is strongly
 | recommended CSRF protection be enabled.
 */
-// FIXME: re-enable
-$config['csrf_protection'] = FALSE;
+$config['csrf_protection'] = TRUE;
 
 
 /*
