@@ -19,7 +19,7 @@ use \clearos\framework\Config as ClearOsConfig;
 $root_dir = str_repeat('../', substr_count(ClearOsConfig::$framework_path, '/') + 2);
 
 foreach (ClearOsConfig::$apps_paths as $app_path) {
-    $app_path = (preg_match('/apps$/', $app_path)) ? $app_path : $app_path . '/apps'; // FIXME: temporary workaround for old version
+    $app_path = (preg_match('/apps$/', $app_path)) ? $app_path : $app_path . '/apps'; // workaround for old version
 
     $full_path = $app_path . '/'; 
     $relative_path = $root_dir . $app_path . '/'; 
