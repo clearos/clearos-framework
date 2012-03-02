@@ -106,7 +106,7 @@ class MY_Page
     const TYPE_CONFIGURATION = 'configuration';
     const TYPE_LOGIN = 'login';
     const TYPE_REPORT = 'report';
-    const TYPE_MARKETPLACE = 'marketplace';
+    const TYPE_SPOTLIGHT = 'spotlight';
     const TYPE_SPLASH = 'splash';
     const TYPE_WIZARD = 'wizard';
     const TYPE_CONSOLE = 'console';
@@ -370,7 +370,7 @@ class MY_Page
 
         if ((($this->data['type'] === MY_Page::TYPE_CONFIGURATION) 
             || ($this->data['type'] === MY_Page::TYPE_REPORT)
-            || ($this->data['type'] === MY_Page::TYPE_MARKETPLACE)) 
+            || ($this->data['type'] === MY_Page::TYPE_SPOTLIGHT)) 
             && !clearos_console()
             && isset($this->framework->session->userdata['wizard'])) {
 
