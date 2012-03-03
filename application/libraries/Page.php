@@ -1115,6 +1115,7 @@ $meta
 
             // Determine 'new/updated' icon status
             $new_status = FALSE;
+
             // Don't display any icon if we are not registered
             if ($register_timestamp != NULL) {
                 if ($one_day_ago < $app['modified']) {
@@ -1128,6 +1129,7 @@ $meta
                     }
                 }
             }
+
             $menu_info['/app/' . $app['basename']] = array(
                 'title' => $app['name'],
                 'category' => $app['category'],
@@ -1149,6 +1151,22 @@ $meta
             foreach ($sort_details as $url => $details)
                 $menu_data[$url] = $details;
         }
+
+        // KLUDGE: Access control needs to go to a useful page when someone 
+        // attempts to unauthorized page (e.g. clicking on a link to
+        // https;//w.x.y.x:81/app/disk_usage without having access to it).
+        //-----------------------------------------------------------------
+
+        if (array_key_exists('/app/dashboard', $menu_data)) {
+            $default_app = 'dashboard';
+        } else if (array_key_exists('/app/user_profile', $menu_data)) {
+            $default_app = 'user_profile';
+        } else if (! empty($menu_data)) {
+            $app_list = array_keys($menu_data);
+            $default_app = preg_replace('/^\/app\/', '', $app_list[0]);
+        }
+
+        $this->framework->session->set_userdata('default_app', $default_app);
 
         // Cache the data and return it
         //-----------------------------
