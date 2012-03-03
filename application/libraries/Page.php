@@ -905,6 +905,8 @@ $meta
 
         $data = $this->_load_app_data();
 
+        // TODO: see TODO in _load_menu_data
+        $data['show_marketplace'] = $this->framework->session->userdata('show_marketplace');
         return theme_summary_box($data);
     }
 
@@ -1167,6 +1169,14 @@ $meta
         }
 
         $this->framework->session->set_userdata('default_app', $default_app);
+
+        // The sidebar needs to know if the user is allowed to view
+        // Marketplace information.  
+        // TODO: implement this in a better way
+
+        $show_marketplace = (array_key_exists('/app/marketplace', $menu_data)) ? TRUE : FALSE;
+
+        $this->framework->session->set_userdata('show_marketplace', $show_marketplace);
 
         // Cache the data and return it
         //-----------------------------
