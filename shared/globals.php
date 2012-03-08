@@ -143,7 +143,10 @@ function clearos_app_installed($app)
 
 function clearos_console()
 {
-    if (isset($_SERVER['HTTP_USER_AGENT']) && preg_match('/ClearOS/', $_SERVER['HTTP_USER_AGENT']))
+    $is_alt_port = (isset($_SERVER['SERVER_PORT']) && ($_SERVER['SERVER_PORT'] == '82')) ? TRUE : FALSE;
+    $is_localhost = (isset($_SERVER['REMOTE_ADDR']) && (preg_match('/^(::1)|(127.0.0.1)$/', $_SERVER['REMOTE_ADDR'])));
+
+    if ($is_alt_port && $is_localhost)
         return TRUE;
     else
         return FALSE;
