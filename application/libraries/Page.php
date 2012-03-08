@@ -288,6 +288,7 @@ class MY_Page
         $this->data['type'] = $type;
         $this->data['app_view'] = theme_confirm($title, $confirm, $cancel, $message, $options);
         $this->data['page_help'] = $this->_get_help_view($app);
+        $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
         $this->data['page_summary'] = $this->_get_summary_view($app);
         $this->data['page_report'] = $this->_get_report_view($app);
 
@@ -324,6 +325,7 @@ class MY_Page
         $this->data['type'] = $type;
         $this->data['app_view'] = theme_confirm_delete($title, $confirm, $cancel, $items, $message, $options);
         $this->data['page_help'] = $this->_get_help_view($app);
+        $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
         $this->data['page_summary'] = $this->_get_summary_view($app);
         $this->data['page_report'] = $this->_get_report_view($app);
 
