@@ -832,8 +832,8 @@ $meta
 
         $data = $this->_load_app_data($app);
 
-        // FIXME: Move these to a driver package
-        // FIXME: translate
+        // TODO: Move these to a driver package
+        // TODO: translate
 
         if (empty($data['user_guide_url'])) {
             $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS/6.2.0/userguide/' . $data['basename'];
@@ -843,6 +843,20 @@ $meta
         if (preg_match('/Professional/', $this->framework->session->userdata('os_name'))) {
             $data['support_url'] = 'http://www.clearcenter.com/getsupport';
             $data['support_url_text'] = 'ClearCARE Support';
+        }
+
+        // TODO: this was a bit of an afterthought.  The help view should be
+        // a little different when stepping through the wizard for the first
+        // time.
+
+        if ($this->framework->session->userdata['wizard']) {
+            $segments = explode('/', $_SERVER['PHP_SELF']);
+
+            if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_description']))
+                $data['description'] = $data['controllers'][$segments[3]]['wizard_description'];
+
+            if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name']))
+                $data['name'] = $data['controllers'][$segments[3]]['wizard_name'];
         }
 
         return theme_help_box($data);
@@ -860,12 +874,24 @@ $meta
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
+        // This was a bit of an afterthought.  The "Network App"
+        // has been broken up into smaller chunks.  This means
+        // that inline help can be provided per controller (segment).
+
         $data = $this->_load_app_data($app);
 
-        if (empty($data['inline_help']))
-            return '';
+        $segments = explode('/', $_SERVER['PHP_SELF']);
+
+        if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['inline_help']))
+            $help['inline_help'] = $data['controllers'][$segments[3]]['inline_help'];
+        else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['inline_help']))
+            $help['inline_help'] = $data['controllers'][$segments[2]]['inline_help'];
+        else if (!empty($data['inline_help']))
+            $help['inline_help'] = $data['inline_help'];
         else
-            return theme_inline_help_box($data);
+            return;
+
+        return theme_inline_help_box($help);
     }
 
     /**
@@ -1275,22 +1301,33 @@ $meta
 
         $segments = explode('/', $_SERVER['PHP_SELF']);
         $app = $segments[2];
-        $current = 0;
+        $controller = isset($segments[3]) ? $segments[3] : '';
+
+        $exact_count = 0;
+        $exact_match = FALSE;
+        $fuzzy_match = FALSE;
 
         foreach ($steps as $step) {
-            // TODO: temporary workaround for marketplace
-            if ($app === 'marketplace') {
-                if ($_SERVER['PHP_SELF'] === $step['nav'])
-                    break;
-            } else {
-                if (preg_match("/\/app\/$app/", $step['nav']))
-                    break;
+            if ($_SERVER['PHP_SELF'] === $step['nav']) {
+                $exact_match = TRUE;
+                break;
+            } else if (preg_match("/\/app\/$app\/$controller/", $step['nav'])) {
+                $fuzzy_match = TRUE;
+                $fuzzy_count = $exact_count;
+            } else if (!$fuzzy_match && (preg_match("/\/app\/$app/", $step['nav']))) {
+                $fuzzy_match = TRUE;
+                $fuzzy_count = $exact_count;
             }
 
-            $current++;
+            $exact_count++;
         }
 
-        // FIXME: Redirect to wizard if non-wizard page was requested
+        if ($exact_match)
+            $current = $exact_count;
+        else if ($fuzzy_match)
+            $current = $fuzzy_count;
+        else
+            throw new \Exception("please finish the wizard.");
 
         if (isset($steps[$current - 1]))
             $wizard_nav['previous'] = $steps[$current - 1]['nav'];
