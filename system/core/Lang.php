@@ -51,6 +51,13 @@ class CI_Lang {
 	 */
 	function load($langfile = '', $idiom = '', $return = FALSE, $add_suffix = TRUE, $alt_path = '')
 	{
+        // ClearFoundation: most of the CI translations aren't used, but there are some exceptions.
+        // Those exceptions are managed in the framework translation for now.
+
+        // TODO: revisit this
+        if ($langfile !== 'framework')
+            return;
+
 		$langfile = str_replace(EXT, '', $langfile);
 
 		if ($add_suffix == TRUE)
