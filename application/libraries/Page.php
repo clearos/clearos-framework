@@ -279,7 +279,11 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data();
 
-        $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
+        // TODO: wizard mode does not work, use splash for now
+        if ($this->framework->session->userdata['wizard'])
+            $type = MY_Page::TYPE_SPLASH;
+        else
+            $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         $app = $this->framework->uri->segment(1);
 
@@ -314,7 +318,11 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data();
 
-        $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
+        // TODO: wizard mode does not work, use splash for now
+        if ($this->framework->session->userdata['wizard'])
+            $type = MY_Page::TYPE_SPLASH;
+        else
+            $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         $app = $this->framework->uri->segment(1);
 
