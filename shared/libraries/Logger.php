@@ -104,7 +104,6 @@ class Logger
             }
         }
 
-        // Specify log line format
         $logline = sprintf("$typestring: %s: %s (%d): %s", $errstring, $file, $line, $errmsg);
 
         // Ignore strict errors coming out of CodeIgniter.
@@ -158,17 +157,19 @@ class Logger
             syslog(LOG_INFO, $logline);
 
             // Log backtrace
-            foreach ($error->get_trace() as $traceinfo) {
-                $tracefile = isset($traceinfo['file']) ? $traceinfo['file'] : 'GUI';
-                $traceline = isset($traceinfo['line']) ? $traceinfo['line'] : '';
-                // Backtrace log format
-                $logline = sprintf(
-                    "$typestring: debug backtrace: %s (%d): %s",
-                    $tracefile,
-                    $traceline,
-                    $traceinfo['function']
-                );
-                syslog(LOG_INFO, $logline);
+            if (($type == Error::TYPE_EXCEPTION) && ($errno == Error::CODE_ERROR)) {
+                foreach ($error->get_trace() as $traceinfo) {
+                    $tracefile = isset($traceinfo['file']) ? $traceinfo['file'] : 'GUI';
+                    $traceline = isset($traceinfo['line']) ? $traceinfo['line'] : '';
+                    // Backtrace log format
+                    $logline = sprintf(
+                        "$typestring: debug backtrace: %s (%d): %s",
+                        $tracefile,
+                        $traceline,
+                        $traceinfo['function']
+                    );
+                    syslog(LOG_INFO, $logline);
+                }
             }
 
             closelog();
