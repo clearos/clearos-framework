@@ -396,8 +396,12 @@ class MY_Page
             // More non-intuitive stuff.  When we are *not* running in "control panel" mode,
             // the user should see a full page summary once an action (e.g. adding a port
             // forward firewall) takes place.
+            //
+            // Also. disable this behavior in wizard mode.
 
-            if ($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL) {
+            if (($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL) 
+                && !$this->framework->session->userdata['wizard'])
+            {
                 $app_data = $this->_load_app_data();
 
                 if (!$action && isset($app_data['controllers'][$controller]['title']))
