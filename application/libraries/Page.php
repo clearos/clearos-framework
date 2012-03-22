@@ -869,6 +869,11 @@ $meta
 
             if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name']))
                 $data['name'] = $data['controllers'][$segments[3]]['wizard_name'];
+
+            $data['support_url'] = '';
+            $data['support_url_text'] = '';
+            $data['user_guide_url'] = '';
+            $data['user_guide_url_text'] = '';
         }
 
         return theme_help_box($data);
