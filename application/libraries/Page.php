@@ -1344,17 +1344,23 @@ $meta
         else if ($fuzzy_match)
             $current = $fuzzy_count;
         else
-            throw new \Exception("please finish the wizard.");
+            throw new \Exception("Please finish the wizard.");
 
-        if (isset($steps[$current - 1]))
+        if (isset($steps[$current - 1])) {
             $wizard_nav['previous'] = $steps[$current - 1]['nav'];
-        else
+            $wizard_nav['previous_title'] = $steps[$current - 1]['title'];
+        } else {
             $wizard_nav['previous'] = '';
+            $wizard_nav['previous_title'] = '';
+        }
 
-        if (isset($steps[$current + 1]))
+        if (isset($steps[$current + 1])) {
             $wizard_nav['next'] = $steps[$current + 1]['nav'];
-        else
+            $wizard_nav['next_title'] = $steps[$current + 1]['title'];
+        } else {
             $wizard_nav['next'] = '';
+            $wizard_nav['next_title'] = '';
+        }
 
         $this->data['wizard_navigation'] = $wizard_nav;
         $this->data['wizard_menu'] = $steps;
