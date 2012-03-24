@@ -779,7 +779,7 @@ function field_textarea($name, $value, $label, $read_only = FALSE, $options = NU
  * @return string HTML output
  */
 
-function field_info($id, $label, $text, $options)
+function field_info($id, $label, $text, $options = NULL)
 {
     return theme_field_info($id, $label, $text, $options);
 }
