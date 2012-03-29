@@ -345,7 +345,7 @@ class MY_Login_Session
         $this->framework->session->set_userdata('username', $username);
         // FIXME: add user's full name
 
-        if (file_exists('/var/clearos/base/wizard'))
+        if (file_exists('/var/clearos/base/wizard') && !clearos_console())
             $this->framework->session->set_userdata('wizard', TRUE);
     }
 
