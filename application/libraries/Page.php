@@ -45,8 +45,6 @@ use \clearos\framework\Config as Config;
 use \clearos\apps\base\Access_Control as Access_Control;
 use \clearos\apps\base\Install_Wizard as Install_Wizard;
 
-clearos_load_language('framework');
-
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
 ///////////////////////////////////////////////////////////////////////////////
@@ -137,7 +135,7 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__, 'Page Class Initialized');
 
         $this->framework =& get_instance();
-        $this->framework->lang->load('framework');
+        $this->framework->lang->load('base');
     }
 
     /**
@@ -171,7 +169,7 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $message = lang('framework_item_was_added');
+        $message = lang('base_item_was_added');
 
         $this->framework->session->set_userdata('status_success', $message);
     }
@@ -186,7 +184,7 @@ class MY_Page
     { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $message = lang('framework_item_was_deleted');
+        $message = lang('base_item_was_deleted');
 
         $this->framework->session->set_userdata('status_success', $message);
     }
@@ -201,7 +199,7 @@ class MY_Page
     { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $message = lang('framework_item_was_disabled');
+        $message = lang('base_item_was_disabled');
 
         $this->framework->session->set_userdata('status_success', $message);
     }
@@ -216,7 +214,7 @@ class MY_Page
     { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $message = lang('framework_item_was_enabled');
+        $message = lang('base_item_was_enabled');
 
         $this->framework->session->set_userdata('status_success', $message);
     }
@@ -231,7 +229,7 @@ class MY_Page
     { 
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $message = lang('framework_system_updated');
+        $message = lang('base_system_updated');
 
         $this->framework->session->set_userdata('status_success', $message);
     }
@@ -254,7 +252,7 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__);
 
         if (empty($title))
-            $title = ($code === 'warning') ? lang('framework_warning') : lang('framework_information');
+            $title = ($code === 'warning') ? lang('base_warning') : lang('base_information');
 
         $this->framework->session->set_userdata('message_code', $code);
         $this->framework->session->set_userdata('message_text', $message);
@@ -326,9 +324,9 @@ class MY_Page
 
         $app = $this->framework->uri->segment(1);
 
-        $message = isset($options['message']) ? $options['message'] : lang('framework_are_you_sure_delete');
+        $message = isset($options['message']) ? $options['message'] : lang('base_are_you_sure_delete');
 
-        $title = lang('framework_confirm_delete');
+        $title = lang('base_confirm_delete');
 
         $this->data['title'] = $ttile;
         $this->data['type'] = $type;
@@ -475,8 +473,8 @@ class MY_Page
             }
 
             // Add common widgets
-            $data[$app_data['basename'] . '/summary']['title'] = lang('framework_summary');
-            $data[$app_data['basename'] . '/help']['title'] = lang('framework_help');
+            $data[$app_data['basename'] . '/summary']['title'] = lang('base_summary');
+            $data[$app_data['basename'] . '/help']['title'] = lang('base_help');
 
             $this->data['app_view'] = theme_control_panel($data);
 
@@ -612,7 +610,7 @@ class MY_Page
         $this->data = array();
         $this->_load_meta_data();
 
-        $this->data['title'] = lang('framework_help');
+        $this->data['title'] = lang('base_help');
         $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_help_view($app);
 
@@ -638,7 +636,7 @@ class MY_Page
         $this->data = array();
         $this->_load_meta_data();
 
-        $this->data['title'] = lang('framework_dashboard_report');
+        $this->data['title'] = lang('base_dashboard_report');
         $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_report_view($app);
 
@@ -664,7 +662,7 @@ class MY_Page
         $this->data = array();
         $this->_load_meta_data();
 
-        $this->data['title'] = lang('framework_summary');
+        $this->data['title'] = lang('base_summary');
         $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_summary_view($app);
 
