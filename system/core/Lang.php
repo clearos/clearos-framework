@@ -54,9 +54,9 @@ class CI_Lang {
         // ClearFoundation: most of the CI translations aren't used, but there are some exceptions.
         // Those exceptions are managed in the framework translation for now.
 
-        // TODO: revisit this
-        if ($langfile !== 'framework')
-            return;
+        // TODO: just log it for now, revisit this later
+        if (! (($langfile === 'framework') || ($langfile === 'number')))
+		    log_message('debug', "FIXME FIXME FIXME - translation required $langfile - $idiom");
 
 		$langfile = str_replace(EXT, '', $langfile);
 
