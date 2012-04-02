@@ -135,7 +135,6 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__, 'Page Class Initialized');
 
         $this->framework =& get_instance();
-        $this->framework->lang->load('base');
     }
 
     /**
