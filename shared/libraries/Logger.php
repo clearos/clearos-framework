@@ -94,7 +94,7 @@ class Logger
                  if ($errno !== Error::CODE_ERROR)
                     return;
             } else if ($type == Error::TYPE_ERROR) {
-                // FIXME: disable this error level until RC/final
+                // Disable this error level until RC/final
                 if (($errno === E_NOTICE) || ($errno === E_STRICT) || ($errno === E_WARNING))
                     return;
 
@@ -138,16 +138,19 @@ class Logger
                 $timestamp = date('M j G:i:s T Y');
                 error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
 
-                foreach ($error->get_trace() as $traceinfo) {
-                    if (isset($traceinfo['file'])) {
-                        // Backtrace log format
-                        $logline = sprintf(
-                            "$typestring: debug backtrace: %s (%d): %s",
-                            $traceinfo['file'],
-                            $traceinfo['line'],
-                            $traceinfo['function']
-                        );
-                        error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
+                // only backtrace error exceptions
+                if ($errno === Error::CODE_ERROR) {
+                    foreach ($error->get_trace() as $traceinfo) {
+                        if (isset($traceinfo['file'])) {
+                            // Backtrace log format
+                            $logline = sprintf(
+                                "$typestring: debug backtrace: %s (%d): %s",
+                                $traceinfo['file'],
+                                $traceinfo['line'],
+                                $traceinfo['function']
+                            );
+                            error_log("{$timestamp}: $logline\n", 3, ini_get('error_log'));
+                        }
                     }
                 }
             }
