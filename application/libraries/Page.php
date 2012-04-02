@@ -405,7 +405,7 @@ class MY_Page
             // Also. disable this behavior in wizard mode.
 
             if (($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL) 
-                && !empty($this->framework->session->userdata['wizard']))
+                && (!isset($this->framework->session->userdata['wizard'])))
             {
                 $app_data = $this->_load_app_data();
 
