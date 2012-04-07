@@ -1078,7 +1078,7 @@ $meta
         );
 
         $secondary_order = array(
-            lang('base_subcategory_settings') => '010',
+            lang('base_subcategory_settings') => '999',
             lang('base_subcategory_accounts') => '020',
         );
 
@@ -1153,7 +1153,7 @@ $meta
 
             // Sort stuff
             $primary_sort = empty($primary_order[$app['category']]) ? '500' : $primary_order[$app['category']];
-            $secondary_sort = empty($secondary_order[$app['subcategory']]) ? $app['subcategory'] : $secondary_order[$app['subcategory']];
+            $secondary_sort = empty($secondary_order[$app['subcategory']]) ? '500' . $app['subcategory'] : $secondary_order[$app['subcategory']];
             $page_sort = empty($app['priority']) ? '500' : $app['priority'];
 
             $menu_info = array();
