@@ -785,22 +785,70 @@ function field_info($id, $label, $text, $options = NULL)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// F I E L D  I N F O
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Display some information.
+ *
+ * @param string $id      HTML ID
+ * @param string $label   label
+ * @param string $text    text
+ * @param array  $options options
+ *
+ * @return string HTML output
+ */
+
+function field_FIXME_info($id, $label, $text, $options = NULL)
+{
+    return theme_field_info($id, $label, $text, $options);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // R A D I O  S E T S
 ///////////////////////////////////////////////////////////////////////////////
 
-function form_radio_set_open($class, $orientation, $options = NULL)
+/**
+ * Radio set.
+ *
+ * @param string $title   title
+ * @param array  $radios  radio array
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function field_radio_set($title, $radios, $options = NULL)
 {
-    return "<div class='$class'>\n";
+    return theme_field_radio_set($title, $radios, $options);
 }
 
-function form_radio_set_item($id, $name, $label, $checked = FALSE)
-{
-    return "<input type='radio' id='$id' name='$name' /><label for='$id'>$label</label>\n";
-}
+/**
+ * Radio set item.
+ *
+ * @param string $name      name of text input element
+ * @param string $group     button group
+ * @param string $label     label for text input field
+ * @param string $checked   checked flag
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
 
-function form_radio_set_close()
+function field_radio_set_item($name, $group, $label, $checked = FALSE, $read_only = FALSE, $options = NULL) 
 {
-    return "</div>\n";
+    $checked = ($read_only) ? $checked : set_value($name, $checked);
+    $error = form_error($name);
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
+
+    // TODO: read only mode has not been used/tested
+    if ($read_only)
+        $html = theme_field_view($label, (bool)$checked, $name, $checked, $input_id, $options);
+    else
+        $html = theme_field_radio_set_item($name, $group, $label, $checked, $error, $input_id, $options);
+
+    return $html;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -852,6 +900,20 @@ function progress_bar($id, $options)
 function form_header($title, $options = NULL)
 {
     return theme_form_header($title, $options);
+}
+
+/**
+ * Form banner.
+ *
+ * @param string $html    html payload
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function form_banner($html, $options = NULL)
+{
+    return theme_form_banner($html, $options);
 }
 
 /**
