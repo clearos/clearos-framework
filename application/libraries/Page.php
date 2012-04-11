@@ -930,12 +930,12 @@ $meta
 
         $this->framework->load->module($report);
 
-        if (! method_exists($this->framework->$module, 'index'))
+        if (! method_exists($this->framework->$module, 'sidebar'))
             return;
 
         ob_start();
         $this->form_only = TRUE;
-        $this->framework->$module->index();
+        $this->framework->$module->sidebar();
         $this->form_only = FALSE;
         $report = ob_get_clean();
 
