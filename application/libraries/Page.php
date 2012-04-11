@@ -528,12 +528,18 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data();
 
+        $segments = explode('/', $_SERVER['PHP_SELF']);
+
+        $message = "<p>" . clearos_exception_message($exception) . "</p>";
+
         if ($this->form_only) {
-            echo infobox_critical(lang('base_error'), clearos_exception_message($exception));
+            echo infobox_warning(lang('base_error'), $message);
         } else {
+            $link = "<p align='center'>" . anchor_custom('/app/' . $segments[2], lang('base_back')) . "</p>";
+
             $this->data['type'] = MY_Page::TYPE_SPLASH;
-            $this->data['title'] = 'Ooops';
-            $this->data['app_view'] = theme_dialog_warning(clearos_exception_message($exception));
+            $this->data['title'] = lang('base_ooops');
+            $this->data['app_view'] = infobox_warning(lang('base_ooops'), $message . $link);
             $this->_display_page();
         }
     }
