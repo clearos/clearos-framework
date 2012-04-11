@@ -922,6 +922,9 @@ $meta
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
+        // See if an app has a "report" controller
+        //----------------------------------------
+
         $report = $app . '/report';
         $module = 'report';
 
@@ -929,6 +932,9 @@ $meta
             return;
 
         $this->framework->load->module($report);
+
+        // Load sidebar report
+        //--------------------
 
         if (! method_exists($this->framework->$module, 'sidebar'))
             return;
@@ -939,7 +945,16 @@ $meta
         $this->form_only = FALSE;
         $report = ob_get_clean();
 
-        return $report;
+        // Grab sidebar title
+        //-------------------
+
+        $data = $this->_load_app_data();
+        $title = (isset($data['sidebar_title'])) ? $data['sidebar_title'] : lang('base_report');
+
+        // Return report widget
+        //---------------------
+
+        return theme_report_box($title, $report);
     }
 
     /**
