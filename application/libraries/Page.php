@@ -922,13 +922,21 @@ $meta
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $this->framework->load->module($app);
+        $report = $app . '/report';
+        $module = 'report';
 
-        if (! method_exists($this->framework->$app, 'report'))
+        if ($this->framework->$module)
+            return;
+
+        $this->framework->load->module($report);
+
+        if (! method_exists($this->framework->$module, 'index'))
             return;
 
         ob_start();
-        $this->framework->$app->report();
+        $this->form_only = TRUE;
+        $this->framework->$module->index();
+        $this->form_only = FALSE;
         $report = ob_get_clean();
 
         return $report;
