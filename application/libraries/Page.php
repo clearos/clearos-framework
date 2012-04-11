@@ -291,6 +291,7 @@ class MY_Page
         $this->data['app_view'] = theme_confirm($title, $confirm, $cancel, $message, $options);
         $this->data['page_help'] = $this->_get_help_view($app);
         $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
+        $this->data['page_wizard_intro'] = $this->_get_wizard_intro_view($app);
         $this->data['page_summary'] = $this->_get_summary_view($app);
         $this->data['page_report'] = $this->_get_report_view($app);
 
@@ -332,6 +333,7 @@ class MY_Page
         $this->data['app_view'] = theme_confirm_delete($title, $confirm, $cancel, $items, $message, $options);
         $this->data['page_help'] = $this->_get_help_view($app);
         $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
+        $this->data['page_wizard_intro'] = $this->_get_wizard_intro_view($app);
         $this->data['page_summary'] = $this->_get_summary_view($app);
         $this->data['page_report'] = $this->_get_report_view($app);
 
@@ -416,6 +418,7 @@ class MY_Page
             $this->data['app_view'] = $this->framework->load->view($form, $data, TRUE);
             $this->data['page_help'] = $this->_get_help_view($app);
             $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
+            $this->data['page_wizard_intro'] = $this->_get_wizard_intro_view($app);
             $this->data['page_app_helper'] = $this->_get_app_helper_view($app);
             $this->data['page_summary'] = $this->_get_summary_view($app);
             $this->data['page_report'] = $this->_get_report_view($app);
@@ -506,6 +509,7 @@ class MY_Page
 
             $this->data['page_help'] = $this->_get_help_view($app);
             $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
+            $this->data['page_wizard_intro'] = $this->_get_wizard_intro_view($app);
             $this->data['page_summary'] = $this->_get_summary_view($app);
             $this->data['page_report'] = $this->_get_report_view($app);
         }
@@ -860,25 +864,6 @@ $meta
             $data['support_url_text'] = 'ClearCARE Support';
         }
 
-        // TODO: this was a bit of an afterthought.  The help view should be
-        // a little different when stepping through the wizard for the first
-        // time.
-
-        if (!empty($this->framework->session->userdata['wizard'])) {
-            $segments = explode('/', $_SERVER['PHP_SELF']);
-
-            if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_description']))
-                $data['description'] = $data['controllers'][$segments[3]]['wizard_description'];
-
-            if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name']))
-                $data['name'] = $data['controllers'][$segments[3]]['wizard_name'];
-
-            $data['support_url'] = '';
-            $data['support_url_text'] = '';
-            $data['user_guide_url'] = '';
-            $data['user_guide_url_text'] = '';
-        }
-
         return theme_help_box($data);
     }
 
@@ -980,6 +965,34 @@ $meta
         // TODO: see TODO in _load_menu_data
         $data['show_marketplace'] = $this->framework->session->userdata('show_marketplace');
         return theme_summary_box($data);
+    }
+
+    /**
+     * Returns the wizard intro view.
+     *
+     * @param string $app app name
+     *
+     * @return string HTML for wizard intro view
+     */
+
+    protected function _get_wizard_intro_view($app)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        if (empty($this->framework->session->userdata['wizard']))
+            return;
+
+        $data = $this->_load_app_data($app);
+
+        $segments = explode('/', $_SERVER['PHP_SELF']);
+
+        if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_description']))
+            $data['description'] = $data['controllers'][$segments[3]]['wizard_description'];
+
+        if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name']))
+            $data['name'] = $data['controllers'][$segments[3]]['wizard_name'];
+
+        return theme_wizard_intro_box($data);
     }
 
     /**
