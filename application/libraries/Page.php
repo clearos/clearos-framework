@@ -986,15 +986,23 @@ $meta
 
         $segments = explode('/', $_SERVER['PHP_SELF']);
 
-        if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_description']))
-            $data['description'] = $data['controllers'][$segments[3]]['wizard_description'];
+        // TODO: this segment mapping is not going to work.  Need a better way.
+        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['wizard_description']))
+            $data['wizard_description'] = $data['controllers'][$segments[5]]['wizard_description'];
+        else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_description']))
+            $data['wizard_description'] = $data['controllers'][$segments[3]]['wizard_description'];
         else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_description']))
-            $data['description'] = $data['controllers'][$segments[2]]['wizard_description'];
+            $data['wizard_description'] = $data['controllers'][$segments[2]]['wizard_description'];
 
-        if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name']))
-            $data['name'] = $data['controllers'][$segments[3]]['wizard_name'];
+        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['wizard_name']))
+            $data['wizard_name'] = $data['controllers'][$segments[5]]['wizard_name'];
+        else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name']))
+            $data['wizard_name'] = $data['controllers'][$segments[3]]['wizard_name'];
         else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_name']))
-            $data['name'] = $data['controllers'][$segments[2]]['wizard_name'];
+            $data['wizard_name'] = $data['controllers'][$segments[2]]['wizard_name'];
+
+        if (empty($data['wizard_name']))
+            return;
 
         return theme_wizard_intro_box($data);
     }
