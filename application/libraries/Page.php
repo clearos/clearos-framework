@@ -988,9 +988,13 @@ $meta
 
         if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_description']))
             $data['description'] = $data['controllers'][$segments[3]]['wizard_description'];
+        else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_description']))
+            $data['description'] = $data['controllers'][$segments[2]]['wizard_description'];
 
         if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name']))
             $data['name'] = $data['controllers'][$segments[3]]['wizard_name'];
+        else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_name']))
+            $data['name'] = $data['controllers'][$segments[2]]['wizard_name'];
 
         return theme_wizard_intro_box($data);
     }
