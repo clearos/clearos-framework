@@ -931,9 +931,11 @@ $meta
             return;
 
         ob_start();
+        $data = $this->data;
         $this->form_only = TRUE;
         $this->framework->$module->sidebar();
         $this->form_only = FALSE;
+        $this->data = $data;
         $report = ob_get_clean();
 
         // Grab sidebar title
