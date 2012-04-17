@@ -919,7 +919,7 @@ $meta
         $report = $app . '/report';
         $module = 'report';
 
-        if ($this->framework->$module)
+        if (isset($this->framework->$module))
             return;
 
         $this->framework->load->module($report);
@@ -1164,17 +1164,18 @@ $meta
             'date',
             'dhcp',
             'dns',
-            'graphical-console',
+            'graphical_console',
             'groups',
             'incoming_firewall',
             'language',
             'mail_notification',
             'marketplace',
             'network',
-            'organization',
-            'process-viewer',
+            'process_viewer',
             'registration',
+            'software_updates',
             'ssh_server',
+            'user_profile'
             'users'
         );
 
