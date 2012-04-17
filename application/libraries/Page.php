@@ -1175,7 +1175,7 @@ $meta
             'registration',
             'software_updates',
             'ssh_server',
-            'user_profile'
+            'user_profile',
             'users'
         );
 
