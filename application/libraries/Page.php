@@ -1265,7 +1265,7 @@ $meta
             $default_app = 'user_profile';
         } else if (! empty($menu_data)) {
             $app_list = array_keys($menu_data);
-            $default_app = preg_replace('/^\/app\/', '', $app_list[0]);
+            $default_app = preg_replace('/^\/app\//', '', $app_list[0]);
         }
 
         $this->framework->session->set_userdata('default_app', $default_app);
