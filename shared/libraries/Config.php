@@ -141,8 +141,6 @@ class Config
             $app_version = "";
 
         foreach (Config::$apps_paths as $path) {
-            $path = (preg_match('/apps$/', $path)) ? $path : $path . '/apps'; // FIXME: temporary workaround for old version
-
             $base = $path . '/' . $app . '/' . $app_version;
             if (is_dir($base))
                 return $base;
