@@ -87,18 +87,15 @@ class MX_Router extends CI_Router
 		foreach (Modules::$locations as $location => $offset) {
 		
 			// ClearFoundation -- add support for multiple development trees
-			if (isset(ClearOsConfig::$clearos_devel_versions['app'][$module]))
-				$app_version = ClearOsConfig::$clearos_devel_versions['app'][$module] . '/';
-			else if (isset(ClearOsConfig::$clearos_devel_versions['app']['default']))
-				$app_version = ClearOsConfig::$clearos_devel_versions['app']['default'] . '/';
-			else
-				$app_version = "";
+
+			foreach (ClearOSConfig::$scm_subpaths as $scm_subpath) {
+			$scm_subpath = $scm_subpath . '/';
 
 			/* module exists? */
-			if (is_dir($source = $location.$module.'/'.$app_version.'controllers/')) {
+			if (is_dir($source = $location.$module.'/'.$scm_subpath.'controllers/')) {
 				
 				$this->module = $module;
-				$this->directory = $offset.$module.'/'.$app_version.'controllers/';
+				$this->directory = $offset.$module.'/'.$scm_subpath.'controllers/';
 				
 				/* module sub-controller exists? */
 				if($directory AND is_file($source.$directory.$ext)) {
@@ -125,6 +122,7 @@ class MX_Router extends CI_Router
 				if(is_file($source.$module.$ext)) {
 					return $segments;
 				}
+			}
 			}
 		}
 		

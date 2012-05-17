@@ -67,7 +67,6 @@ if (getenv('CLEAROS_BOOTSTRAP')) {
     //----------------------------------------------------------------
     // FIXME: auto-detect default version based on dirname(__FILE__);
 
-    Config::$clearos_devel_versions['app']['default'] = 'trunk';
     Config::$clearos_devel_versions['theme']['default'] = 'trunk';
     Config::$clearos_devel_versions['framework'] = 'trunk';
 

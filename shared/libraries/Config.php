@@ -107,6 +107,12 @@ class Config
 
     public static $clearos_devel_versions = array();
 
+    /**
+     * @var array scm path handler
+     */
+
+    public static $scm_subpaths = array('trunk', '');
+
     ///////////////////////////////////////////////////////////////////////////////
     // M E T H O D S
     ///////////////////////////////////////////////////////////////////////////////
@@ -133,17 +139,15 @@ class Config
         // FIXME: verbose
         // Logger::profile(__METHOD__, __LINE__);
 
-        if (isset(Config::$clearos_devel_versions['app'][$app]))
-            $app_version = Config::$clearos_devel_versions['app'][$app];
-        else if (isset(Config::$clearos_devel_versions['app']['default']))
-            $app_version = Config::$clearos_devel_versions['app']['default'];
-        else
-            $app_version = "";
+        $version_paths = array('trunk', '');
 
         foreach (Config::$apps_paths as $path) {
-            $base = $path . '/' . $app . '/' . $app_version;
-            if (is_dir($base))
-                return $base;
+            foreach ($version_paths as $version_path) {
+                $base = $path . '/' . $app . '/' . $version_path;
+
+                if (is_dir("$base/deploy"))
+                    return $base;
+            }
         }
     }
 
@@ -161,6 +165,7 @@ class Config
         $base_path = Config::get_app_base($app);
 
         $base_path = preg_replace('/\/webconfig\/apps\/.*/', '', $base_path);
+        $base_path = preg_replace('/\/apps\/.*/', '', $base_path);
         $base_path = preg_replace('/.*\//', '', $base_path);
 
         if (empty($base_path))
@@ -181,21 +186,18 @@ class Config
     {
         Logger::profile(__METHOD__, __LINE__);
 
-        if (isset(Config::$clearos_devel_versions['app'][$app]))
-            $app_version = Config::$clearos_devel_versions['app'][$app] . '/';
-        else if (isset(Config::$clearos_devel_versions['app']['default']))
-            $app_version = Config::$clearos_devel_versions['app']['default'] . '/';
-        else
-            $app_version = '';
+        $version_paths = array('trunk', '');
 
-        // FIXME
-        if (TRUE) { //devel mode only
-            $approot = Config::get_app_root($app);
-        } else {
-            $approot = '/approot';
+        $approot = Config::get_app_root($app);
+
+        foreach (Config::$apps_paths as $path) {
+            foreach ($version_paths as $version_path) {
+                $base = $path . '/' . $app . '/' . $version_path;
+
+                if (is_dir("$base/deploy"))
+                    return $approot . '/' . $app . '/' . $version_path . '/htdocs';
+            }
         }
-
-        return $approot . '/' . $app . '/' . $app_version . 'htdocs';
     }
 
     /**

@@ -200,22 +200,19 @@ class Modules
 		}	
 
 		// ClearFoundation -- add support for multiple development trees (see opening comment)
-		if (isset(ClearOsConfig::$clearos_devel_versions['app'][$module]))
-			$app_version = ClearOsConfig::$clearos_devel_versions['app'][$module] . '/';
-		else if (isset(ClearOsConfig::$clearos_devel_versions['app']['default']))
-			$app_version = ClearOsConfig::$clearos_devel_versions['app']['default'] . '/';
-		else
-			$app_version = "";
+		foreach (ClearOSConfig::$scm_subpaths as $scm_subpath) {
+		$scm_subpath = $scm_subpath . '/';
 
 		foreach (Modules::$locations as $location => $offset) {					
 			foreach($modules as $module => $subpath) {			
-				$fullpath = $location.$module.'/'.$app_version.$base.$subpath;
+				$fullpath = $location.$module.'/'.$scm_subpath.$base.$subpath;
 				
 				if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
 				
 				if ($base == 'libraries/' AND is_file($fullpath.ucfirst($file_ext))) 
 					return array($fullpath, ucfirst($file));
 			}
+		}
 		}
 		
 		/* is the file in an application directory? */
