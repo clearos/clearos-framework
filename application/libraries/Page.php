@@ -1130,7 +1130,8 @@ $meta
             lang('base_category_gateway') => '040',
             lang('base_category_system')  => '050',
             lang('base_category_spotlight')  => '060',
-            lang('base_category_my_account')  => '070',
+            lang('base_category_reports')  => '070',
+            lang('base_category_my_account')  => '080',
         );
 
         $secondary_order = array(
