@@ -173,6 +173,12 @@ class CI_Session {
 			return FALSE;
 		}
 
+		// Set custom session expiration?
+		if (array_key_exists('custom_expiration', $session))
+		{
+			$this->sess_expiration = $session['custom_expiration'];
+		}
+
 		// Is the session current?
 		if (($session['last_activity'] + $this->sess_expiration) < $this->now)
 		{

@@ -337,12 +337,20 @@ class MY_Login_Session
      * @return void
      */
 
-    public function start_authenticated($username)
+    public function start_authenticated($username, $custom_expiration = NULL)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
         $this->framework->session->set_userdata('logged_in', 'TRUE');
         $this->framework->session->set_userdata('username', $username);
+
+        // Override default session time-out?
+        if ($custom_expiration !== NULL) {
+            $this->framework->session->set_userdata(
+                'custom_expiration', $custom_expiration
+            );
+        }
+
         // FIXME: add user's full name
 
         if (file_exists('/var/clearos/base/wizard') && !clearos_console())
