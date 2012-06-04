@@ -56,27 +56,38 @@ class MX_Lang extends CI_Lang
 	
 		$_module OR $_module = CI::$APP->router->fetch_module();
 
-		// ClearFoundation - fall back to en_US if translation is unavailable
-		$languages = array($idiom, 'en_US');
+		// ClearFoundation
+        // - fall back to en_US if translation is unavailable
+        // - add helper for translators
+        //
+        // In devel mode, we tack on the en_US translations to $translations.
+        // This is used in system/core/Lang.php to see if the translation exists.
 
-		foreach ($languages as $idiom) {
-			list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/'.$idiom.'/');
+        list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/'.$idiom.'/');
+        list($path_en_us, $_langfile_en_us) = Modules::find($langfile.'_lang', $_module, 'language/en_US/');
 
-			if ($path === FALSE) {
-				// ClearFoundation - support short form tags, e.g. load('date') is equivalent to load('date/date')
-				$newlangfile = "$langfile/$langfile";
-				list($path, $_langfile) = Modules::find($newlangfile.'_lang', $_module, 'language/'.$idiom.'/');
-			} else {
-				break;
-			}
-		}
+		if ($path === FALSE) {
+            $path = $path_en_us;
+            $_langfile = $_langfile_en_us;
+        }
 
 		if ($path === FALSE) {
 			if ($lang = parent::load($langfile, $lang, $return)) return $lang;
 		} else {
 			if($lang = Modules::load_file($_langfile, $path, 'lang')) {
 				if ($return) return $lang;
+
+                if (($idiom != 'en_US') && file_exists('/etc/clearos/language.d/develmode')) {
+                    $lang_en_us = Modules::load_file($_langfile_en_us, $path_en_us, 'lang');
+
+                    if (isset($this->language['en_US']))
+                        $lang_en_us = array_merge($this->language['en_US'], $lang_en_us);
+
+                    $this->language['en_US'] = $lang_en_us;
+                }
+
 				$this->language = array_merge($this->language, $lang);
+
 				$this->is_loaded[] = $langfile.'_lang';
 				unset($lang);
 			}

@@ -101,6 +101,11 @@ if (file_exists('/tmp/webconfig.debug')) {
 if (isset($_SERVER['CLEAROS_CONFIG']) && file_exists($_SERVER['CLEAROS_CONFIG']))
     require_once($_SERVER['CLEAROS_CONFIG']);
 
+// Translations in developer mode 
+//-------------------------------
+
+Config::$apps_paths[] = '/var/clearos/base/translations';
+
 ///////////////////////////////////////////////////////////////////////////////
 // C O R E  F U N C T I O N S  A N D  H E L P E R S
 ///////////////////////////////////////////////////////////////////////////////
