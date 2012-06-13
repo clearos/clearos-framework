@@ -67,12 +67,13 @@ class MX_Lang extends CI_Lang
         list($path_en_us, $_langfile_en_us) = Modules::find($langfile.'_lang', $_module, 'language/en_US/');
 
 		if ($path === FALSE) {
-            $path = $path_en_us;
-            $_langfile = $_langfile_en_us;
+            $newlangfile = "$langfile/$langfile";
+            list($path, $_langfile) = Modules::find($newlangfile.'_lang', $_module, 'language/'.$idiom.'/');
+            list($path_en_us, $_langfile_en_us) = Modules::find($newlangfile.'_lang', $_module, 'language/en_US/');
         }
 
 		if ($path === FALSE) {
-			if ($lang = parent::load($langfile, $lang, $return)) return $lang;
+			// if ($lang = parent::load($langfile, $lang, $return)) return $lang;
 		} else {
 			if($lang = Modules::load_file($_langfile, $path, 'lang')) {
 				if ($return) return $lang;
@@ -87,7 +88,6 @@ class MX_Lang extends CI_Lang
                 }
 
 				$this->language = array_merge($this->language, $lang);
-
 				$this->is_loaded[] = $langfile.'_lang';
 				unset($lang);
 			}
