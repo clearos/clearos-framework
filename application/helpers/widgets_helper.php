@@ -785,26 +785,6 @@ function field_info($id, $label, $text, $options = NULL)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-// F I E L D  I N F O
-///////////////////////////////////////////////////////////////////////////////
-
-/**
- * Display some information.
- *
- * @param string $id      HTML ID
- * @param string $label   label
- * @param string $text    text
- * @param array  $options options
- *
- * @return string HTML output
- */
-
-function field_FIXME_info($id, $label, $text, $options = NULL)
-{
-    return theme_field_info($id, $label, $text, $options);
-}
-
-///////////////////////////////////////////////////////////////////////////////
 // R A D I O  S E T S
 ///////////////////////////////////////////////////////////////////////////////
 
