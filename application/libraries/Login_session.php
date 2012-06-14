@@ -351,8 +351,6 @@ class MY_Login_Session
             );
         }
 
-        // FIXME: add user's full name
-
         if (file_exists('/var/clearos/base/wizard') && !clearos_console())
             $this->framework->session->set_userdata('wizard', TRUE);
     }
