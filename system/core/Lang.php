@@ -56,7 +56,7 @@ class CI_Lang {
 
         // TODO: just log it for now, revisit this later
         if (! (($langfile === 'framework') || ($langfile === 'number')))
-		    log_message('debug', "FIXME FIXME FIXME - translation required $langfile - $idiom");
+		    log_message('debug', "Oooops!  Translation required $langfile - $idiom");
 
 		$langfile = str_replace(EXT, '', $langfile);
 
