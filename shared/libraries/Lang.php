@@ -87,12 +87,10 @@ class Lang
         // Load the language file
         $langpath = clearos_app_base($app) . "/language/$language/$langfile";
 
-            $lang = array();
-        if (file_exists($langpath)) {
+        $lang = array();
+
+        if (file_exists($langpath))
             require "$langpath";
-        } else {
-            // FIXME?
-        }
 
         $this->is_loaded[] = $target;
         $this->language = array_merge($this->language, $lang);
