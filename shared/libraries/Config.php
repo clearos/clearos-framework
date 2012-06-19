@@ -164,14 +164,15 @@ class Config
         // Logging is verbose, don't bother
         $base_path = Config::get_app_base($app);
 
-        $base_path = preg_replace('/\/webconfig\/apps\/.*/', '', $base_path);
-        $base_path = preg_replace('/\/apps\/.*/', '', $base_path);
-        $base_path = preg_replace('/.*\//', '', $base_path);
-
-        if (empty($base_path))
+        if (preg_match('/.usr.clearos.apps/', $base_path)) {
             return '/approot';
-        else
+        } else {
+            $base_path = preg_replace('/\/webconfig\/apps\/.*/', '', $base_path);
+            $base_path = preg_replace('/\/apps\/.*/', '', $base_path);
+            $base_path = preg_replace('/.*\//', '', $base_path);
+
             return '/' . $base_path . '/approot';
+        }
     }
 
     /**
