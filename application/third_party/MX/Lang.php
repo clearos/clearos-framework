@@ -76,9 +76,13 @@ class MX_Lang extends CI_Lang
 			// if ($lang = parent::load($langfile, $lang, $return)) return $lang;
 		} else {
 			if($lang = Modules::load_file($_langfile, $path, 'lang')) {
+                // KLUDGE: add special language mapping file
+                if ($_langfile == 'base_lang')
+                    include clearos_app_base('base') . '/language/en_US/base_framework_lang.php';
+
 				if ($return) return $lang;
 
-                if (($idiom != 'en_US') && file_exists('/etc/clearos/language.d/develmode')) {
+                if (($idiom != 'en_US') && file_exists('/var/clearos/base/translations/base')) {
                     $lang_en_us = Modules::load_file($_langfile_en_us, $path_en_us, 'lang');
 
                     if (isset($this->language['en_US']))
