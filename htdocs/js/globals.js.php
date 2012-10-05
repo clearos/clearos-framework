@@ -47,6 +47,8 @@ echo "
 var auth_options = new Object();
 var sdn_org = '';
 var internet_connection = false;
+var lang_yes = '" . lang("base_yes") . "';
+var lang_no = '" . lang("base_no") . "';
 var lang_close = '" . lang("base_close") . "';
 var lang_authenticate = '" . lang("base_authenticate") . "';
 var lang_sdn_authentication_required = '" . lang("base_sdn_authentication_required") . "';
@@ -74,6 +76,22 @@ var lang_marketplace_renewal_date = '" . lang('marketplace_renewal_date') . "';
 var lang_marketplace_upgrade = '" . lang('marketplace_upgrade') . "';
 var lang_marketplace_sidebar_recommended_apps = '" . lang('marketplace_sidebar_recommended_apps') . "';
 var lang_marketplace_recommended_apps = '" . lang('marketplace_recommended_apps') . "';
+var lang_marketplace_evaluation = '" . lang('marketplace_evaluation') . "';
+var lang_marketplace_trial_ends = '" . lang('marketplace_trial_ends') . "';
+var lang_marketplace_eval_limitations = '" . lang('marketplace_eval_limitations') . "';
+var lang_marketplace_support_1_title = '" . lang('marketplace_support_1_title') . "';
+var lang_marketplace_support_2_title = '" . lang('marketplace_support_2_title') . "';
+var lang_marketplace_support_4_title = '" . lang('marketplace_support_4_title') . "';
+var lang_marketplace_support_8_title = '" . lang('marketplace_support_8_title') . "';
+var lang_marketplace_support_16_title = '" . lang('marketplace_support_16_title') . "';
+var lang_marketplace_support_1_description = '" . lang('marketplace_support_1_description') . "';
+var lang_marketplace_support_2_description = '" . lang('marketplace_support_2_description') . "';
+var lang_marketplace_support_4_description = '" . lang('marketplace_support_4_description') . "';
+var lang_marketplace_support_8_description = '" . lang('marketplace_support_8_description') . "';
+var lang_marketplace_support_16_description = '" . lang('marketplace_support_16_description') . "';
+var lang_marketplace_support_policy = '" . lang('marketplace_support_policy') . "';
+var lang_marketplace_support_legend = '" . lang('marketplace_support_legend') . "';
+var lang_marketplace_learn_more = '" . lang('marketplace_learn_more') . "';
 
 my_location = get_location_info();
 
