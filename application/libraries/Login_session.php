@@ -211,10 +211,22 @@ class MY_Login_Session
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        // Set session
+        // Set language code
         $this->framework->session->set_userdata('lang_code', $code);
 
-        // TODO: text direction and character set need to be updated too
+        // Set text direction and encoding
+        if (clearos_load_library('language/Locale')) {
+            try {
+                $locale = new Locale();
+                $text_direction = $locale->get_text_direction();
+                $encoding = $locale->get_encoding();
+
+                $this->framework->session->set_userdata('text_direction', $text_direction);
+                $this->framework->session->set_userdata('encoding', $encoding);
+            } catch (Exception $e) {
+                // Use default
+            }
+        }
 
         // Clear the cache when changing the session language
         $this->framework->page->clear_cache();
@@ -261,13 +273,13 @@ class MY_Login_Session
         if (! $this->framework->session->userdata('lang_code')) {
             $session['lang_code'] = 'en_US';
             $session['encoding'] = 'utf-8';
-            $session['textdir'] = 'LTR';
+            $session['text_direction'] = 'LTR';
 
             if (clearos_load_library('language/Locale')) {
                 try {
                     $locale = new Locale();
                     $session['lang_code'] = $locale->get_language_code();
-                    $session['textdir'] = $locale->get_text_direction();
+                    $session['text_direction'] = $locale->get_text_direction();
                     $session['encoding'] = $locale->get_encoding();
                 } catch (Exception $e) {
                     // Use default
