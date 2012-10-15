@@ -754,7 +754,7 @@ class MY_Page
         // <html>
         //-------------------
         
-        $head = "<html dir='" . $this->framework->session->userdata('textdir') . "'>\n\n";
+        $head = "<html dir='" . $this->framework->session->userdata('text_direction') . "'>\n\n";
 
         // <head> commom
         //-------------------
