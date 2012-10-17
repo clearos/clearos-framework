@@ -153,6 +153,22 @@ function clearos_console()
 }
 
 /**
+ * Returns the installed driver for given driver engine.
+ *
+ * @param string $driver_engine driver engine name
+ *
+ * @return string driver name
+ */
+
+function clearos_driver($driver_engine)
+{
+    if ($driver_engine === 'summary')
+        return Config::get_summary_driver();
+    else if ($driver_engine === 'reports')
+        return Config::get_reports_driver();
+}
+
+/**
  * Returns the error code from any Exception object
  *
  * This function makes it possible to return the error code from

@@ -202,6 +202,34 @@ class Config
     }
 
     /**
+     * Returns the report driver name.
+     *
+     * @return string driver name
+     */
+
+    public static function get_reports_driver()
+    {
+        Logger::profile(__METHOD__, __LINE__);
+
+        // FIXME
+        return 'home_reports';
+    }
+
+    /**
+     * Returns the summary driver name.
+     *
+     * @return string driver name
+     */
+
+    public static function get_summary_driver()
+    {
+        Logger::profile(__METHOD__, __LINE__);
+
+        // TODO: add support for other drivers
+        return 'marketplace';
+    }
+
+    /**
      * Returns the theme path.
      *
      * @param string $theme theme name

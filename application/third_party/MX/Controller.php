@@ -61,11 +61,15 @@ class ClearOS_Controller
 
     /* ClearFoundation - add default methods */
 
+    public function dashboard() {
+        $this->load->page->view_dashboard_widget(uri_string());
+    }
+
     public function help() {
-        $this->load->page->view_help(uri_string());
+        $this->load->page->view_help_widget(uri_string());
     }
 
     public function summary() {
-        $this->load->page->view_summary(uri_string());
+        $this->load->page->view_summary_widget(uri_string());
     }
 }

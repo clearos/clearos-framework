@@ -102,8 +102,10 @@ class MY_Page
     ///////////////////////////////////////////////////////////////////////////////
 
     const TYPE_CONFIGURATION = 'configuration';
+    const TYPE_WIDE_CONFIGURATION = 'wide_configuration';
     const TYPE_LOGIN = 'login';
-    const TYPE_REPORT = 'report';
+    const TYPE_REPORT = 'report'; // TODO: deprecated, remove
+    const TYPE_REPORTS = 'reports';
     const TYPE_SPOTLIGHT = 'spotlight';
     const TYPE_SPLASH = 'splash';
     const TYPE_WIZARD = 'wizard';
@@ -118,6 +120,8 @@ class MY_Page
 
     protected $framework = NULL;
     protected $javascript = array();
+    protected $report_driver = 'home_reports'; // FIXME
+    protected $summary_driver = NULL;
     public $data = array();
     public $form_only = FALSE;
 
@@ -436,6 +440,54 @@ class MY_Page
     }
 
     /**
+     * Displays a report.
+     *
+     * Available options are identical to view_form
+     *
+     * @param string $type        dashboard or full
+     * @param array  $data        CodeIgniter data array
+     * @param array  $report_info report info
+     * @param array  $options     options array
+     *
+     * @return view
+     */
+
+    public function view_report($type, $data, $report_info, $options = array())
+    {
+        // Common
+        //-------
+
+        $options['javascript'] = array(clearos_app_htdocs($this->report_driver) . '/' . $this->report_driver . '.js.php');
+        if (isset($options['javascript']))
+            $this->javascript = array_merge($options['javascript'], $this->javascript);
+
+        $title = $report_info['title'];
+        $data['type'] = MY_Page::TYPE_REPORTS;
+
+        // Dashboard
+        //----------
+
+        if ($type === 'dashboard') {
+            return $this->view_form($this->report_driver . '/dashboard', $data, $title, $options);
+        }
+
+        // Full Report
+        //------------
+
+        if (empty($this->data))
+            $this->_load_meta_data();
+
+        $this->data['type'] = MY_Page::TYPE_REPORTS;
+
+        $this->data['page_help'] = $this->_get_help_view($app);
+        $this->data['page_report_helper'] = $this->_get_report_helper_view($data, $title, $options);
+        $this->data['page_report_chart'] = $this->_get_report_chart_view($data, $title, $options);
+        $this->data['page_report_table'] = $this->_get_report_table_view($data, $title, $options);
+
+        $this->_display_page();
+    }
+
+    /**
      * Display a page using multiple controllers.
      *
      * Available options:
@@ -608,7 +660,7 @@ class MY_Page
      * @return HTML
      */
 
-    public function view_help($uri)
+    public function view_help_widget($uri)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -634,7 +686,7 @@ class MY_Page
      * @return HTML
      */
 
-    public function view_report($uri)
+    public function view_dashboard_widget($uri)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -660,7 +712,7 @@ class MY_Page
      * @return HTML
      */
 
-    public function view_summary($uri)
+    public function view_summary_widget($uri)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
@@ -947,6 +999,63 @@ $meta
         //---------------------
 
         return theme_report_box($title, $report);
+    }
+
+    /**
+     * Returns the report chart view.
+     *
+     * @param string $app app name
+     *
+     * @return string HTML for report helper view
+     */
+
+    protected function _get_report_chart_view($data, $title, $options)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        ob_start();
+        $this->framework->load->view($this->report_driver . '/chart', $data);
+        $view = ob_get_clean();
+
+        return $view;
+    }
+
+    /**
+     * Returns the report helper view.
+     *
+     * @param string $app app name
+     *
+     * @return string HTML for report helper view
+     */
+
+    protected function _get_report_helper_view($data, $title, $options)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        ob_start();
+        $this->framework->load->view($this->report_driver . '/helper', $data);
+        $view = ob_get_clean();
+
+        return $view;
+    }
+
+    /**
+     * Returns the report table view.
+     *
+     * @param string $app app name
+     *
+     * @return string HTML for report table view
+     */
+
+    protected function _get_report_table_view($data, $title, $options)
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        ob_start();
+        $this->framework->load->view($this->report_driver . '/data_table', $data);
+        $view = ob_get_clean();
+
+        return $view;
     }
 
     /**
