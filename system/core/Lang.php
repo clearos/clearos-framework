@@ -133,7 +133,7 @@ class CI_Lang {
 	function line($line = '')
 	{
         // ClearFoundation - custom handler for translators
-        if (empty($this->language[$line]) || ($this->language['en_US'][$line] == $this->language[$line]))
+        if (empty($this->language[$line]) || (!empty($this->language['en_US'][$line]) && ($this->language['en_US'][$line] == $this->language[$line])))
             $line = '**' .  $line . '**';
         else
             $line = $this->language[$line];
