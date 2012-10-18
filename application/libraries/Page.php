@@ -106,6 +106,7 @@ class MY_Page
     const TYPE_LOGIN = 'login';
     const TYPE_REPORT = 'report'; // TODO: deprecated, remove
     const TYPE_REPORTS = 'reports';
+    const TYPE_REPORT_OVERVIEW = 'report_overview';
     const TYPE_SPOTLIGHT = 'spotlight';
     const TYPE_SPLASH = 'splash';
     const TYPE_WIZARD = 'wizard';
@@ -374,7 +375,8 @@ class MY_Page
         if (isset($options['javascript']))
             $this->javascript = array_merge($options['javascript'], $this->javascript);
 
-        $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
+        if (empty($this->data['type']))
+            $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         // Load wizard view if enabled
         //----------------------------
@@ -446,13 +448,13 @@ class MY_Page
      *
      * @param string $type        dashboard or full
      * @param array  $data        CodeIgniter data array
-     * @param array  $report_info report info
+     * @param string $title       page title
      * @param array  $options     options array
      *
      * @return view
      */
 
-    public function view_report($type, $data, $report_info, $options = array())
+    public function view_report($type, $data, $title, $options = array())
     {
         // Common
         //-------
@@ -461,15 +463,13 @@ class MY_Page
         if (isset($options['javascript']))
             $this->javascript = array_merge($options['javascript'], $this->javascript);
 
-        $title = $report_info['title'];
         $data['type'] = MY_Page::TYPE_REPORTS;
 
         // Dashboard
         //----------
 
-        if ($type === 'dashboard') {
+        if ($type === 'dashboard')
             return $this->view_form($this->report_driver . '/dashboard', $data, $title, $options);
-        }
 
         // Full Report
         //------------
@@ -477,14 +477,39 @@ class MY_Page
         if (empty($this->data))
             $this->_load_meta_data();
 
+        $this->data['title'] = $title;
         $this->data['type'] = MY_Page::TYPE_REPORTS;
 
         $this->data['page_help'] = $this->_get_help_view($app);
-        $this->data['page_report_helper'] = $this->_get_report_helper_view($data, $title, $options);
+        $this->data['page_report_helper'] = $this->_get_report_helper_view($data);
         $this->data['page_report_chart'] = $this->_get_report_chart_view($data, $title, $options);
         $this->data['page_report_table'] = $this->_get_report_table_view($data, $title, $options);
 
         $this->_display_page();
+    }
+
+    /**
+     * Display a report page using multiple controllers.
+     *
+     * See view_controllers.
+     *
+     * @param array  $controllers list of controllers
+     * @param string $title       page title
+     * @param array  $options     options array
+     *
+     * @return view
+     */
+
+    public function view_reports($controllers, $data, $title, $options = array())
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $options['type'] = MY_Page::TYPE_REPORT_OVERVIEW;
+
+        // Woah... this is non-intutive.  Must document.
+        $this->data['page_report_helper'] = $this->_get_report_helper_view($data);
+
+        return $this->view_controllers($controllers, $title, $options);
     }
 
     /**
@@ -671,7 +696,7 @@ class MY_Page
         $this->_load_meta_data();
 
         $this->data['title'] = lang('base_help');
-        $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
+        // $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_help_view($app);
 
         $this->_display_page();
@@ -697,7 +722,7 @@ class MY_Page
         $this->_load_meta_data();
 
         $this->data['title'] = lang('base_dashboard_report');
-        $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
+        // $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_report_view($app);
 
         $this->_display_page();
@@ -723,7 +748,7 @@ class MY_Page
         $this->_load_meta_data();
 
         $this->data['title'] = lang('base_summary');
-        $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
+        // $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_summary_view($app);
 
         $this->_display_page();
@@ -1028,7 +1053,7 @@ $meta
      * @return string HTML for report helper view
      */
 
-    protected function _get_report_helper_view($data, $title, $options)
+    protected function _get_report_helper_view($data)
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
