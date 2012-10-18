@@ -1430,11 +1430,10 @@ $meta
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $view_data = $this->_load_view_data();
         $menu_data['menus'] = $this->_load_menu_data();
         $session_data = $this->_load_session_data();
 
-        $this->data = array_merge($this->data, $view_data, $session_data, $menu_data);
+        $this->data = array_merge($this->data, $session_data, $menu_data);
     }
 
     /**
@@ -1462,27 +1461,6 @@ $meta
             $this->framework->session->unset_userdata('status_success');
 
         return $session_data;
-    }
-
-    /**
-     * Returns view page data in an array.
-     *
-     * @return array view meta data
-     */
-
-    protected function _load_view_data()
-    {
-        Logger::profile_framework(__METHOD__, __LINE__);
-
-        $view_data = array();
-
-        // Page layout type
-        //-----------------
-
-        if (empty($this->data['type']))
-            $view_data['type'] = MY_Page::TYPE_CONFIGURATION;
-
-        return $view_data;
     }
 
     /**
