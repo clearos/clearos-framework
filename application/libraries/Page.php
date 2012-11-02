@@ -540,6 +540,7 @@ class MY_Page
         if ($this->framework->session->userdata['theme_mode'] === self::MODE_CONTROL_PANEL) {
             $app_data = $this->_load_app_data();
 
+            // FIXME: the logic below for controllers needs to be introduced here... maybe
             foreach ($controllers as $controller) {
                 $basename = preg_replace('/.*\//', '', $controller);
                 if (isset($app_data['controllers'][$basename]['title']))
@@ -569,11 +570,32 @@ class MY_Page
 
             ob_start();
 
-            foreach ($controllers as $form) {
-                $basename = preg_replace('/.*\//', '', $form);
+            // The controllers parameter can contain a simple list:
+            // dhcp/settings, dhcp/subnets, dhcp/leases
+            //
+            // Or it can be a more complex hash array with detailed
+            // information on the controller:
+            //   [controller] => network_report/iface
+            //   [method] => dashboard
+            //   [params] => eth0
 
-                $this->framework->load->module($form);
-                $this->framework->$basename->index();
+            foreach ($controllers as $controller) {
+                if (is_array($controller)) {
+                    $basename = preg_replace('/.*\//', '', $controller['controller']);
+                    $method = $controller['method'];
+
+                    $this->framework->load->module($controller['controller']);
+
+                    if (empty($controller['params']))
+                        $this->framework->$basename->$method();
+                    else
+                        $this->framework->$basename->$method($controller['params']);
+                } else {
+                    $basename = preg_replace('/.*\//', '', $controller);
+
+                    $this->framework->load->module($controller);
+                    $this->framework->$basename->index();
+                }
             }
 
             $this->data['app_view'] = ob_get_clean();
