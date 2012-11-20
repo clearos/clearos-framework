@@ -834,16 +834,21 @@ class MY_Page
             $javascript_list[] = $app_url . '/' . $javascript_basename;
         }
 
-        $javascript_head = '';
+        $javascript_head = array();
 
         foreach ($javascript_list as $javascript)
-            $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
+            $javascript_head_list[] = $javascript;
 
         // Automatically pull in explicit javascript requests
         if (! empty($this->javascript)) {
             foreach ($this->javascript as $javascript)
-                $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
+                $javascript_head_list[] = $javascript;
         }
+
+        $javascript_head = '';
+
+        foreach (array_unique($javascript_head_list) as $javascript)
+            $javascript_head .= "<script type='text/javascript' src='" . $javascript . "'></script>\n";
 
         // <meta>
         //-------------------
