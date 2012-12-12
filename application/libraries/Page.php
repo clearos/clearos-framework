@@ -932,7 +932,7 @@ $meta
         // Implement this properly.
 
         if ($app == 'marketplace') {
-            $callback = $this->framework->load->view('marketplace/filter', $data, TRUE);
+            $callback = $this->framework->load->view('marketplace/filter', NULL, TRUE);
         } else {
             $callback = '';
         }
