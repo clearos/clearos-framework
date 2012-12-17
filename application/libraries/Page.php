@@ -121,7 +121,7 @@ class MY_Page
 
     protected $framework = NULL;
     protected $javascript = array();
-    protected $report_driver = 'home_reports'; // FIXME
+    protected $report_driver = NULL;
     protected $summary_driver = NULL;
     public $data = array();
     public $form_only = FALSE;
@@ -139,6 +139,8 @@ class MY_Page
         Logger::profile_framework(__METHOD__, __LINE__, 'Page Class Initialized');
 
         $this->framework =& get_instance();
+
+        $this->report_driver = clearos_driver('reports');
     }
 
     /**

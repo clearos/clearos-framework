@@ -211,8 +211,10 @@ class Config
     {
         Logger::profile(__METHOD__, __LINE__);
 
-        // FIXME
-        return 'home_reports';
+        if (clearos_app_installed('professional_reports'))
+            return 'professional_reports';
+        else
+            return 'home_reports';
     }
 
     /**
