@@ -111,6 +111,7 @@ class MY_Page
     const TYPE_SPLASH = 'splash';
     const TYPE_WIZARD = 'wizard';
     const TYPE_CONSOLE = 'console';
+    const TYPE_DASHBOARD = 'dashboard';
 
     const MODE_CONTROL_PANEL = 'control_panel';
     const MODE_NORMAL = 'normal';
