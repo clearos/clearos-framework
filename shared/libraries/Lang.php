@@ -84,8 +84,11 @@ class Lang
         if (file_exists(CLEAROS_TEMP_DIR . '/language_cache.php'))
             include CLEAROS_TEMP_DIR . '/language_cache.php';
 
-        // Load the language file
-        $langpath = clearos_app_base($app) . "/language/$language/$langfile";
+        // Load the language file...if file does not exist, load default en_US
+        if (file_exists(clearos_app_base($app) . "/language/$language/$langfile"))
+            $langpath = clearos_app_base($app) . "/language/$language/$langfile";
+        else
+            $langpath = clearos_app_base($app) . "/language/en_US/$langfile";
 
         $lang = array();
 
