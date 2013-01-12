@@ -64,12 +64,9 @@ class MX_Lang extends CI_Lang
         // This is used in system/core/Lang.php to see if the translation exists.
 
         list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/'.$idiom.'/');
-        list($path_en_us, $_langfile_en_us) = Modules::find($langfile.'_lang', $_module, 'language/en_US/');
 
 		if ($path === FALSE) {
-            $newlangfile = "$langfile/$langfile";
-            list($path, $_langfile) = Modules::find($newlangfile.'_lang', $_module, 'language/'.$idiom.'/');
-            list($path_en_us, $_langfile_en_us) = Modules::find($newlangfile.'_lang', $_module, 'language/en_US/');
+            list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/en_US/');
         }
 
 		if ($path === FALSE) {
@@ -82,13 +79,17 @@ class MX_Lang extends CI_Lang
 
 				if ($return) return $lang;
 
-                if (($idiom != 'en_US') && file_exists('/var/clearos/base/translations/base')) {
-                    $lang_en_us = Modules::load_file($_langfile_en_us, $path_en_us, 'lang');
+                // Developer mode -- add the "translated" info which holds state of all translated tags
+                if (file_exists('/etc/clearos/devel.d/translator_mode')) {
+                    $translated_file = '/var/clearos/base/translations/base/trunk/language/' . $idiom . '/translated.php';
 
-                    if (isset($this->language['en_US']))
-                        $lang_en_us = array_merge($this->language['en_US'], $lang_en_us);
-
-                    $this->language['en_US'] = $lang_en_us;
+                    if ($idiom == 'en_US') {
+                        $this->language['is_en_us'] = TRUE;
+                    } else if (file_exists($translated_file) && (!isset($this->language['is_translated']))) {
+                        include $translated_file;
+                        $this->language['is_translated'] = $translated;
+                        $this->language['is_en_us'] = FALSE;
+                    }
                 }
 
 				$this->language = array_merge($this->language, $lang);

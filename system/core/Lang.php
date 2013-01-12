@@ -55,8 +55,10 @@ class CI_Lang {
         // Those exceptions are managed in the framework translation for now.
 
         // TODO: just log it for now, revisit this later
-        if (! (($langfile === 'framework') || ($langfile === 'number')))
+        if (! (($langfile === 'framework') || ($langfile === 'number'))) {
 		    log_message('debug', "Oooops!  Translation required $langfile - $idiom");
+            return;
+        }
 
 		$langfile = str_replace(EXT, '', $langfile);
 
@@ -133,10 +135,18 @@ class CI_Lang {
 	function line($line = '')
 	{
         // ClearFoundation - custom handler for translators
-        if (empty($this->language[$line]) || (!empty($this->language['en_US'][$line]) && ($this->language['en_US'][$line] == $this->language[$line])))
-            $line = '**' .  $line . '**';
-        else
+        if (file_exists('/etc/clearos/devel.d/translator_mode')) {
+            if (isset($this->language['is_en_us']) && $this->language['is_en_us'])
+                $line = $this->language[$line];
+            else if (isset($this->language['is_translated'][$line]) && $this->language['is_translated'][$line])
+                $line = $this->language[$line];
+            else
+                $line = '**' .  $line . '**';
+        } else if ($line == '' OR ! isset($this->language[$line])) {
+            $line = '****' .  $line . '****';
+        } else {
             $line = $this->language[$line];
+        }
 
 		return $line;
 	}
