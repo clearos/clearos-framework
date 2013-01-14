@@ -63,6 +63,8 @@ class MX_Lang extends CI_Lang
         // In devel mode, we tack on the en_US translations to $translations.
         // This is used in system/core/Lang.php to see if the translation exists.
 
+        $langfile = "$langfile/$langfile";
+
         list($path, $_langfile) = Modules::find($langfile.'_lang', $_module, 'language/'.$idiom.'/');
 
 		if ($path === FALSE) {
