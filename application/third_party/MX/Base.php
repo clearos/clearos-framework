@@ -11,7 +11,7 @@ require_once dirname(__FILE__).'/Config.php';
  * @link	http://codeigniter.com
  *
  * Description:
- * This library extends the CodeIgniter CI_Base class and creates an application 
+ * This library extends the CodeIgniter CI_Controller class and creates an application 
  * object allowing use of the HMVC design pattern.
  *
  * Install this file as application/third_party/MX/Base.php
@@ -46,11 +46,13 @@ class CI extends CI_Controller
 		/* assign the application instance */
 		self::$APP = $this;
 		
-		parent::__construct();
+		global $LANG, $CFG;
 		
 		/* re-assign language and config for modules */
-		if ( ! is_a($this->lang, 'MX_Lang')) $this->lang = new MX_Lang;
-		if ( ! is_a($this->config, 'MX_Config')) $this->config = new MX_Config;
+		if ( ! is_a($LANG, 'MX_Lang')) $LANG = new MX_Lang;
+		if ( ! is_a($CFG, 'MX_Config')) $CFG = new MX_Config;
+		
+		parent::__construct();
 	}
 }
 

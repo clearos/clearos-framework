@@ -1,6 +1,6 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
-/* load MX core classes */
+/** load the CI class for Modular Extensions **/
 require dirname(__FILE__).'/Base.php';
 
 /**
@@ -18,7 +18,7 @@ require dirname(__FILE__).'/Base.php';
  * @copyright	Copyright (c) 2011 Wiredesignz
  * @version 	5.4
  *
- * ClearFoundation: vanity & consistency -- changed the name to ClearOS
+ * ClearFoundation: vanity & docs consistency -- changed the name to ClearOS
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -45,11 +45,12 @@ class ClearOS_Controller
 	public function __construct() 
 	{
 		$class = str_replace(CI::$APP->config->item('controller_suffix'), '', get_class($this));
-		log_message('debug', $class." ClearOS_Controller Initialized");	
+		log_message('debug', $class." ClearOS_Controller Initialized");
+		Modules::$registry[strtolower($class)] = $this;	
 		
 		/* copy a loader instance and initialize */
 		$this->load = clone load_class('Loader');
-		$this->load->_init();	
+		$this->load->initialize($this);	
 		
 		/* autoload module items */
 		$this->load->_autoloader($this->autoload);
