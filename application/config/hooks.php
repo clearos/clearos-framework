@@ -10,6 +10,7 @@
 |
 */
 
+// ClearFoundation - define our hooks
 $hook['pre_controller'][] = array(
 	'class'    => 'MY_Login_Session',
 	'function' => 'start',
@@ -37,7 +38,6 @@ $hook['post_controller_constructor'][] = array(
 	'filename' => 'Page.php',
 	'filepath' => 'libraries'
 );
-
 
 /* End of file hooks.php */
 /* Location: ./application/config/hooks.php */

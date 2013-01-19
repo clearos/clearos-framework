@@ -27,6 +27,7 @@
 |
 */
 
+// ClearFoundation - configuration is custom of course
 /*
 | -------------------------------------------------------------------
 |  Auto-load Packges

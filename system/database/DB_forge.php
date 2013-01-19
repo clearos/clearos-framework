@@ -35,7 +35,7 @@ class CI_DB_forge {
 	 * Grabs the CI super object instance so we can access it.
 	 *
 	 */
-	function CI_DB_forge()
+	function __construct()
 	{
 		// Assign the main database object to $this->db
 		$CI =& get_instance();
@@ -99,7 +99,7 @@ class CI_DB_forge {
 	{
 		if (is_array($key))
 		{
-			foreach($key as $one)
+			foreach ($key as $one)
 			{
 				$this->add_key($one, $primary);
 			}
@@ -234,7 +234,7 @@ class CI_DB_forge {
 			show_error('A table name is required for that operation.');
 		}
 
-		$sql = $this->_rename_table($table_name, $new_table_name);
+		$sql = $this->_rename_table($this->db->dbprefix.$table_name, $this->db->dbprefix.$new_table_name);
 		return $this->db->query($sql);
 	}
 
@@ -333,6 +333,12 @@ class CI_DB_forge {
 
 		foreach ($field as $k => $v)
 		{
+			// If no name provided, use the current name
+			if ( ! isset($field[$k]['name']))
+			{
+				$field[$k]['name'] = $k;
+			}
+
 			$this->add_field(array($k => $field[$k]));
 
 			if (count($this->fields) == 0)

@@ -26,7 +26,17 @@
  */
 class CI_Lang {
 
+	/**
+	 * List of translations
+	 *
+	 * @var array
+	 */
 	var $language	= array();
+	/**
+	 * List of loaded language files
+	 *
+	 * @var array
+	 */
 	var $is_loaded	= array();
 
 	/**
@@ -47,27 +57,21 @@ class CI_Lang {
 	 * @access	public
 	 * @param	mixed	the name of the language file to be loaded. Can be an array
 	 * @param	string	the language (english, etc.)
+	 * @param	bool	return loaded array of translations
+	 * @param 	bool	add suffix to $langfile
+	 * @param 	string	alternative path to look for language file
 	 * @return	mixed
 	 */
 	function load($langfile = '', $idiom = '', $return = FALSE, $add_suffix = TRUE, $alt_path = '')
 	{
-        // ClearFoundation: most of the CI translations aren't used, but there are some exceptions.
-        // Those exceptions are managed in the framework translation for now.
-
-        // TODO: just log it for now, revisit this later
-        if (! (($langfile === 'framework') || ($langfile === 'number'))) {
-		    log_message('debug', "Oooops!  Translation required $langfile - $idiom");
-            return;
-        }
-
-		$langfile = str_replace(EXT, '', $langfile);
+		$langfile = str_replace('.php', '', $langfile);
 
 		if ($add_suffix == TRUE)
 		{
 			$langfile = str_replace('_lang.', '', $langfile).'_lang';
 		}
 
-		$langfile .= EXT;
+		$langfile .= '.php';
 
 		if (in_array($langfile, $this->is_loaded, TRUE))
 		{
@@ -87,17 +91,21 @@ class CI_Lang {
 		{
 			include($alt_path.'language/'.$idiom.'/'.$langfile);
 		}
-		elseif (file_exists(APPPATH.'language/'.$idiom.'/'.$langfile))
-		{
-			include(APPPATH.'language/'.$idiom.'/'.$langfile);
-		}
 		else
 		{
-			if (file_exists(BASEPATH.'language/'.$idiom.'/'.$langfile))
+			$found = FALSE;
+
+			foreach (get_instance()->load->get_package_paths(TRUE) as $package_path)
 			{
-				include(BASEPATH.'language/'.$idiom.'/'.$langfile);
+				if (file_exists($package_path.'language/'.$idiom.'/'.$langfile))
+				{
+					include($package_path.'language/'.$idiom.'/'.$langfile);
+					$found = TRUE;
+					break;
+				}
 			}
-			else
+
+			if ($found !== TRUE)
 			{
 				show_error('Unable to load the requested language file: language/'.$idiom.'/'.$langfile);
 			}
@@ -134,21 +142,15 @@ class CI_Lang {
 	 */
 	function line($line = '')
 	{
-        // ClearFoundation - custom handler for translators
-        if (file_exists('/etc/clearos/devel.d/translator_mode')) {
-            if (isset($this->language['is_en_us']) && $this->language['is_en_us'])
-                $line = $this->language[$line];
-            else if (isset($this->language['is_translated'][$line]) && $this->language['is_translated'][$line])
-                $line = $this->language[$line];
-            else
-                $line = '**' .  $line . '**';
-        } else if ($line == '' OR ! isset($this->language[$line])) {
-            $line = '****' .  $line . '****';
-        } else {
-            $line = $this->language[$line];
-        }
+		$value = ($line == '' OR ! isset($this->language[$line])) ? FALSE : $this->language[$line];
 
-		return $line;
+		// Because killer robots like unicorns!
+		if ($value === FALSE)
+		{
+			log_message('error', 'Could not find the language line "'.$line.'"');
+		}
+
+		return $value;
 	}
 
 }

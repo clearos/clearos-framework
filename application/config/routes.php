@@ -23,16 +23,24 @@
 | RESERVED ROUTES
 | -------------------------------------------------------------------------
 |
-| There is one reserved routes:
+| There area two reserved routes:
 |
 |	$route['default_controller'] = 'welcome';
 |
 | This route indicates which controller class should be loaded if the
 | URI contains no data. In the above example, the "welcome" class
 | would be loaded.
+|
+|	$route['404_override'] = 'errors/page_missing';
+|
+| This route will tell the Router what URI segments to use if those provided
+| in the URL cannot be matched to a valid route.
+|
 */
 
+// ClearFoundation - define default controller
 $route['default_controller'] = "base/dashboard";
+$route['404_override'] = '';
 
 
 /* End of file routes.php */

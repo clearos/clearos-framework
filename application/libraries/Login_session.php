@@ -98,6 +98,9 @@ class MY_Login_Session
         Logger::profile_framework(__METHOD__, __LINE__, 'Login Session Class Initialized');
 
         $this->framework =& get_instance();
+
+        if ($this->framework->session->userdata('session_started') != '1')
+            $this->start();
     }
 
     /**

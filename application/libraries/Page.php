@@ -125,7 +125,6 @@ class MY_Page
     protected $report_driver = NULL;
     protected $summary_driver = NULL;
     public $data = array();
-    public $form_only = FALSE;
 
     ///////////////////////////////////////////////////////////////////////////////
     // M E T H O D S
@@ -398,15 +397,15 @@ class MY_Page
 
         // Non-intuitive: see view_forms for form_only explanation
         //--------------------------------------------------------
-        
-        if ($this->form_only) {
+
+        if ($this->framework->form_only) {
             $this->framework->load->view($form, $data);
         } else {
             $this->data['title'] = $title;
             $segments = preg_split('/\//', uri_string());
-            $app = $segments[1];
-            $controller = isset($segments[2]) ? $segments[2] : 'index';
-            $action = isset($segments[3]) ? $segments[3] : '';
+            $app = $segments[0];
+            $controller = isset($segments[1]) ? $segments[1] : 'index';
+            $action = isset($segments[2]) ? $segments[2] : '';
 
             // More non-intuitive stuff.  When we are *not* running in "control panel" mode,
             // the user should see a full page summary once an action (e.g. adding a port
@@ -569,7 +568,7 @@ class MY_Page
             // is set to TRUE to indicate that only the raw form should be 
             // loaded (no headers, no footers, etc.).
 
-            $this->form_only = TRUE; 
+            $this->framework->form_only = TRUE;
 
             ob_start();
 
@@ -604,7 +603,7 @@ class MY_Page
             $this->data['app_view'] = ob_get_clean();
 
             // Now we set form_only back to the default
-            $this->form_only = FALSE; 
+            $this->framework->form_only = FALSE;
 
             $app = $this->framework->uri->segment(1);
 
@@ -637,7 +636,7 @@ class MY_Page
 
         $message = "<p>" . clearos_exception_message($exception) . "</p>";
 
-        if ($this->form_only) {
+        if ($this->framework->form_only) {
             echo infobox_warning(lang('base_error'), $message);
         } else {
             $link = "<p align='center'>" . anchor_custom('/app/' . $segments[2], lang('base_back')) . "</p>";
@@ -1038,9 +1037,9 @@ $meta
 
         ob_start();
         $data = $this->data;
-        $this->form_only = TRUE;
+        $this->framework->form_only = TRUE;
         $this->framework->$module->sidebar();
-        $this->form_only = FALSE;
+        $this->framework->form_only = FALSE;
         $this->data = $data;
         $report = ob_get_clean();
 

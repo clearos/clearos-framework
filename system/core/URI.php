@@ -28,9 +28,34 @@
  */
 class CI_URI {
 
+	/**
+	 * List of cached uri segments
+	 *
+	 * @var array
+	 * @access public
+	 */
 	var	$keyval			= array();
+	/**
+	 * Current uri string
+	 *
+	 * @var string
+	 * @access public
+	 */
 	var $uri_string;
+	/**
+	 * List of uri segments
+	 *
+	 * @var array
+	 * @access public
+	 */
 	var $segments		= array();
+	/**
+	 * Re-indexed list of uri segments
+	 * Starts at 1 instead of 0
+	 *
+	 * @var array
+	 * @access public
+	 */
 	var $rsegments		= array();
 
 	/**
@@ -61,13 +86,17 @@ class CI_URI {
 	{
 		if (strtoupper($this->config->item('uri_protocol')) == 'AUTO')
 		{
-			// If the URL has a question mark then it's simplest to just
-			// build the URI string from the zero index of the $_GET array.
-			// This avoids having to deal with $_SERVER variables, which
-			// can be unreliable in some environments
-			if (is_array($_GET) && count($_GET) == 1 && trim(key($_GET), '/') != '')
+			// Is the request coming from the command line?
+			if (php_sapi_name() == 'cli' or defined('STDIN'))
 			{
-				$this->uri_string = key($_GET);
+				$this->_set_uri_string($this->_parse_cli_args());
+				return;
+			}
+
+			// Let's try the REQUEST_URI first, this will work in most situations
+			if ($uri = $this->_detect_uri())
+			{
+				$this->_set_uri_string($uri);
 				return;
 			}
 
@@ -76,7 +105,7 @@ class CI_URI {
 			$path = (isset($_SERVER['PATH_INFO'])) ? $_SERVER['PATH_INFO'] : @getenv('PATH_INFO');
 			if (trim($path, '/') != '' && $path != "/".SELF)
 			{
-				$this->uri_string = $path;
+				$this->_set_uri_string($path);
 				return;
 			}
 
@@ -84,93 +113,130 @@ class CI_URI {
 			$path =  (isset($_SERVER['QUERY_STRING'])) ? $_SERVER['QUERY_STRING'] : @getenv('QUERY_STRING');
 			if (trim($path, '/') != '')
 			{
-				$this->uri_string = $path;
+				$this->_set_uri_string($path);
 				return;
 			}
 
-			// No QUERY_STRING?... Maybe the ORIG_PATH_INFO variable exists?
-			$path = str_replace($_SERVER['SCRIPT_NAME'], '', (isset($_SERVER['ORIG_PATH_INFO'])) ? $_SERVER['ORIG_PATH_INFO'] : @getenv('ORIG_PATH_INFO'));
-			if (trim($path, '/') != '' && $path != "/".SELF)
+			// As a last ditch effort lets try using the $_GET array
+			if (is_array($_GET) && count($_GET) == 1 && trim(key($_GET), '/') != '')
 			{
-				// remove path and script information so we have good URI data
-				$this->uri_string = $path;
+				$this->_set_uri_string(key($_GET));
 				return;
 			}
 
 			// We've exhausted all our options...
 			$this->uri_string = '';
+			return;
 		}
-		else
+
+		$uri = strtoupper($this->config->item('uri_protocol'));
+
+		if ($uri == 'REQUEST_URI')
 		{
-			$uri = strtoupper($this->config->item('uri_protocol'));
-
-			if ($uri == 'REQUEST_URI')
-			{
-				$this->uri_string = $this->_parse_request_uri();
-				return;
-			}
-
-			$this->uri_string = (isset($_SERVER[$uri])) ? $_SERVER[$uri] : @getenv($uri);
+			$this->_set_uri_string($this->_detect_uri());
+			return;
 		}
-
-		// If the URI contains only a slash we'll kill it
-		if ($this->uri_string == '/')
+		elseif ($uri == 'CLI')
 		{
-			$this->uri_string = '';
+			$this->_set_uri_string($this->_parse_cli_args());
+			return;
 		}
+
+		$path = (isset($_SERVER[$uri])) ? $_SERVER[$uri] : @getenv($uri);
+		$this->_set_uri_string($path);
 	}
 
 	// --------------------------------------------------------------------
 
 	/**
-	 * Parse the REQUEST_URI
+	 * Set the URI String
 	 *
-	 * Due to the way REQUEST_URI works it usually contains path info
-	 * that makes it unusable as URI data.  We'll trim off the unnecessary
-	 * data, hopefully arriving at a valid URI that we can use.
+	 * @access	public
+	 * @param 	string
+	 * @return	string
+	 */
+	function _set_uri_string($str)
+	{
+		// Filter out control characters
+		$str = remove_invisible_characters($str, FALSE);
+
+		// If the URI contains only a slash we'll kill it
+		$this->uri_string = ($str == '/') ? '' : $str;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Detects the URI
+	 *
+	 * This function will detect the URI automatically and fix the query string
+	 * if necessary.
 	 *
 	 * @access	private
 	 * @return	string
 	 */
-	function _parse_request_uri()
+	private function _detect_uri()
 	{
-		if ( ! isset($_SERVER['REQUEST_URI']) OR $_SERVER['REQUEST_URI'] == '')
+		if ( ! isset($_SERVER['REQUEST_URI']) OR ! isset($_SERVER['SCRIPT_NAME']))
 		{
 			return '';
 		}
 
-		$request_uri = preg_replace("|/(.*)|", "\\1", str_replace("\\", "/", $_SERVER['REQUEST_URI']));
-
-		if ($request_uri == '' OR $request_uri == SELF)
+		$uri = $_SERVER['REQUEST_URI'];
+		if (strpos($uri, $_SERVER['SCRIPT_NAME']) === 0)
 		{
-			return '';
+			$uri = substr($uri, strlen($_SERVER['SCRIPT_NAME']));
+		}
+		elseif (strpos($uri, dirname($_SERVER['SCRIPT_NAME'])) === 0)
+		{
+			$uri = substr($uri, strlen(dirname($_SERVER['SCRIPT_NAME'])));
 		}
 
-		$fc_path = FCPATH.SELF;
-		if (strpos($request_uri, '?') !== FALSE)
+		// This section ensures that even on servers that require the URI to be in the query string (Nginx) a correct
+		// URI is found, and also fixes the QUERY_STRING server var and $_GET array.
+		if (strncmp($uri, '?/', 2) === 0)
 		{
-			$fc_path .= '?';
+			$uri = substr($uri, 2);
+		}
+		$parts = preg_split('#\?#i', $uri, 2);
+		$uri = $parts[0];
+		if (isset($parts[1]))
+		{
+			$_SERVER['QUERY_STRING'] = $parts[1];
+			parse_str($_SERVER['QUERY_STRING'], $_GET);
+		}
+		else
+		{
+			$_SERVER['QUERY_STRING'] = '';
+			$_GET = array();
 		}
 
-		$parsed_uri = explode("/", $request_uri);
-
-		$i = 0;
-		foreach(explode("/", $fc_path) as $segment)
+		if ($uri == '/' || empty($uri))
 		{
-			if (isset($parsed_uri[$i]) && $segment == $parsed_uri[$i])
-			{
-				$i++;
-			}
+			return '/';
 		}
 
-		$parsed_uri = implode("/", array_slice($parsed_uri, $i));
+		$uri = parse_url($uri, PHP_URL_PATH);
 
-		if ($parsed_uri != '')
-		{
-			$parsed_uri = '/'.$parsed_uri;
-		}
+		// Do some final cleaning of the URI and return it
+		return str_replace(array('//', '../'), '/', trim($uri, '/'));
+	}
 
-		return $parsed_uri;
+	// --------------------------------------------------------------------
+
+	/**
+	 * Parse cli arguments
+	 *
+	 * Take each command line argument and assume it is a URI segment.
+	 *
+	 * @access	private
+	 * @return	string
+	 */
+	private function _parse_cli_args()
+	{
+		$args = array_slice($_SERVER['argv'], 1);
+
+		return $args ? '/' . implode('/', $args) : '';
 	}
 
 	// --------------------------------------------------------------------
@@ -228,7 +294,7 @@ class CI_URI {
 	 */
 	function _explode_segments()
 	{
-		foreach(explode("/", preg_replace("|/*(.+?)/*$|", "\\1", $this->uri_string)) as $val)
+		foreach (explode("/", preg_replace("|/*(.+?)/*$|", "\\1", $this->uri_string)) as $val)
 		{
 			// Filter segments for security
 			$val = trim($this->_filter_uri($val));
@@ -325,6 +391,11 @@ class CI_URI {
 	}
 	/**
 	 * Identical to above only it uses the re-routed segment array
+	 *
+	 * @access 	public
+	 * @param 	integer	the starting segment number
+	 * @param 	array	an array of default values
+	 * @return 	array
 	 *
 	 */
 	function ruri_to_assoc($n = 3, $default = array())
@@ -484,7 +555,7 @@ class CI_URI {
 	{
 		$leading	= '/';
 		$trailing	= '/';
-		
+
 		if ($where == 'trailing')
 		{
 			$leading	= '';
@@ -493,7 +564,7 @@ class CI_URI {
 		{
 			$trailing	= '';
 		}
-		
+
 		return $leading.$this->$which($n).$trailing;
 	}
 
@@ -573,7 +644,7 @@ class CI_URI {
 	 */
 	function ruri_string()
 	{
-		return '/'.implode('/', $this->rsegment_array()).'/';
+		return '/'.implode('/', $this->rsegment_array());
 	}
 
 }

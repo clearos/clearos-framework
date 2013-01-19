@@ -364,30 +364,23 @@ if ( ! function_exists('highlight_phrase'))
  */
 if ( ! function_exists('convert_accented_characters'))
 {
-	function convert_accented_characters($match)
+	function convert_accented_characters($str)
 	{
-		if ( ! file_exists(APPPATH.'config/foreign_chars'.EXT))
+		if (defined('ENVIRONMENT') AND is_file(APPPATH.'config/'.ENVIRONMENT.'/foreign_chars.php'))
 		{
-			return $match;
+			include(APPPATH.'config/'.ENVIRONMENT.'/foreign_chars.php');
 		}
-
-		include APPPATH.'config/foreign_chars'.EXT;
+		elseif (is_file(APPPATH.'config/foreign_chars.php'))
+		{
+			include(APPPATH.'config/foreign_chars.php');
+		}
 
 		if ( ! isset($foreign_characters))
 		{
-			return $match;
+			return $str;
 		}
 
-		$ord = ord($match['1']);
-
-		if (isset($foreign_characters[$ord]))
-		{
-			return $foreign_characters[$ord];
-		}
-		else
-		{
-			return $match['1'];
-		}
+		return preg_replace(array_keys($foreign_characters), array_values($foreign_characters), $str);
 	}
 }
 
@@ -452,7 +445,7 @@ if ( ! function_exists('word_wrap'))
 			}
 
 			$temp = '';
-			while((strlen($line)) > $charlim)
+			while ((strlen($line)) > $charlim)
 			{
 				// If the over-length word is a URL we won't wrap it
 				if (preg_match("!\[url.+\]|://|wwww.!", $line))
