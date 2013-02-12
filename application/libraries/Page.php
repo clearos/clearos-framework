@@ -1507,6 +1507,7 @@ $meta
 
         $install_wizard = new Install_Wizard();
         $steps = $install_wizard->get_steps();
+        $state = $install_wizard->get_state();
 
         // Generate previous/next links
         //-----------------------------
@@ -1534,12 +1535,15 @@ $meta
             $exact_count++;
         }
 
-        if ($exact_match)
+        if ($exact_match) {
             $current = $exact_count;
-        else if ($fuzzy_match)
+        } else if ($fuzzy_match) {
             $current = $fuzzy_count;
-        else
+        } else if ($state) {
+            redirect(preg_replace('/\/app/', '', $steps[$state]['nav']));
+        } else {
             throw new \Exception("Please finish the wizard.");
+        }
 
         if (isset($steps[$current - 1])) {
             $wizard_nav['previous'] = $steps[$current - 1]['nav'];
@@ -1561,6 +1565,8 @@ $meta
         $this->data['wizard_menu'] = $steps;
         $this->data['wizard_current'] = $current;
         $this->data['wizard_type'] = $steps[$current]['type'];
+
+        $install_wizard->set_state($current);
 
         return TRUE;
     }
