@@ -837,6 +837,7 @@ class MY_Page
         }
 
         $javascript_head = array();
+        $javascript_head_list = array();
 
         foreach ($javascript_list as $javascript)
             $javascript_head_list[] = $javascript;
