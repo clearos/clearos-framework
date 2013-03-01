@@ -410,7 +410,7 @@ class MY_Login_Session
         $loaded = $framework->session->CI->lang->is_loaded;
 
         $new_loaded = array();
-        $app_file = $app . '_lang';
+        $app_file = $app . '/' . $app . '_lang.php';
 
         foreach ($loaded as $loaded_lang) {
             if ($loaded_lang !== $app_file)
