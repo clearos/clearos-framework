@@ -1430,6 +1430,8 @@ $meta
         } else if (! empty($menu_data)) {
             $app_list = array_keys($menu_data);
             $default_app = preg_replace('/^\/app\//', '', $app_list[0]);
+        } else {
+            $default_app = '';
         }
 
         $this->framework->session->set_userdata('default_app', $default_app);
