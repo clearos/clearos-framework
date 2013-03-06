@@ -109,6 +109,7 @@ class MY_Page
     const TYPE_REPORT_OVERVIEW = 'report_overview';
     const TYPE_SPOTLIGHT = 'spotlight';
     const TYPE_SPLASH = 'splash';
+    const TYPE_SPLASH_ORGANIZATION = 'splash_org';
     const TYPE_WIZARD = 'wizard';
     const TYPE_CONSOLE = 'console';
     const TYPE_DASHBOARD = 'dashboard';
