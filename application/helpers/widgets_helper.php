@@ -910,6 +910,65 @@ function form_footer($options = NULL)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// S I D E B A R  H E A D E R / F O O T E R
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Sidebar header.
+ *
+ * @param string $title   sidebar title
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function sidebar_header($title, $options = NULL)
+{
+    return theme_sidebar_header($title, $options);
+}
+
+/**
+ * Sidebar banner.
+ *
+ * @param string $html    html payload
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function sidebar_banner($banner, $options = NULL)
+{
+    return theme_sidebar_banner($banner, $options);
+}
+
+/**
+ * Sidebar text.
+ *
+ * @param string $html    html payload
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function sidebar_text($text, $options = NULL)
+{
+    return theme_sidebar_text($text, $options);
+}
+
+/**
+ * Sidebar footer.
+ *
+ * @param array $options options
+ *
+ * @return string HTML
+ */
+
+function sidebar_footer($options = NULL)
+{
+    return theme_sidebar_footer($options);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // C H A R T  W I D G E T
 ///////////////////////////////////////////////////////////////////////////////
 

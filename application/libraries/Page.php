@@ -1045,16 +1045,10 @@ $meta
         $this->data = $data;
         $report = ob_get_clean();
 
-        // Grab sidebar title
-        //-------------------
-
-        $data = $this->_load_app_data();
-        $title = (isset($data['sidebar_title'])) ? $data['sidebar_title'] : lang('base_report');
-
         // Return report widget
         //---------------------
 
-        return theme_report_box($title, $report);
+        return $report;
     }
 
     /**
