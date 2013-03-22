@@ -942,6 +942,22 @@ function sidebar_banner($banner, $options = NULL)
 }
 
 /**
+ * Sidebar key value.
+ *
+ * @param string $html    html payload
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function sidebar_value($value, $label, $options = NULL)
+{
+    $base_id = (isset($options['id'])) ? $options['id'] : '';
+
+    return theme_sidebar_value($value, $label, $base_id, $options);
+}
+
+/**
  * Sidebar text.
  *
  * @param string $html    html payload
