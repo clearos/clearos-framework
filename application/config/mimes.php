@@ -9,6 +9,7 @@
 */
 
 // ClearFoundation - added 'text/plain' to csv entry
+// ClearFoundation - added 'application/x-compressed-tar' and 'application/x-gzip' to tgz
 $mimes = array(	'hqx'	=>	'application/mac-binhex40',
 				'cpt'	=>	'application/mac-compactpro',
 				'csv'	=>	array('text/x-comma-separated-values', 'text/comma-separated-values', 'application/octet-stream', 'application/vnd.ms-excel', 'application/x-csv', 'text/x-csv', 'text/csv', 'application/csv', 'application/excel', 'application/vnd.msexcel', 'text/plain'),
@@ -49,7 +50,7 @@ $mimes = array(	'hqx'	=>	'application/mac-binhex40',
 				'swf'	=>	'application/x-shockwave-flash',
 				'sit'	=>	'application/x-stuffit',
 				'tar'	=>	'application/x-tar',
-				'tgz'	=>	array('application/x-tar', 'application/x-gzip-compressed'),
+				'tgz'	=>	array('application/x-tar', 'application/x-gzip-compressed', 'application/x-compressed-tar', 'application/x-gzip'),
 				'xhtml'	=>	'application/xhtml+xml',
 				'xht'	=>	'application/xhtml+xml',
 				'zip'	=>  array('application/x-zip', 'application/zip', 'application/x-zip-compressed'),
