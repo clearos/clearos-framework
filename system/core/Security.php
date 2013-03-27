@@ -143,6 +143,23 @@ class CI_Security {
 			return $this->csrf_set_cookie();
 		}
 
+    
+		// Check if URI has been whitelisted from CSRF checks
+		// ClearFoundation - temporary workaround for CSRF on a remote API call
+		if ($exclude_uris = array('central_management/device/add', 'central_management/configuration/get', 'mobile_demo/rest'))
+		{
+			$uri = load_class('URI', 'core');
+
+            foreach ($exclude_uris as $exclude_uri) {
+                $exclude_uri = preg_quote($exclude_uri, '/');
+
+                if (preg_match('/' . $exclude_uri . '/', $uri->uri_string()))
+                {
+                    return $this;
+                }
+            }
+		}
+
 		// Do the tokens exist in both the _POST and _COOKIE arrays?
 		if ( ! isset($_POST[$this->_csrf_token_name], $_COOKIE[$this->_csrf_cookie_name]))
 		{
