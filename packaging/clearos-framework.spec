@@ -1,6 +1,6 @@
 Name: clearos-framework
 Group: Development/Languages
-Version: 6.4.25
+Version: 6.4.26
 Release: 1%{dist}
 Summary: ClearOS framework
 License: CodeIgniter and LGPLv3
@@ -40,17 +40,27 @@ cp -r system $RPM_BUILD_ROOT/usr/clearos/framework
 install -m 0644 license.txt $RPM_BUILD_ROOT/usr/clearos/framework
 install -m 0644 packaging/framework.conf $RPM_BUILD_ROOT/usr/clearos/sandbox/etc/httpd/conf.d
 
-%post
-if [ $1 -eq 1 ]; then
-    /sbin/service webconfig condrestart >/dev/null 2>&1
+%pre
+# TODO: Remove in ClearOS 7 - upgrade workaround for 6.4
+if ( [ -d /usr/clearos/framework/application/libraries ] && [ ! -e /usr/clearos/framework/application/libraries/MY_Form_validation.php ] ); then
+    logger -p local6.notice -t installer "clearos-framework - detected upgrade"
+    touch /var/clearos/framework/upgrade
+    sleep 10
 fi
 
+%post
 # Generate session key
 if [ ! -e /var/clearos/framework/session_key ]; then
     touch /var/clearos/framework/session_key
     chmod 640 /var/clearos/framework/session_key
     chown root.webconfig /var/clearos/framework/session_key
     cat /dev/urandom | tr -dc A-Za-z0-9 | head -c32 > /var/clearos/framework/session_key
+fi
+
+if [ -e /var/clearos/framework/upgrade ]; then
+    sleep 10
+    logger -p local6.notice -t installer "clearos-framework - finished upgrade"
+    rm -f /var/clearos/framework/upgrade
 fi
 
 %clean

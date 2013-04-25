@@ -99,8 +99,16 @@ class MY_Login_Session
 
         $this->framework =& get_instance();
 
-        if ($this->framework->session->userdata('session_started') != '1')
+        if ($this->framework->session->userdata('session_started') != '1') {
             $this->start();
+
+            // TODO: remove in ClearOS 7 - upgrade workaround for 6.3 -> 6.4
+            if (file_exists('/var/clearos/framework/upgrade')) {
+                clearos_log('framework', 'handling framework upgrade');
+                sleep(3);
+                $this->start_authenticated('root');
+            }
+        }
     }
 
     /**
