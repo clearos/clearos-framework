@@ -399,7 +399,7 @@ class MY_Page
         // Non-intuitive: see view_forms for form_only explanation
         //--------------------------------------------------------
 
-        if ($this->framework->form_only) {
+        if (!empty($this->framework->form_only) && $this->framework->form_only) {
             $this->framework->load->view($form, $data);
         } else {
             $this->data['title'] = $title;
