@@ -971,6 +971,18 @@ $meta
             $data['support_url_text'] = 'ClearCARE Support';
         }
 
+        $segments = explode('/', $_SERVER['PHP_SELF']);
+
+        // TODO: this segment mapping is not going to work.  Need a better way.
+        // Below places an action item in the help dialog
+        if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['help_action'])) {
+            $data['action'] = array(
+                'url' => '/app/marketplace/all',
+                'text' => lang('marketplace_select_all'),
+                'priority' => 'high',
+                'js' => array('id' => 'toggle_select')
+            );
+        }
         return theme_help_box($data);
     }
 
@@ -994,7 +1006,9 @@ $meta
 
         $segments = explode('/', $_SERVER['PHP_SELF']);
 
-        if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['inline_help']))
+        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['inline_help']))
+            $help['inline_help'] = $data['controllers'][$segments[5]]['inline_help'];
+        else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['inline_help']))
             $help['inline_help'] = $data['controllers'][$segments[3]]['inline_help'];
         else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['inline_help']))
             $help['inline_help'] = $data['controllers'][$segments[2]]['inline_help'];
@@ -1142,29 +1156,41 @@ $meta
         if (empty($this->framework->session->userdata['wizard']))
             return;
 
+        $options = array();
+
         $data = $this->_load_app_data($app);
 
         $segments = explode('/', $_SERVER['PHP_SELF']);
 
         // TODO: this segment mapping is not going to work.  Need a better way.
-        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['wizard_description']))
+        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['wizard_description'])) {
             $data['wizard_description'] = $data['controllers'][$segments[5]]['wizard_description'];
-        else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_description']))
+            // If Marketplace app selector, add action as req'd
+            if (preg_match('/mode1|mode2/' , $segments[5]))
+                $options['action'] = array(
+                    'url' => '/app/marketplace/all',
+                    'text' => lang('marketplace_select_all'),
+                    'priority' => 'high',
+                    'js' => array('id' => 'toggle_select')
+                );
+        } else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_description'])) {
             $data['wizard_description'] = $data['controllers'][$segments[3]]['wizard_description'];
-        else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_description']))
+        } else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_description'])) {
             $data['wizard_description'] = $data['controllers'][$segments[2]]['wizard_description'];
+        }
 
-        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['wizard_name']))
+        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['wizard_name'])) {
             $data['wizard_name'] = $data['controllers'][$segments[5]]['wizard_name'];
-        else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name']))
+        } else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name'])) {
             $data['wizard_name'] = $data['controllers'][$segments[3]]['wizard_name'];
-        else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_name']))
+        } else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_name'])) {
             $data['wizard_name'] = $data['controllers'][$segments[2]]['wizard_name'];
+        }
 
         if (empty($data['wizard_name']))
             return;
 
-        return theme_wizard_intro_box($data);
+        return theme_wizard_intro_box($data, $options);
     }
 
     /**
