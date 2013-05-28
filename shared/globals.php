@@ -36,11 +36,13 @@
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
+use \clearos\framework\Apps as Apps;
 use \clearos\framework\Config as Config;
 use \clearos\framework\Error as Error;
 use \clearos\framework\Lang as Lang;
 use \clearos\framework\Logger as Logger;
 
+require_once 'libraries/Apps.php';
 require_once 'libraries/Config.php';
 require_once 'libraries/Error.php';
 require_once 'libraries/Lang.php';
@@ -166,6 +168,16 @@ function clearos_driver($driver_engine)
         return Config::get_summary_driver();
     else if ($driver_engine === 'reports')
         return Config::get_reports_driver();
+}
+
+/**
+ * Returns installed app information.
+ *
+ * @return array installed app information
+ */
+
+function clearos_get_apps() {
+    return Apps::get_list();
 }
 
 /**

@@ -1257,35 +1257,17 @@ $meta
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        // Create a list of apps to check
-        //-------------------------------
+        $apps_list = clearos_get_apps();
 
-        clearstatcache();
+        // Find most recently installed
+        //-----------------------------
 
-        $apps_list = array();
         $most_recent = 0;
-        // Used to display newly installed/upgraded apps for 1 day
-        $one_day_ago = strtotime('-1 day');
 
+        foreach ($apps_list as $app => $details) {
+            if ($details['installed'] > $most_recent)
+                $most_recent = $details['installed'];
 
-        foreach (Config::$apps_paths as $path) {
-            $raw_list = scandir($path);
-
-            foreach ($raw_list as $dir) {
-                if (! preg_match('/^\./', $dir)) {
-                    $info_file = clearos_app_base($dir) . '/deploy/info.php';
-                    if (file_exists($info_file)) {
-                        $apps_list[$dir] = array(
-                            'installed' => filemtime($info_file)
-                        );
-
-                        $stat = stat($info_file);
-
-                        if ($stat['ctime'] > $most_recent)
-                            $most_recent = $stat['ctime'];
-                    }
-                }
-            }
         }
 
         // If timestamps are okay, use the cache file
@@ -1305,24 +1287,6 @@ $meta
         }
         */
 
-        // Load menu order preferences
-        //----------------------------
-
-        $primary_order = array(
-            lang('base_category_server')  => '020',
-            lang('base_category_network') => '030',
-            lang('base_category_gateway') => '040',
-            lang('base_category_system')  => '050',
-            lang('base_category_spotlight')  => '060',
-            lang('base_category_reports')  => '070',
-            lang('base_category_my_account')  => '080',
-        );
-
-        $secondary_order = array(
-            lang('base_subcategory_settings') => '999',
-            lang('base_subcategory_accounts') => '020',
-        );
-
         // Load valid pages for given users
         //---------------------------------
 
@@ -1337,54 +1301,20 @@ $meta
         // Create an array with the sort key
         //----------------------------------
 
-        $sorted = array();
-
-        // FIXME - this list should come from a default config file or installer?
-        $core_app_list = array(
-            'accounts',
-            'base',
-            'clearcenter',
-            'configuration_backup',
-            'dashboard',
-            'date',
-            'dhcp',
-            'dns',
-            'graphical_console',
-            'groups',
-            'incoming_firewall',
-            'language',
-            'mail_notification',
-            'marketplace',
-            'network',
-            'process_viewer',
-            'registration',
-            'software_updates',
-            'ssh_server',
-            'user_profile',
-            'users'
-        );
-
         // Pull from Registration library?
         $registered = '/var/clearos/registration/registered';
+
         if (file_exists($registered))
             $register_timestamp = filemtime($registered);
         else
             $register_timestamp = NULL;
 
-        foreach ($apps_list as $app_name => $app_info) {
-            $app = $this->_load_app_data($app_name);
+        // Used to display newly installed/upgraded apps for 1 day
+        $one_day_ago = strtotime('-1 day');
+        $sorted = array();
 
-            if (! isset($app['basename'])) 
-                continue;
-
-            // If menu is disabled, skip it
-            if (isset($app['menu_enabled']) && (!$app['menu_enabled']))
-                continue;
-
-            // If this is just a library, skip it
-            $views_dir = Config::get_app_base($app_name) . '/views';
-            if (! is_dir($views_dir))
-                continue;
+        foreach ($apps_list as $app_name => $app) {
+        //    $app = $this->_load_app_data($app_name);
 
             // If this page is not allowed, skip it
             if ($username !== 'root') {
@@ -1392,13 +1322,6 @@ $meta
                 if (! in_array($full_name, $valid_pages))
                     continue;
             }
-
-            // Sort stuff
-            $primary_sort = empty($primary_order[$app['category']]) ? '500' : $primary_order[$app['category']];
-            $secondary_sort = empty($secondary_order[$app['subcategory']]) ? '500' . $app['subcategory'] : $secondary_order[$app['subcategory']];
-            $page_sort = empty($app['priority']) ? '500' : $app['priority'];
-
-            $menu_info = array();
 
             // Determine 'new/updated' icon status
             $new_status = FALSE;
@@ -1417,6 +1340,7 @@ $meta
                 }
             }
 
+            $menu_info = array();
             $menu_info['/app/' . $app['basename']] = array(
                 'title' => $app['name'],
                 'category' => $app['category'],
@@ -1424,7 +1348,7 @@ $meta
                 'new' => $new_status
             );
 
-            $sorted[$primary_sort . '.' . $secondary_sort . '.' . $page_sort . '.' . $app['name']] = $menu_info;
+            $sorted[$app['priority']] = $menu_info;
         }
 
         // Use the sorted array to generate the menu array
