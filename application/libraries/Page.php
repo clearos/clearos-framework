@@ -324,7 +324,7 @@ class MY_Page
             $this->_load_meta_data();
 
         // TODO: wizard mode does not work, use splash for now
-        if ($this->framework->session->userdata['wizard'])
+        if (isset($this->framework->session->userdata['wizard']) && $this->framework->session->userdata['wizard'])
             $type = MY_Page::TYPE_SPLASH;
         else
             $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
@@ -335,7 +335,7 @@ class MY_Page
 
         $title = lang('base_confirm_delete');
 
-        $this->data['title'] = $ttile;
+        $this->data['title'] = $title;
         $this->data['type'] = $type;
         $this->data['app_view'] = theme_confirm_delete($title, $confirm, $cancel, $items, $message, $options);
         $this->data['page_help'] = $this->_get_help_view($app);
