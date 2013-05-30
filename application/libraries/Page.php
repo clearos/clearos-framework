@@ -1314,8 +1314,6 @@ $meta
         $sorted = array();
 
         foreach ($apps_list as $app_name => $app) {
-        //    $app = $this->_load_app_data($app_name);
-
             // If this page is not allowed, skip it
             if ($username !== 'root') {
                 $full_name = '/app/' . $app_name;
@@ -1330,7 +1328,7 @@ $meta
             if ($register_timestamp != NULL) {
                 if ($one_day_ago < $app['modified']) {
                     // Newly installed app...better check core apps and install time
-                    if (in_array($app_name, $core_app_list)) {
+                    if ($app['is_core']) {
                         // Don't display TRUE status for any core apps if system was just (1 day) registered
                         if ($register_timestamp < $one_day_ago)
                             $new_status = TRUE;

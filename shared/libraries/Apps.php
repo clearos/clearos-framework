@@ -110,6 +110,7 @@ class Apps
         // FIXME - this list should come from a default config file or installer?
         $core_app_list = array(
             'accounts',
+            'account_synchronization',
             'base',
             'clearcenter',
             'configuration_backup',
@@ -171,6 +172,7 @@ class Apps
                         $apps_list[$app_name]['menu_enabled'] = TRUE;
                         $apps_list[$app_name]['category'] = $app['category'];
                         $apps_list[$app_name]['subcategory'] = $app['subcategory'];
+                        $apps_list[$app_name]['is_core'] = in_array($app['basename'], $core_app_list) ? TRUE : FALSE;
 
                         // Add timestamp
                         $stat = stat($info_file);
