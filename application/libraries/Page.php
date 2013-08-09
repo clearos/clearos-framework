@@ -1006,8 +1006,8 @@ $meta
 
         $segments = explode('/', $_SERVER['PHP_SELF']);
 
-        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['inline_help']))
-            $help['inline_help'] = $data['controllers'][$segments[5]]['inline_help'];
+        if (isset($segments[4]) && isset($data['controllers'][$segments[4]]['inline_help']))
+            $help['inline_help'] = $data['controllers'][$segments[4]]['inline_help'];
         else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['inline_help']))
             $help['inline_help'] = $data['controllers'][$segments[3]]['inline_help'];
         else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['inline_help']))
@@ -1163,10 +1163,11 @@ $meta
         $segments = explode('/', $_SERVER['PHP_SELF']);
 
         // TODO: this segment mapping is not going to work.  Need a better way.
-        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['wizard_description'])) {
-            $data['wizard_description'] = $data['controllers'][$segments[5]]['wizard_description'];
+        if (isset($segments[4]) && isset($data['controllers'][$segments[4]]['wizard_description'])) {
+            $data['wizard_description'] = $data['controllers'][$segments[4]]['wizard_description'];
             // If Marketplace app selector, add action as req'd
-            if (preg_match('/mode1|mode2/' , $segments[5]))
+            //if (preg_match('/mode1|mode2/' , $segments[5]))
+            if (preg_match('/selection/' , $segments[4]))
                 $options['action'] = array(
                     'url' => '/app/marketplace/all',
                     'text' => lang('marketplace_select_all'),
@@ -1179,8 +1180,8 @@ $meta
             $data['wizard_description'] = $data['controllers'][$segments[2]]['wizard_description'];
         }
 
-        if (isset($segments[5]) && isset($data['controllers'][$segments[5]]['wizard_name'])) {
-            $data['wizard_name'] = $data['controllers'][$segments[5]]['wizard_name'];
+        if (isset($segments[4]) && isset($data['controllers'][$segments[4]]['wizard_name'])) {
+            $data['wizard_name'] = $data['controllers'][$segments[4]]['wizard_name'];
         } else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name'])) {
             $data['wizard_name'] = $data['controllers'][$segments[3]]['wizard_name'];
         } else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_name'])) {
