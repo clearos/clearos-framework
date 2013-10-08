@@ -876,7 +876,8 @@ class MY_Page
 $meta
 
 <!-- Jquery -->
-<script type='text/javascript' src='/js/jquery-1.7.2.min.js'></script>
+<script type='text/javascript' src='/js/jquery-1.10.2.min.js'></script>
+<script type='text/javascript' src='/js/jquery-migrate-1.2.1.js'></script>
 <script type='text/javascript' src='/js/jquery-1.0.0.cookie.js'></script>
 <script type='text/javascript' src='/js/jquery.base64.min.js'></script>
 
