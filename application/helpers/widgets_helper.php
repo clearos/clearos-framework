@@ -1265,3 +1265,18 @@ function menu($app, $tag)
 
     return $translation;
 }
+
+///////////////////////////////////////////////////////////////////////////////
+// D E V E L O P E R  H E L P E R
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Debug/echo array.
+ */
+
+function devel_print_r($obj)
+{
+    echo "<pre style='text-align: left; clear: both;'>";
+    print_r($obj);
+    echo "</pre>";
+}
