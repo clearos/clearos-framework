@@ -165,11 +165,10 @@ class Apps
                         if (! is_dir($views_dir))
                             continue;
 
-
                         $apps_list[$app_name]['name'] = $app['name'];
                         $apps_list[$app_name]['basename'] = $app['basename'];
-                        $apps_list[$app_name]['menu_enabled'] = (isset($app['menu_enabled']) && $app['menu_enabled'] === FALSE) ? FALSE : TRUE;
-                        $apps_list[$app_name]['menu_enabled'] = TRUE;
+                        $apps_list[$app_name]['menu_enabled'] = (isset($app['menu_enabled'])) ? $app['menu_enabled'] : TRUE;
+                        $apps_list[$app_name]['user_access'] = (isset($app['user_access'])) ? $app['user_access'] : FALSE;
                         $apps_list[$app_name]['category'] = $app['category'];
                         $apps_list[$app_name]['subcategory'] = $app['subcategory'];
                         $apps_list[$app_name]['is_core'] = in_array($app['basename'], $core_app_list) ? TRUE : FALSE;
