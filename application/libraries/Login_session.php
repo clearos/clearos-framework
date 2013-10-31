@@ -164,12 +164,16 @@ class MY_Login_Session
             return;
 
         // If logged in but denied access, point the user in the right direction.
-        // If not logged in, send the user to the login page.
         //-----------------------------------------------------------------------
 
         if ($logged_in) {
             redirect('base/session/access_denied');
         } else {
+            // Send invalid REST request to simple access denied page
+            if ($_SERVER['SERVER_PORT'] == 83)
+                redirect('base/session/rest');
+
+            // Send the user to the login page.
             if (!($_SERVER['PHP_SELF'] === '/app/base/session/login')) {
                 $post_redirect = base64_encode($_SERVER['PHP_SELF']);
                 $post_redirect = strtr($post_redirect, '+/=', '-@_'); // Avoid these characters
