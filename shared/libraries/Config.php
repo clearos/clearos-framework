@@ -136,9 +136,7 @@ class Config
 
     public static function get_app_base($app)
     {
-        // FIXME: verbose
-        // Logger::profile(__METHOD__, __LINE__);
-
+        // Logger::profile here is too verbose, so skip it
         $version_paths = array('trunk', '');
 
         foreach (Config::$apps_paths as $path) {
