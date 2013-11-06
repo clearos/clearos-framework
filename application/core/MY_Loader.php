@@ -125,7 +125,6 @@ class MY_Loader extends MX_Loader {
         return CI::$APP->$_alias;
     }
 
-    // FIXME
     /** Load a module controller **/
     public function module($module, $params = NULL) {
 

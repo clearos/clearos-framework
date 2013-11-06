@@ -138,7 +138,7 @@ class Apps
 
         $apps_list = array();
 
-        foreach (Config::$apps_paths as $path) {
+        foreach (Config::get_apps_paths() as $path) {
             $raw_list = scandir($path);
 
             foreach ($raw_list as $app_name) {

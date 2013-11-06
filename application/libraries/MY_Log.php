@@ -87,8 +87,8 @@ class MY_Log extends CI_Log {
             return FALSE;
 
         // See Error.php for explanation of error code handling
-        require_once(Config::$framework_path . '/shared/libraries/Logger.php');
-        require_once(Config::$framework_path . '/shared/libraries/Error.php');
+        require_once(Config::get_framework_path() . '/shared/libraries/Logger.php');
+        require_once(Config::get_framework_path() . '/shared/libraries/Error.php');
 
         if ($level === 'ERROR') {
             $clearos_level = CLEAROS_ERROR;

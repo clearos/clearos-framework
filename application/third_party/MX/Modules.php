@@ -25,9 +25,9 @@ use \clearos\framework\Config as ClearOsConfig;
 // Counting the number of slashes in the paths should work.
 
 // The +2 is to account for the additional 'application/core/' subdirectory.
-$root_dir = str_repeat('../', substr_count(ClearOsConfig::$framework_path, '/') + 2);
+$root_dir = str_repeat('../', substr_count(ClearOsConfig::get_framework_path(), '/') + 2);
 
-foreach (ClearOsConfig::$apps_paths as $app_path) {
+foreach (ClearOsConfig::get_apps_paths() as $app_path) {
     $full_path = $app_path . '/'; 
     $relative_path = $root_dir . $app_path . '/'; 
     Modules::$locations[$full_path] = $relative_path;
@@ -209,19 +209,19 @@ class Modules
 		}	
 
 		// ClearFoundation -- add support for multiple development trees (see opening comment)
-		foreach (ClearOSConfig::$scm_subpaths as $scm_subpath) {
-		$scm_subpath = $scm_subpath . '/';
 
 		foreach (Modules::$locations as $location => $offset) {					
-			foreach($modules as $module => $subpath) {			
-				$fullpath = $location.$module.'/'.$scm_subpath.$base.$subpath;
-				
-				if ($base == 'libraries/' AND is_file($fullpath.ucfirst($file_ext))) 
-					return array($fullpath, ucfirst($file));
-					
-				if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
-			}
-		}
+            foreach (ClearOSConfig::$scm_subpaths as $scm_subpath) {
+            $scm_subpath = $scm_subpath . '/';
+                foreach($modules as $module => $subpath) {			
+                    $fullpath = $location.$module.'/'.$scm_subpath.$base.$subpath;
+                    
+                    if ($base == 'libraries/' AND is_file($fullpath.ucfirst($file_ext))) 
+                        return array($fullpath, ucfirst($file));
+                        
+                    if (is_file($fullpath.$file_ext)) return array($fullpath, $file);
+                }
+            }
 		}
 		
 		return array(FALSE, $file);	

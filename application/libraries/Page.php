@@ -1410,6 +1410,13 @@ $meta
         $menu_data['menus'] = $this->_load_menu_data();
         $session_data = $this->_load_session_data();
 
+        // Add some developer information
+        $segments = explode('/', $_SERVER['PHP_SELF']);
+        $app_base = clearos_app_base($segments[2]);
+        
+        $this->data['devel_app_source'] = (preg_match('/^\/usr\/clearos/', $app_base)) ? 'Live' : 'Development';
+        $this->data['devel_framework_source'] = (preg_match('/^\/usr\/clearos/', __FILE__)) ? 'Live' : 'Development';
+
         $this->data = array_merge($this->data, $session_data, $menu_data);
     }
 

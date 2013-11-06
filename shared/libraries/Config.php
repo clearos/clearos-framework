@@ -69,7 +69,8 @@ class Config
      * @var array apps paths
      */
 
-    public static $apps_paths = array('/usr/clearos/apps');
+    public static $apps_path = '/usr/clearos/apps';
+    public static $apps_paths = array();
 
     /**
      * @var string base path for the framework
@@ -78,16 +79,11 @@ class Config
     public static $framework_path = '/usr/clearos/framework';
 
     /**
-     * @var string base path for the web server document root
-     */
-
-    public static $htdocs_path = '/usr/clearos/framework/htdocs';
-
-    /**
      * @var string base path for themes
      */
 
-    public static $themes_path = '/usr/clearos/themes';
+    public static $theme_path = '/usr/clearos/themes';
+    public static $theme_paths = array();
 
     /**
      * @var boolean debug mode flag
@@ -99,13 +95,7 @@ class Config
      * @var string debug log path
      */
 
-    public static $debug_log = '/var/log/webconfig/framework_log';
-
-    /**
-     * @var array version handler for app developers
-     */
-
-    public static $clearos_devel_versions = array();
+    public static $debug_log = '/tmp/framework_log';
 
     /**
      * @var array scm path handler
@@ -137,6 +127,10 @@ class Config
     public static function get_app_base($app)
     {
         // Logger::profile here is too verbose, so skip it
+
+        if (empty(Config::$apps_paths))
+            return Config::$apps_path . '/' . $app . '/';
+
         $version_paths = array('trunk', '');
 
         foreach (Config::$apps_paths as $path) {
@@ -185,9 +179,12 @@ class Config
     {
         Logger::profile(__METHOD__, __LINE__);
 
-        $version_paths = array('trunk', '');
-
         $approot = Config::get_app_root($app);
+
+        if (empty(Config::$apps_paths))
+            return $approot . '/' . $app . '/htdocs';
+
+        $version_paths = array('trunk', '');
 
         foreach (Config::$apps_paths as $path) {
             foreach ($version_paths as $version_path) {
@@ -195,6 +192,42 @@ class Config
 
                 if (is_dir("$base/deploy"))
                     return $approot . '/' . $app . '/' . $version_path . '/htdocs';
+            }
+        }
+    }
+
+    /**
+     * Returns app paths.
+     *
+     * @return array app paths
+     */
+
+    public static function get_apps_paths()
+    {
+        if (empty(Config::$apps_paths))
+            return array(Config::$apps_path);
+        else
+            return Config::$apps_paths;
+    }
+
+    /**
+     * Returns the framework path.
+     *
+     * @return string framework path
+     */
+
+    public static function get_framework_path()
+    {
+        if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
+            $framework_path = preg_replace('/shared$/', '', $_ENV['CLEAROS_BOOTSTRAP']);
+            return $framework_path;
+        }
+
+        $version_paths = array('trunk', '');
+
+        foreach ($version_paths as $version_path) {
+            if (file_exists(Config::$framework_path . "/$version_path/shared/globals.php")) {
+                return Config::$framework_path . "/$version_path";
             }
         }
     }
@@ -241,14 +274,17 @@ class Config
     {
         Logger::profile(__METHOD__, __LINE__);
 
-        if (isset(Config::$clearos_devel_versions['theme'][$theme]))
-            $theme_version = '/' . Config::$clearos_devel_versions['theme'][$theme];
-        else if (isset(Config::$clearos_devel_versions['theme']['default']))
-            $theme_version = '/' . Config::$clearos_devel_versions['theme']['default'];
-        else
-            $theme_version = "";
+        if (empty(Config::$theme_paths))
+            return Config::$theme_path . '/' . $theme;
 
-        return Config::$themes_path . '/' . $theme . $theme_version;
+        $version_paths = array('trunk', '');
+
+        foreach (Config::$theme_paths as $path) {
+            foreach ($version_paths as $version_path) {
+                if (file_exists("$path/$theme/$version_path/core/page.php"))
+                    return "$path/$theme/$version_path";
+            }
+        }
     }
 
     /**
@@ -263,13 +299,24 @@ class Config
     {
         Logger::profile(__METHOD__, __LINE__);
 
-        if (isset(Config::$clearos_devel_versions['theme'][$theme]))
-            $theme_version = '/' . Config::$clearos_devel_versions['theme'][$theme];
-        else if (isset(Config::$clearos_devel_versions['theme']['default']))
-            $theme_version = '/' . Config::$clearos_devel_versions['theme']['default'];
-        else
-            $theme_version = "";
+        // Return default
+        if (empty(Config::$theme_paths))
+            return "/themes/$theme";
 
-        return "/themes/" . $theme . $theme_version;
+        $version_paths = array('trunk', '');
+
+        foreach (Config::$theme_paths as $path) {
+            foreach ($version_paths as $version_path) {
+                $base_path = $path . '/' . $theme . '/' . $version_path;
+
+                if (file_exists("$base_path/core/page.php")) {
+                    $alias = preg_replace('/\/webconfig\/themes\/.*/', '', $base_path);
+                    $alias = preg_replace('/\/themes\/.*/', '', $alias);
+                    $alias = preg_replace('/.*\//', '', $alias);
+
+                    return '/' . $alias . "/themes/$theme/$version_path";
+                }
+            }
+        }
     }
 }

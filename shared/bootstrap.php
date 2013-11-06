@@ -37,6 +37,7 @@
 // D E P E N D E N C I E S
 ///////////////////////////////////////////////////////////////////////////////
 
+
 use \clearos\framework\Config as Config;
 
 require_once 'libraries/Config.php';
@@ -45,47 +46,7 @@ require_once 'libraries/Config.php';
 // C O N F I G U R A T I O N
 ///////////////////////////////////////////////////////////////////////////////
 
-// If the CLEAROS_BOOTSTRAP environment variable is defined, then the core
-// system is running in development mode.  Provide some intelligent
-// configuration defaults.
-//------------------------------------------------------------------------
-
-if (getenv('CLEAROS_BOOTSTRAP')) {
-
-    // Find a unique debug name to avoid log collisions.  Base on path.
-    //----------------------------------------------------------------
-
-    $debugname = preg_replace('/\/webconfig\/.*/', '', dirname(__FILE__));
-
-    // Remove "home" and "clearos" paths if they exist
-    $debugname = preg_replace('/(home)|(clearos)/', '', $debugname);
-
-    // Remove slashes
-    $debugname = preg_replace('/\//', '', $debugname);
-
-    // Versioning for development and testing
-    //----------------------------------------------------------------
-    // FIXME: auto-detect default version based on dirname(__FILE__);
-
-    Config::$clearos_devel_versions['theme']['default'] = 'trunk';
-    Config::$clearos_devel_versions['framework'] = 'trunk';
-
-    // Paths
-    //----------------------------------------------------------------
-
-    $basedir = preg_replace('/\/framework\/.*/', '', dirname(__FILE__));
-
-    Config::$apps_paths = array($basedir . '/apps');
-    Config::$framework_path = $basedir . '/framework/trunk';
-    Config::$htdocs_path = $basedir . '/framework/trunk/htdocs';
-    Config::$themes_path = $basedir . '/themes';
-
-    // Debug mode
-    //----------------------------------------------------------------
-
-    Config::$debug_mode = TRUE;
-    Config::$debug_log = '/tmp/clearos_framework_' . $debugname . '_log';
-}
+getenv('CLEAROS_BOOTSTRAP'); // Pull in environment variable
 
 // Quick way to enable debug
 //--------------------------
@@ -101,6 +62,15 @@ if (file_exists('/tmp/webconfig.debug')) {
 if (isset($_SERVER['CLEAROS_CONFIG']) && file_exists($_SERVER['CLEAROS_CONFIG']))
     require_once($_SERVER['CLEAROS_CONFIG']);
 
+// Add default paths
+//------------------
+
+if (!empty(Config::$apps_paths) && !in_array('/usr/clearos/apps', Config::$apps_paths))
+    Config::$apps_paths[] = '/usr/clearos/apps';
+
+if (!empty(Config::$theme_paths) && !in_array('/usr/clearos/themes', Config::$theme_paths))
+    Config::$theme_paths[] = '/usr/clearos/apps';
+
 // Translations in developer mode 
 //-------------------------------
 
@@ -111,4 +81,4 @@ if (file_exists('/etc/clearos/devel.d/translator_mode'))
 // C O R E  F U N C T I O N S  A N D  H E L P E R S
 ///////////////////////////////////////////////////////////////////////////////
 
-require_once Config::$framework_path . '/shared/globals.php';
+require_once Config::get_framework_path() . '/shared/globals.php';
