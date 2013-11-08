@@ -40,8 +40,10 @@ namespace clearos\framework;
 ///////////////////////////////////////////////////////////////////////////////
 
 use \clearos\framework\Logger as Logger;
+use \clearos\framework\Apps as Apps;
 
 require_once 'Logger.php';
+require_once 'Apps.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -128,12 +130,9 @@ class Config
     {
         // Logger::profile here is too verbose, so skip it
 
-        if (empty(Config::$apps_paths))
-            return Config::$apps_path . '/' . $app . '/';
-
         $version_paths = array('trunk', '');
 
-        foreach (Config::$apps_paths as $path) {
+        foreach (Config::get_apps_paths() as $path) {
             foreach ($version_paths as $version_path) {
                 $base = $path . '/' . $app . '/' . $version_path;
 
@@ -144,29 +143,78 @@ class Config
     }
 
     /**
-     * Returns the app base path.
+     * Returns the app root path.
      *
      * @param string $app app name
      *
-     * @return string app base path
+     * @return string app root path
      */
 
     public static function get_app_root($app)
     {
         // Logging is verbose, don't bother
+
+        // An app can not only be in /usr/clearos/apps, but also in development
+        // directories as well.  This function returns the web server root path
+        // used for aliasing in the Apache configlet, e.g.
+        // - /usr/clearos/apps -> /approot
+        // - /home/test/my_playground/apps -> /my_plaground/approot
+
         $base_path = Config::get_app_base($app);
 
-        if (preg_match('/.usr.clearos.apps/', $base_path)) {
-            return '/approot';
-        } else {
-            $base_path = preg_replace('/\/webconfig\/apps\/.*/', '', $base_path);
-            $base_path = preg_replace('/\/apps\/.*/', '', $base_path);
-            $base_path = preg_replace('/.*\//', '', $base_path);
+        // Return default /approot for live apps ASAP
 
-            return '/' . $base_path . '/approot';
+        if (preg_match('/\/usr\/clearos\/apps/', $base_path))
+            return '/approot';
+
+        // Loop through the configured apps paths configured by the 
+        // developer looking for the app root path.
+
+        foreach (Config::get_apps_paths() as $path) {
+            $app_root = Config::_get_app_root_alias($path, $base_path);
+
+            if (! empty($app_root))
+                return $app_root;
         }
     }
 
+    /**
+     * Returns the app root mappings.
+     *
+     * @param string $path path
+     *
+     * @return string approot mapping
+     */
+
+    public static function get_app_root_mappings()
+    {
+        Logger::profile(__METHOD__, __LINE__);
+
+        // This generates a list of app root mappings for the
+        // Apache configlet file used in develoment mode.
+        // See get_app_root for details.
+
+        $apps = Apps::get_list(FALSE);
+        $apps_paths = Config::get_apps_paths();
+        $app_roots = array();
+
+        foreach ($apps as $app) {
+            $base_path = Config::get_app_base($app);
+
+            foreach ($apps_paths as $path) {
+                $path = preg_replace('/\/\//', '/', $path); // Remove double slashes
+                $app_root = Config::_get_app_root_alias($path, $base_path);
+
+                if (!empty($app_root) && ($path != '/usr/clearos/apps'))
+                    $app_roots[$app_root] = $path;
+            }
+        }
+
+        $app_roots = array_unique($app_roots);
+
+        return $app_roots;
+    }
+    
     /**
      * Returns the app URL.
      *
@@ -181,12 +229,9 @@ class Config
 
         $approot = Config::get_app_root($app);
 
-        if (empty(Config::$apps_paths))
-            return $approot . '/' . $app . '/htdocs';
-
         $version_paths = array('trunk', '');
 
-        foreach (Config::$apps_paths as $path) {
+        foreach (Config::get_apps_paths() as $path) {
             foreach ($version_paths as $version_path) {
                 $base = $path . '/' . $app . '/' . $version_path;
 
@@ -318,5 +363,51 @@ class Config
                 }
             }
         }
+    }
+
+    /**
+     * Returns approot mapping for given path.
+     *
+     * @param string $path path
+     *
+     * @return string approot mapping
+     */
+
+    private static function _get_app_root_alias($path, $base_path)
+    {
+        // For development apps we need to create an Apache alias to
+        // that maps into the htdocs directory.  Things like Javascript
+        // and logos should not go through CodeIgniter engine.
+        //
+        // For the aliases, we use something readable instead of a hash,
+        // so /home/devuser/some_place/apps is aliased to /some_place_apps
+
+        $path = preg_replace('/\/\//', '/', $path); // Remove double slashes
+        $base_path = preg_replace('/\/\//', '/', $base_path); // Remove double slashes
+        $preg_path = preg_quote($path, '/');
+
+        if (!(preg_match("/$preg_path/", $base_path)))
+            return '';
+
+        // Legacy support for SVN (e.g. ~clearos/webconfig/apps aliased to /clearos)
+        if (preg_match('/\/clearos\/webconfig\/apps$/', $path)) {
+            $base_path = 'clearos';
+        } else if (preg_match('/\/clearcenter\/webconfig\/apps$/', $path)) {
+            $base_path = 'clearcenter';
+        } else {
+            // Path munging - /home/devuser/some_place/apps/some_app
+            // i) remove home directory portion
+            $home_dir = preg_replace('/\.clearos/', '', getenv('CLEAROS_CONFIG')); // Home directory
+            $base_path = preg_replace('/' . preg_quote($home_dir, '/') . '/', '', $base_path);
+
+            // ii) remove trailing app name
+            $base_path = preg_replace('/\/$/', '', $base_path);
+            $base_path = preg_replace('/\/\w*$/', '', $base_path);
+
+            // iii) convert remaining slashes in path (typically some_place/apps) to underscores
+            $base_path = preg_replace('/\//', '_', $base_path);
+        }
+
+        return '/' . $base_path . '/approot';
     }
 }

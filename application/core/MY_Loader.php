@@ -112,8 +112,11 @@ class MY_Loader extends MX_Loader {
             $library = ucfirst($_library);
 
             // ClearFoundation -- add namespace
-            $namespace = preg_replace('/.*\/apps\//', '', $path);
-            $namespace = preg_replace('/\/.*/', '', $namespace);
+            $path = preg_replace('/\/\//', '/', $path); // Remove double slashes
+
+            $namespace = preg_replace('/\/trunk/', '', $path);
+            $namespace = preg_replace('/\/libraries\/$/', '', $namespace);
+            $namespace = preg_replace('/.*\//', '', $namespace);
             $library = '\clearos\\apps\\' . $namespace . '\\' . $library;
             // ClearFoundation -- end
 

@@ -62,6 +62,29 @@ if (file_exists('/tmp/webconfig.debug')) {
 if (isset($_SERVER['CLEAROS_CONFIG']) && file_exists($_SERVER['CLEAROS_CONFIG']))
     require_once($_SERVER['CLEAROS_CONFIG']);
 
+// Change relative paths to full paths
+//------------------------------------
+
+if (!empty(Config::$apps_paths)) {
+    $home_dir = preg_replace('/\.clearos/', '', getenv('CLEAROS_CONFIG')); // A bit dirty
+    $real_paths = array();
+
+    foreach (Config::$apps_paths as $path)
+        $real_paths[] = (preg_match('/^\//', $path)) ? $path : $home_dir . '/' . $path;
+
+    Config::$apps_paths = $real_paths;
+}
+
+if (!empty(Config::$theme_paths)) {
+    $home_dir = preg_replace('/\.clearos/', '', getenv('CLEAROS_CONFIG')); // A bit dirty
+    $theme_real_paths = array();
+
+    foreach (Config::$theme_paths as $path)
+        $real_paths[] = (preg_match('/^\//', $path)) ? $path : $home_dir . '/' . $path;
+
+    Config::$theme_paths = $real_paths;
+}
+
 // Add default paths
 //------------------
 

@@ -77,32 +77,32 @@ class Apps
     }
 
     /**
-     * Returns the app base path.
+     * Returns the apps list.
      *
-     * @param string $app app name
-     *
-     * @return string app base path
+     * @return string apps list
      */
 
-    public static function get_list()
+    public static function get_list($detailed = TRUE)
     {
         // Define menu order preferences
         //------------------------------
 
-        $primary_order = array(
-            lang('base_category_server')  => '020',
-            lang('base_category_network') => '030',
-            lang('base_category_gateway') => '040',
-            lang('base_category_system')  => '050',
-            lang('base_category_spotlight')  => '060',
-            lang('base_category_reports')  => '070',
-            lang('base_category_my_account')  => '080',
-        );
+        if ($detailed) {
+            $primary_order = array(
+                lang('base_category_server')  => '020',
+                lang('base_category_network') => '030',
+                lang('base_category_gateway') => '040',
+                lang('base_category_system')  => '050',
+                lang('base_category_spotlight')  => '060',
+                lang('base_category_reports')  => '070',
+                lang('base_category_my_account')  => '080',
+            );
 
-        $secondary_order = array(
-            lang('base_subcategory_settings') => '999',
-            lang('base_subcategory_accounts') => '020',
-        );
+            $secondary_order = array(
+                lang('base_subcategory_settings') => '999',
+                lang('base_subcategory_accounts') => '020',
+            );
+        }
 
         // Define "base apps" (intalled by default)
         //-----------------------------------------
@@ -147,7 +147,13 @@ class Apps
 
                     if (file_exists($info_file)) {
 
-                        // Load the "$app" infommation
+                        // For the non-detailed list, just return a list of apps
+                        if (!$detailed) {
+                            $apps_list[] = $app_name;
+                            continue;
+                        }
+
+                        // Load the "$app" information
                         $app = array();
                         clearos_load_language($app_name);
                         include $info_file;
