@@ -89,6 +89,7 @@ class Apps
 
         if ($detailed) {
             $primary_order = array(
+                lang('base_category_cloud')  => '010',
                 lang('base_category_server')  => '020',
                 lang('base_category_network') => '030',
                 lang('base_category_gateway') => '040',
