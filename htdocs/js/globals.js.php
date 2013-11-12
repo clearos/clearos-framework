@@ -96,6 +96,8 @@ var lang_marketplace_learn_more = '" . lang('marketplace_learn_more') . "';
 // Main
 //-----
 
+$.ajaxSetup({ cache: false });
+
 my_location = get_location_info();
 
 $(document).ready(function() {
