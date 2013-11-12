@@ -93,11 +93,17 @@ var lang_marketplace_support_policy = '" . lang('marketplace_support_policy') . 
 var lang_marketplace_support_legend = '" . lang('marketplace_support_legend') . "';
 var lang_marketplace_learn_more = '" . lang('marketplace_learn_more') . "';
 
+// Main
+//-----
+
 my_location = get_location_info();
 
 $(document).ready(function() {
     theme_clearos_on_page_ready(my_location);
 });
+
+// Functions
+//----------
 
 function clearos_is_authenticated() {
     theme_clearos_is_authenticated();
