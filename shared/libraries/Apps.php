@@ -90,13 +90,13 @@ class Apps
         if ($detailed) {
             $primary_order = array(
                 lang('base_category_cloud')  => '010',
-                lang('base_category_server')  => '020',
-                lang('base_category_network') => '030',
-                lang('base_category_gateway') => '040',
+                lang('base_category_gateway') => '020',
+                lang('base_category_server')  => '030',
+                lang('base_category_network') => '040',
                 lang('base_category_system')  => '050',
-                lang('base_category_spotlight')  => '060',
-                lang('base_category_reports')  => '070',
-                lang('base_category_my_account')  => '080',
+                lang('base_category_reports')  => '060',
+                lang('base_category_my_account')  => '070',
+                lang('base_category_spotlight')  => '080',
             );
 
             $secondary_order = array(
