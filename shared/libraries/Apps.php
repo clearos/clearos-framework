@@ -167,9 +167,9 @@ class Apps
                         if (isset($app['menu_enabled']) && ($app['menu_enabled']) === FALSE)
                             continue;
 
-                        // If this is just a library, skip it
-                        $views_dir = Config::get_app_base($app_name) . '/views';
-                        if (! is_dir($views_dir))
+                        // If only the -core package is installed, skip it
+                        $htdocs_dir = Config::get_app_base($app_name) . '/htdocs';
+                        if (!is_dir($htdocs_dir))
                             continue;
 
                         $apps_list[$app_name]['name'] = $app['name'];
