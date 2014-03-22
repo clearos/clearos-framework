@@ -64,6 +64,17 @@ function webconfig_cache()
         $lang_cache_time = $stat['ctime'];
     }
 
+    if (!file_exists('/etc/sysconfig/i18n')) {
+        if (!file_exists(CLEAROS_TEMP_DIR . '/language_cache.php')) {
+            // Concatenation is to avoid breaking syntax highlighting
+            $contents = "<?php \$language = 'en_US'; ?" . ">\n";
+            file_put_contents(CLEAROS_TEMP_DIR . '/language_cache.php', $contents);
+            chmod(CLEAROS_TEMP_DIR . '/language_cache.php', 0644);
+        }
+
+        return;
+    }
+
     $stat = stat('/etc/sysconfig/i18n');
     $lang_actual_time = $stat['ctime'];
 
