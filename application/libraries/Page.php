@@ -680,7 +680,7 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $theme_files = array('doctype.php', 'meta.php', 'head.php', 'page.php', 'widgets.php');
+        $theme_files = array('doctype.php', 'meta.php', 'head.php', 'page.php', 'widgets.php', 'javascript.php');
 
         $path = Config::get_theme_path($this->framework->session->userdata('theme'));
 
@@ -696,8 +696,6 @@ class MY_Page
 
             if (file_exists($full_path))
                 include $full_path;
-            else
-                echo "<p class='alert'>Theme file is missing: $file</p>";
         }
     }
 
@@ -918,7 +916,17 @@ $meta
 
         echo theme_page_doctype() . "\n";
         echo $this->_build_page_head();
-        echo theme_page($this->data);
+
+        // The original ClearOS 6 theme_page handles everything from <body> to </html>
+        // The later themes added a javascripts hook before the closing </body> tag
+        if (function_exists('theme_page_javascript')) {
+            echo "<!-- Body -->\n<body>\n";
+            echo theme_page($this->data);
+            echo theme_page_javascript();
+            echo "\n</body>\n</html>";
+        } else {
+            echo theme_page($this->data);
+        }
     }
 
     /**

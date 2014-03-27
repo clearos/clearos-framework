@@ -359,7 +359,12 @@ class Config
                     $alias = preg_replace('/\/themes\/.*/', '', $alias);
                     $alias = preg_replace('/.*\//', '', $alias);
 
-                    return '/' . $alias . "/themes/$theme/$version_path";
+                    $url = '/' . $alias . "/themes/$theme/$version_path";
+
+                    // Clean for case of empty alias and version path
+                    $url = preg_replace(array('|^//|', '|/$|'), array('/', ''), $url);
+
+                    return $url;
                 }
             }
         }

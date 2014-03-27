@@ -377,6 +377,19 @@ function clearos_profile($method, $line, $message = NULL)
     Logger::profile($method, $line, $message);
 }
 
+/**
+ * Returns URL path to the theme.
+ *
+ * @param string $theme theme name
+ *
+ * @return string theme URL
+ */
+
+function clearos_theme_url($theme)
+{
+    return Config::get_theme_url($theme);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // G L O B A L  E R R O R  A N D  E X C E P T I O N  H A N D L E R S
 ///////////////////////////////////////////////////////////////////////////////
