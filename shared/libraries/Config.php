@@ -263,8 +263,10 @@ class Config
 
     public static function get_framework_path()
     {
-        if (isset($_ENV['CLEAROS_BOOTSTRAP'])) {
-            $framework_path = preg_replace('/shared$/', '', $_ENV['CLEAROS_BOOTSTRAP']);
+        $bootstrap = getenv('CLEAROS_BOOTSTRAP');
+
+        if (!empty($bootstrap)) {
+            $framework_path = preg_replace('/shared$/', '', $bootstrap);
             return $framework_path;
         }
 
