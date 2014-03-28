@@ -138,6 +138,26 @@ function clearos_app_installed($app)
 }
 
 /**
+ * Returns ClearOS base version.
+ *
+ * @return integer base version, 0 if version is unknown
+ */
+
+function clearos_version()
+{
+    $contents = file_get_contents('/etc/product');    
+    $matches = array();
+
+    if (preg_match('/base_version\s*=\s*(\d+)/s', $contents, $matches))
+        $version = (int)$matches[1];
+
+    if (is_int($version))
+        return $version;
+    else
+        return 0;
+}
+
+/**
  * Checks to see if the request is coming from the console.
  *
  * @return boolean TRUE if request is coming from the console
