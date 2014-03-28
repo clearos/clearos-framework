@@ -39,7 +39,7 @@
 */
 
 // ClearFoundation - define default controller
-$route['default_controller'] = "base/dashboard";
+$route['default_controller'] = "base";
 $route['404_override'] = '';
 
 
