@@ -88,7 +88,7 @@ if (!empty(Config::$theme_paths)) {
 // Add default paths
 //------------------
 
-if (!empty(Config::$apps_paths) && !in_array('/usr/clearos/apps', Config::$apps_paths))
+if (!in_array('/usr/clearos/apps', Config::$apps_paths))
     Config::$apps_paths[] = '/usr/clearos/apps';
 
 if (!empty(Config::$theme_paths) && !in_array('/usr/clearos/themes', Config::$theme_paths))
