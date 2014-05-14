@@ -347,6 +347,29 @@ class MY_Page
         $this->_display_page();
     }
 
+    // TODO TODO //
+    public function get_dashboard_widgets($app, $data, $options = array())
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $widgets = array(
+            'html' => array($this->framework->load->view($app . '/dashboard', $data, TRUE)),
+            'css' => NULL,
+            'javascript' => NULL
+        );
+
+        $css =  $app . '.css';
+        $js =  $app . '.js.php';
+
+        $doc_base = clearos_app_base($app) . '/htdocs/';
+
+        if (file_exists($doc_base . '/' . $css))
+            $widgets['css'] = Config::get_app_url($app) . '/' . $css;
+        if (file_exists($doc_base . '/' . $css))
+            $widgets['javascript'] = Config::get_app_url($app) . '/' . $js;
+        return $widgets;
+    }
+
     /**
      * Displays a page with a single form.
      *
@@ -920,7 +943,7 @@ $meta
         // The original ClearOS 6 theme_page handles everything from <body> to </html>
         // The later themes added a javascripts hook before the closing </body> tag
         if (function_exists('theme_page_javascript')) {
-            echo "<!-- Body -->\n<body>\n";
+            echo "<!-- Body -->\n<body class='skin-blue'>\n";
             echo theme_page($this->data);
             echo theme_page_javascript();
             echo "\n</body>\n</html>";
@@ -1425,6 +1448,14 @@ $meta
         $this->data['devel_app_source'] = (preg_match('/^\/usr\/clearos/', $app_base)) ? 'Live' : 'Development';
         $this->data['devel_framework_source'] = (preg_match('/^\/usr\/clearos/', __FILE__)) ? 'Live' : 'Development';
 
+        // Start: TODO - New...talk to Pete
+        $app_data = $this->_load_app_data();
+        $this->data['current_basename'] = $app_data['basename'];
+        $this->data['current_name'] = $app_data['name'];
+        $this->data['current_category'] = $app_data['category'];
+        $this->data['current_subcategory'] = $app_data['subcategory'];
+        // End: TODO - New...talk to Pete
+        
         $this->data = array_merge($this->data, $session_data, $menu_data);
     }
 

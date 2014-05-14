@@ -23,7 +23,7 @@ function form_open($action = '', $attributes = '', $hidden = array())
     // - added default form class
     // - added a newline 
     $form = "<div class='theme-form-container'>\n";
-    $form .= '<form class="theme-form" action="'.$action.'"';
+    $form .= '<form class="form-horizontal theme-form" action="'.$action.'"';
 
     $form .= _attributes_to_string($attributes, TRUE);
 
