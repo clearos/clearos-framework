@@ -1176,6 +1176,58 @@ function infobox_highlight($title, $message, $options = NULL)
     return theme_infobox('highlight', $title, $message, $options);
 }
 
+/**
+ * Open a row.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function row_open($options = NULL)
+{
+    return theme_row_open($options);
+}
+
+/**
+ * End a row.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function row_close($options = NULL)
+{
+    return theme_row_close($options);
+}
+
+/**
+ * Open a row.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function column_open($desktop, $tablet = NULL, $phone = NULL, $options = NULL)
+{
+    return theme_column_open($desktop, $tablet, $phone, $options);
+}
+
+/**
+ * End a column.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function column_close($options = NULL)
+{
+    return theme_column_close($options);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // S U M M A R Y  V I E W
 ///////////////////////////////////////////////////////////////////////////////

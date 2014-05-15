@@ -436,7 +436,6 @@ class MY_Page
             // forward firewall) takes place.
             //
             // Also. disable this behavior in wizard mode.
-
             if (($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL) 
                 && (!isset($this->framework->session->userdata['wizard'])))
             {
@@ -594,8 +593,6 @@ class MY_Page
 
             $this->framework->form_only = TRUE;
 
-            ob_start();
-
             // The controllers parameter can contain a simple list:
             // dhcp/settings, dhcp/subnets, dhcp/leases
             //
@@ -605,7 +602,10 @@ class MY_Page
             //   [method] => dashboard
             //   [params] => eth0
 
+            $this->data['widget_views'] = array();
+
             foreach ($controllers as $controller) {
+                ob_start();
                 if (is_array($controller)) {
                     $basename = preg_replace('/.*\//', '', $controller['controller']);
                     $method = $controller['method'];
@@ -622,9 +622,16 @@ class MY_Page
                     $this->framework->load->module($controller);
                     $this->framework->$basename->index();
                 }
+
+                $this->data['widget_views'][] = ob_get_clean();
             }
 
-            $this->data['app_view'] = ob_get_clean();
+            if ($options['type'] == MY_Page::TYPE_DASHBOARD) {
+                $this->framework->form_only = FALSE;
+                return $this->data['widget_views'];
+            }
+
+            $this->data['app_view'] = implode(' ', $this->data['widget_views']);
 
             // Now we set form_only back to the default
             $this->framework->form_only = FALSE;
