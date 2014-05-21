@@ -113,6 +113,7 @@ class MY_Page
     const TYPE_WIZARD = 'wizard';
     const TYPE_CONSOLE = 'console';
     const TYPE_DASHBOARD = 'dashboard';
+    const TYPE_DASHBOARD_WIDGET = 'dashboard_widget';
 
     const MODE_CONTROL_PANEL = 'control_panel';
     const MODE_NORMAL = 'normal';
@@ -401,7 +402,7 @@ class MY_Page
         if (isset($options['javascript']))
             $this->javascript = array_merge($options['javascript'], $this->javascript);
 
-        if (empty($this->data['type']))
+        //if (empty($this->data['type'])) TODO
             $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         // Load wizard view if enabled
@@ -626,7 +627,7 @@ class MY_Page
                 $this->data['widget_views'][] = ob_get_clean();
             }
 
-            if ($options['type'] == MY_Page::TYPE_DASHBOARD) {
+            if ($options['type'] == MY_Page::TYPE_DASHBOARD_WIDGET) {
                 $this->framework->form_only = FALSE;
                 return $this->data['widget_views'];
             }
