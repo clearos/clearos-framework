@@ -49,6 +49,7 @@ var sdn_org = '';
 var internet_connection = false;
 var lang_yes = '" . lang("base_yes") . "';
 var lang_no = '" . lang("base_no") . "';
+var lang_cancel = '" . lang("base_cancel") . "';
 var lang_close = '" . lang("base_close") . "';
 var lang_authenticate = '" . lang("base_authenticate") . "';
 var lang_sdn_authentication_required = '" . lang("base_sdn_authentication_required") . "';
@@ -58,6 +59,8 @@ var lang_password = '" . lang("base_password") . "';
 var lang_forgot_password = '" . lang("base_forgot_password") . "';
 var lang_sdn_email = '" . lang("base_sdn_email") . "';
 var lang_sdn_password_invalid = '" . lang("base_sdn_password_invalid") . "';
+var lang_login = '" . lang("base_login") . "';
+var lang_success = '" . lang("base_success") . "';
 var lang_reset_password_and_send = '" . lang("base_reset_password_and_send") . "';
 var lang_sdn_email_invalid = '" . lang("base_sdn_email_invalid") . "';
 var lang_sdn_email_mismatch = '" . lang("base_sdn_email_mismatch") . "';
@@ -111,10 +114,6 @@ function clearos_is_authenticated() {
     theme_clearos_is_authenticated();
 }
 
-function clearos_dialog_box(id, title, message, options) {
-    theme_clearos_dialog_box(id, title, message, options);
-}
-
 function get_location_info()
 {
     my_obj = new Object();
@@ -134,5 +133,15 @@ function get_location_info()
     }
     return my_obj;
 }
+
+function clearos_dialog_box(id, title, message, options) {
+    theme_clearos_dialog_box(id, title, message, options);
+}
+
+function clearos_infobox(type, title, message, options)
+{
+    theme_clearos_info_box(type, title, message, options);
+}
+
 ";
 // vim: syntax=php ts=4

@@ -114,6 +114,7 @@ class MY_Page
     const TYPE_CONSOLE = 'console';
     const TYPE_DASHBOARD = 'dashboard';
     const TYPE_DASHBOARD_WIDGET = 'dashboard_widget';
+    const TYPE_EXCEPTION = 'exception';
 
     const MODE_CONTROL_PANEL = 'control_panel';
     const MODE_NORMAL = 'normal';
@@ -666,16 +667,16 @@ class MY_Page
 
         $segments = explode('/', $_SERVER['PHP_SELF']);
 
-        $message = "<p>" . clearos_exception_message($exception) . "</p>";
-
         if ($this->framework->form_only) {
+            $message = "<p>" . clearos_exception_message($exception) . "</p>";
             echo infobox_warning(lang('base_error'), $message);
         } else {
             $link = "<p align='center'>" . anchor_custom('/app/' . $segments[2], lang('base_back')) . "</p>";
 
-            $this->data['type'] = MY_Page::TYPE_SPLASH;
+            $this->data['type'] = MY_Page::TYPE_EXCEPTION;
             $this->data['title'] = lang('base_ooops');
-            $this->data['app_view'] = infobox_warning(lang('base_ooops'), $message . $link);
+            $this->data['app_view'] = infobox_warning(lang('base_ooops'), lang('base_unhandled_exception'));
+            $this->data['exception'] = clearos_exception_message($exception);
             $this->_display_page();
         }
     }
@@ -1456,13 +1457,11 @@ $meta
         $this->data['devel_app_source'] = (preg_match('/^\/usr\/clearos/', $app_base)) ? 'Live' : 'Development';
         $this->data['devel_framework_source'] = (preg_match('/^\/usr\/clearos/', __FILE__)) ? 'Live' : 'Development';
 
-        // Start: TODO - New...talk to Pete
         $app_data = $this->_load_app_data();
         $this->data['current_basename'] = $app_data['basename'];
         $this->data['current_name'] = $app_data['name'];
         $this->data['current_category'] = $app_data['category'];
         $this->data['current_subcategory'] = $app_data['subcategory'];
-        // End: TODO - New...talk to Pete
         
         $this->data = array_merge($this->data, $session_data, $menu_data);
     }
