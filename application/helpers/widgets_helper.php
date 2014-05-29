@@ -245,6 +245,21 @@ function anchor_previous($url, $importance = 'high', $options = NULL)
 }
 
 /**
+ * Select anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function anchor_select($url, $importance = 'low', $options = NULL)
+{
+    return theme_anchor($url, lang('base_select'), $importance, 'theme-anchor-select', $options);
+}
+
+/**
  * View anchor.
  *
  * @param string $url        URL of anchor
@@ -367,6 +382,21 @@ function form_submit_ok($name, $importance = 'high', $options = NULL)
 function form_submit_previous($name, $importance = 'high', $options = NULL)
 {
     return theme_form_submit($name, lang('base_previous'), $importance, 'theme-form-submit-previous', $options);
+}
+
+/**
+ * Select button.
+ *
+ * @param string $name       name of select button
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function form_submit_select($name, $importance = 'high', $options = NULL)
+{
+    return theme_form_select($name, lang('base_select'), $importance, 'theme-form-submit-select', $options);
 }
 
 /**

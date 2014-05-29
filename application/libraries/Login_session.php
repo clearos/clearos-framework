@@ -342,7 +342,7 @@ class MY_Login_Session
 
             try {
                 $session['theme'] = $webconfig->get_theme();
-                $session['theme_mode'] = $webconfig->get_theme_mode();
+//                $session['theme_mode'] = $webconfig->get_theme_mode();
             } catch (Exception $e) {
                 // Use default
             }
