@@ -568,6 +568,41 @@ function field_password($name, $value, $label, $read_only = FALSE, $options = NU
     return $html;
 } 
 
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  C O L O U R
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Colour input field.
+ *
+ * @param string $name      name of text input element
+ * @param string $value     value of text input 
+ * @param string $label     label for text input field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_color($name, $value, $label, $read_only = FALSE, $options = NULL)
+{
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
+    $value = ($read_only) ? $value : set_value($name, $value);
+    $error = form_error($name);
+    $options['color-picker'] = TRUE;
+
+    if ($read_only)
+        $html = theme_field_view($label, $value, $name, $value, $input_id, $options);
+    else
+        $html = theme_field_color($name, $value, $label, $error, $input_id, $options);
+
+    return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  F I L E  I N P U T
+///////////////////////////////////////////////////////////////////////////////
+
 /**
  * File input field.
  *

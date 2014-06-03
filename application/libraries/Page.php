@@ -675,7 +675,7 @@ class MY_Page
 
             $this->data['type'] = MY_Page::TYPE_EXCEPTION;
             $this->data['title'] = lang('base_ooops');
-            $this->data['app_view'] = infobox_warning(lang('base_ooops'), lang('base_unhandled_exception'));
+            $this->data['app_view'] = infobox_warning(lang('base_ooops'), lang('base_unhandled_exception') . ':TODO: ' . clearos_exception_message($exception));
             $this->data['exception'] = clearos_exception_message($exception);
             $this->_display_page();
         }
@@ -949,13 +949,11 @@ $meta
         echo theme_page_doctype() . "\n";
         echo $this->_build_page_head();
 
-        // The original ClearOS 6 theme_page handles everything from <body> to </html>
-        // The later themes added a javascripts hook before the closing </body> tag
         if (function_exists('theme_page_javascript')) {
-            echo "<!-- Body -->\n<body class='skin-blue'>\n";
+            echo theme_page_open($this->framework->session->userdata('theme_' . $this->framework->session->userdata('theme')));
             echo theme_page($this->data);
             echo theme_page_javascript();
-            echo "\n</body>\n</html>";
+            echo theme_page_close();
         } else {
             echo theme_page($this->data);
         }
