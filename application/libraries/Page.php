@@ -917,7 +917,7 @@ $meta
         // <head> extras defined in theme (head.php)
         //------------------------------------------
 
-        $head .= theme_page_head($theme_path);
+        $head .= theme_page_head($this->framework->session->userdata('theme_' . $this->framework->session->userdata('theme')));
 
         // <head> extras defined in app
         //------------------------------------------
@@ -952,7 +952,7 @@ $meta
         if (function_exists('theme_page_javascript')) {
             echo theme_page_open($this->framework->session->userdata('theme_' . $this->framework->session->userdata('theme')));
             echo theme_page($this->data);
-            echo theme_page_javascript();
+            echo theme_page_javascript($this->framework->session->userdata('theme_' . $this->framework->session->userdata('theme')));
             echo theme_page_close();
         } else {
             echo theme_page($this->data);

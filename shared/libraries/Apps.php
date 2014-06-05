@@ -7,7 +7,7 @@
  * @package    shared
  * @subpackage libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2013 ClearFoundation
+ * @copyright  2013-2014 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
@@ -56,7 +56,7 @@ require_once 'Config.php';
  * @package    shared
  * @subpackage libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2013 ClearFoundation
+ * @copyright  2013-2014 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
@@ -179,6 +179,7 @@ class Apps
                         $apps_list[$app_name]['category'] = $app['category'];
                         $apps_list[$app_name]['subcategory'] = $app['subcategory'];
                         $apps_list[$app_name]['is_core'] = in_array($app['basename'], $core_app_list) ? TRUE : FALSE;
+                        $apps_list[$app_name]['dashboard_widgets'] = $app['dashboard_widgets'];
 
                         // Add timestamp
                         $stat = stat($info_file);
