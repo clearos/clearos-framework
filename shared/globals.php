@@ -70,7 +70,7 @@ define('CLEAROS_CACHE_DIR', '/var/clearos/framework/cache');
 
 $zone = 'UTC'; // default
 
-if (@date_default_timezone_get() === 'UTC') {
+if (file_exists('/etc/sysconfig/clock') && @date_default_timezone_get() === 'UTC') {
     $lines = preg_split("/\n/", file_get_contents('/etc/sysconfig/clock'));
 
     foreach ($lines as $line) {
