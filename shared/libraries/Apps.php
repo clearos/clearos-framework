@@ -179,7 +179,7 @@ class Apps
                         $apps_list[$app_name]['category'] = $app['category'];
                         $apps_list[$app_name]['subcategory'] = $app['subcategory'];
                         $apps_list[$app_name]['is_core'] = in_array($app['basename'], $core_app_list) ? TRUE : FALSE;
-                        $apps_list[$app_name]['dashboard_widgets'] = $app['dashboard_widgets'];
+                        $apps_list[$app_name]['dashboard_widgets'] = (isset($app['dashboard_widgets']) ? $app['dashboard_widgets'] : NULL);
 
                         // Add timestamp
                         $stat = stat($info_file);
