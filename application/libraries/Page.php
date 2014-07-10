@@ -950,9 +950,9 @@ $meta
         echo $this->_build_page_head();
 
         if (function_exists('theme_page_javascript')) {
-            echo theme_page_open($this->framework->session->userdata('theme_' . $this->framework->session->userdata('theme')));
+            echo theme_page_open($this->framework->session->userdata['theme_' . $this->framework->session->userdata['theme']]);
             echo theme_page($this->data);
-            echo theme_page_javascript($this->framework->session->userdata('theme_' . $this->framework->session->userdata('theme')));
+            echo theme_page_javascript($this->framework->session->userdata['theme_' . $this->framework->session->userdata['theme']]);
             echo theme_page_close();
         } else {
             echo theme_page($this->data);

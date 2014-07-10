@@ -236,7 +236,7 @@ class Config
                 $base = $path . '/' . $app . '/' . $version_path;
 
                 if (is_dir("$base/deploy"))
-                    return $approot . '/' . $app . '/' . $version_path . '/htdocs';
+                    return $approot . '/' . $app . ($version_path != '' ? '/' . $version_path : '') . '/htdocs';
             }
         }
     }

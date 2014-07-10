@@ -396,7 +396,7 @@ function form_submit_previous($name, $importance = 'high', $options = NULL)
 
 function form_submit_select($name, $importance = 'high', $options = NULL)
 {
-    return theme_form_select($name, lang('base_select'), $importance, 'theme-form-submit-select', $options);
+    return theme_form_submit($name, lang('base_select'), $importance, 'theme-form-submit-select', $options);
 }
 
 /**
@@ -1192,6 +1192,22 @@ function dialogbox_confirm($message, $confirm_anchor, $cancel_anchor)
     return theme_dialogbox_confirm($message, $confirm_anchor, $cancel_anchor);
 }
 
+/**
+ * Modal confirmation box.
+ *
+ * @param string $title   title
+ * @param string $message message
+ * @param string $confirm confirm URL if using anchor (not used if using forms/form_id)
+ * @param array  $form_id form ID (used if you want to submit a form on confirmation)
+ *
+ * @return string HTML
+ */
+
+function modal_confirm($title, $message, $confirm, $form_id)
+{
+    return theme_modal_confirm($title, $message, $confirm, $form_id);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // I N F O  B O X E S
 ///////////////////////////////////////////////////////////////////////////////
@@ -1242,6 +1258,31 @@ function infobox_highlight($title, $message, $options = NULL)
 }
 
 /**
+ * Open a box.
+ *
+ * @param string $title   title
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function box_open($title = NULL, $options = NULL)
+{
+    return theme_box_open($title, $options);
+}
+
+/**
+ * Close box.
+ *
+ * @return string HTML
+ */
+
+function box_close()
+{
+    return theme_box_close();
+}
+
+/**
  * Open a row.
  *
  * @param array  $options options
@@ -1268,7 +1309,7 @@ function row_close($options = NULL)
 }
 
 /**
- * Open a row.
+ * Open a column.
  *
  * @param array  $options options
  *
@@ -1299,6 +1340,104 @@ function column_close($options = NULL)
 
 function control_panel($links) {
     echo theme_control_panel($links);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// I M A G E S
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * App Logo.
+ *
+ * @param string $basename app base name
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function app_logo($basename = NULL, $options = NULL)
+{
+    return theme_app_logo($basename, $options);
+}
+
+/**
+ * Returns a screenshot display list.
+ *
+ * @param string $id      id
+ * @param array  $images  array of metadata containing screenshot info
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function screenshot_set($id, $images = NULL, $options = NULL)
+{
+    return theme_screenshot_set($id, $images, $options);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// M A R K E T P L A C E
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Returns marketplace filter options.
+ *
+function theme_marketplace_filter($name, $values, $selected = 'all', $options)
+ * @param string $name     name
+ * @param array  $values   values
+ * @param string $selected selected value
+ * @param array  $options  options
+ *
+ * @return string HTML
+ */
+
+function marketplace_filter($name, $values, $selected = 'all', $options = NULL)
+{
+    return theme_marketplace_filter($name, $values, $selected, $options);
+}
+
+/**
+ * Returns marketplace search.
+ *
+ * @param string $basename app base name
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function marketplace_search($placeholder)
+{
+    return theme_marketplace_search($placeholder);
+}
+
+/**
+ * Returns marketplace HTML for developer field.
+ *
+ * @param string $id      id
+ * @param string $field   human readable field name
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function marketplace_developer_field($id, $field, $options)
+{
+    return theme_marketplace_developer_field($id, $field, $options = NULL);
+}
+
+/**
+ * Returns marketplace HTML for review .
+ *
+ * @param string $basename basename
+ * @param string $pseudonym, pseudonymn
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function marketplace_review($id, $field, $options)
+{
+    return theme_marketplace_review($basename, $pseudonym, $options = NULL);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1393,7 +1532,10 @@ function menu($app, $tag)
 
 function devel_print_r($obj)
 {
-    echo "<pre style='text-align: left; clear: both;'>";
-    print_r($obj);
-    echo "</pre>";
+    //  echo "<pre style='text-align: left; clear: both; position: absolute; background-color: white; width: 100%;z-index: 9999;'>";
+    //  print_r($obj);
+    //  echo "</pre>";
+    echo "<script type='text/javascript'>\n";
+    echo "  console.log(" . json_encode($obj) . ");\n";
+    echo "</script>\n";
 }

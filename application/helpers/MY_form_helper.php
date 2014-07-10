@@ -22,6 +22,7 @@ function form_open($action = '', $attributes = '', $hidden = array())
     // - added a wrapper around form
     // - added default form class
     // - added a newline 
+    // TODO -is div container really necessary? [BC]
     $form = "<div class='theme-form-container'>\n";
     $form .= '<form class="form-horizontal theme-form" action="'.$action.'"';
 
@@ -64,6 +65,7 @@ function form_fieldset($legend_text = '', $attributes = array())
 function form_close($extra = '')
 {
     // ClearFoundation add a wrapper around form
+    // TODO Is div wrapper really necessary?? [BC]
     return "</form>".$extra."</div>\n";
 }
 
