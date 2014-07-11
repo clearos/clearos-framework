@@ -953,7 +953,7 @@ $meta
             echo theme_page_open($this->framework->session->userdata['theme_' . $this->framework->session->userdata['theme']]);
             echo theme_page($this->data);
             echo theme_page_javascript($this->framework->session->userdata['theme_' . $this->framework->session->userdata['theme']]);
-            echo theme_page_close();
+            echo theme_page_close($this->data);
         } else {
             echo theme_page($this->data);
         }

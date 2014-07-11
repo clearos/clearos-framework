@@ -38,7 +38,6 @@ require_once $bootstrap . '/bootstrap.php';
 
 clearos_load_language('base');
 clearos_load_language('marketplace');
-// TODO: separate marketplace from framework
 
 header('Content-Type: application/x-javascript');
 
@@ -49,6 +48,7 @@ var sdn_org = '';
 var internet_connection = false;
 var lang_yes = '" . lang("base_yes") . "';
 var lang_no = '" . lang("base_no") . "';
+var review_by = '" . lang('marketplace_by') . "';
 var lang_cancel = '" . lang("base_cancel") . "';
 var lang_close = '" . lang("base_close") . "';
 var lang_authenticate = '" . lang("base_authenticate") . "';
@@ -105,6 +105,9 @@ my_location = get_location_info();
 
 $(document).ready(function() {
     theme_clearos_on_page_ready(my_location);
+    $('#submit_review').on('click', function () {
+        submit_review(false);
+    });
 });
 
 // Functions
@@ -141,6 +144,115 @@ function clearos_dialog_box(id, title, message, options) {
 function clearos_infobox(type, title, message, options)
 {
     theme_clearos_info_box(type, title, message, options);
+}
+
+function prevent_review() {
+    clearos_dialog_box('review_error', '" . lang('base_warning') . "', '" . lang('marketplace_no_install_no_review') . "');
+}
+
+function add_review(id) {
+    auth_options.reload_after_auth = false;
+    clearos_is_authenticated();
+    $('#review-form').modal({show: true, backdrop: 'static'});
+    // Sometimes browser autocompletes this field
+    $('#comment').val('');
+}
+
+function submit_review(update) {
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/app/marketplace/ajax/add_review',
+        data: 'ci_csrf_token=' + $.cookie('ci_csrf_token') + '&basename=' + $('#basename').val() + '&comment=' + $('#comment').val()
+            + '&rating=' + $('#rating').val() + '&pseudonym=' + $('#pseudonym').val() + (update ? '&update=1' : ''),
+        success: function(data) {
+            if (data.code != 0) {
+                // Check to see if there's already a review
+                if (data.code == 8) {
+                    $('#review-form').modal('hide');
+                    $('#confirm-review-replace-wrapper').modal('show');
+                    return;
+                }
+                $('#review-message-bar').html(theme_clearos_info_box('warning', lang_warning, data.errmsg));
+                $('#review-message-bar').show(200);
+            } else {
+                $('#review-form').modal('hide');
+                var options = new Object();
+                options.reload_on_close = true;
+                clearos_dialog_box('submit_info', '" . lang('base_information') . "', data.status, options);
+            }
+        },
+        error: function(xhr, text, err) {
+            clearos_dialog_box('error', '" . lang('base_warning') . "', xhr.responseText.toString());
+        }
+    });
+}
+
+function peer_review(basename, dbid, approve) {
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/app/marketplace/ajax/peer_review',
+        data: 'ci_csrf_token=' + $.cookie('ci_csrf_token') + '&basename=' + basename + '&approve=' + approve + '&dbid=' + dbid,
+        success: function(data) {
+            if (data.code == 1) {
+                clearos_is_authenticated();
+            } else if (data.code != 0) {
+                clearos_dialog_box('peer_review_error', '" . lang('base_warning') . "', data.errmsg);
+            } else {
+                if (approve > 0) {
+                    // Already rated
+                    if (data.updated_review != undefined) {
+                        $('#agree_' + dbid).html(parseInt($('#agree_' + dbid).text()) + 1);
+                        if (parseInt($('#disagree_' + dbid).text()) > 0)
+                            $('#disagree_' + dbid).html(parseInt($('#disagree_' + dbid).text()) - 1);
+                    } else if (data.new_review != undefined) {
+                        $('#agree_' + dbid).html(parseInt($('#agree_' + dbid).text()) + 1);
+                    }
+                } else {
+                    // New rating
+                    if (data.updated_review != undefined) {
+                        $('#disagree_' + dbid).html(parseInt($('#disagree_' + dbid).text()) + 1);
+                        if (parseInt($('#agree_' + dbid).text()) > 0)
+                            $('#agree_' + dbid).html(parseInt($('#agree_' + dbid).text()) - 1);
+                    } else if (data.new_review != undefined) {
+                        $('#disagree_' + dbid).html(parseInt($('#disagree_' + dbid).text()) + 1);
+                    }
+                }
+            }
+        },
+        error: function(xhr, text, err) {
+            clearos_dialog_box('error', '" . lang('base_warning') . "', xhr.responseText.toString());
+        }
+    });
+}
+
+function clearos_app_rating(basename, ratings) {
+    var html = '';
+    for (index = 0 ; index < ratings.length; index++) {
+        ar = ratings[index];
+        var title = ar.comment;
+        if (title.indexOf('.') > 0) {
+            title = title.substring(0, title.indexOf('.'));
+        } else if (title.indexOf('\\n') > 0) {
+            title = title.substring(0, title.indexOf('\\n'));
+        }
+
+        if (title == ar.comment)
+            html += theme_rating_review(basename, ar.id, title, null, ar.rating, ar.pseudonym, ar.timestamp, ar.agree, ar.disagree); 
+        else
+            html += theme_rating_review(basename, ar.id, title, ar.comment, ar.rating, ar.pseudonym, ar.timestamp, ar.agree, ar.disagree); 
+    }
+    html += '<script type=\'text/javascript\'>' +
+            '  $(\'a.review-action\').on(\'click\', function (e) {' +
+            '    e.preventDefault();' +
+            '    var parts = this.id.split(\'-\');' +
+            '    clearos_is_authenticated();' +
+            '    peer_review(parts[0], parts[1], (parts[2].match(/up/) ? 1 : 0));' +
+            '  });' +
+            '</script>'
+    ;
+    return html;
 }
 
 ";
