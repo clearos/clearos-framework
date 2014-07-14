@@ -46,6 +46,7 @@ echo "
 var auth_options = new Object();
 var sdn_org = '';
 var internet_connection = false;
+var lang = new Object();
 var lang_yes = '" . lang("base_yes") . "';
 var lang_no = '" . lang("base_no") . "';
 var review_by = '" . lang('marketplace_by') . "';
@@ -69,6 +70,7 @@ var lang_status = '" . lang('base_status') . "';
 var lang_internet_down = '" . lang('base_check_internet_connection') . "';
 var lang_marketplace_connection_failure = '" . lang('marketplace_connection_failure') . "';
 var lang_marketplace_redemption = '" . lang('marketplace_redemption') . "';
+var lang_more_info = '" . lang('marketplace_more_info') . "';
 var lang_marketplace_expired_no_subscription = '" . lang('marketplace_expired_no_subsription') . "';
 var lang_marketplace_billing_cycle_monthly = '" . lang('marketplace_billing_cycle_monthly') . "';
 var lang_marketplace_billing_cycle_yearly = '" . lang('marketplace_billing_cycle_yearly') . "';
@@ -253,6 +255,35 @@ function clearos_app_rating(basename, ratings) {
             '</script>'
     ;
     return html;
+}
+
+function clearos_related_apps(type, list) {
+    var html = '';
+    for (index = 0 ; index < list.length; index++)
+        html += theme_related_app(type, list[index]);
+    return html;
+}
+
+function clearos_load_lang(apps, obj) {
+    payload = '&targets=' + apps; 
+    if ($.isArray(apps)) {
+        payload = ''; 
+        foreach (basename in apps)
+            payload += '&targets[]=' + basename;
+    }
+    $.ajax({
+        type: 'POST',
+        dataType: 'json',
+        url: '/app/language/tags',
+        data: 'ci_csrf_token=' + $.cookie('ci_csrf_token') + payload,
+        success: function(data) {
+            for (var key in data)
+                obj[key] = data[key];
+        },
+        error: function(xhr, text, err) {
+            clearos_dialog_box('error', '" . lang('base_warning') . "', xhr.responseText.toString());
+        }
+    });
 }
 
 ";
