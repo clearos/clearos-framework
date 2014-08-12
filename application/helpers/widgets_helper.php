@@ -856,16 +856,17 @@ function field_info($id, $label, $text, $options = NULL)
 /**
  * Radio set.
  *
- * @param string $title   title
- * @param array  $radios  radio array
- * @param array  $options options
+ * @param string $title    title
+ * @param array  $radios   radio array
+ * @param string $input_id input ID
+ * @param array  $options  options
  *
  * @return string HTML
  */
 
-function field_radio_set($title, $radios, $options = NULL)
+function field_radio_set($title, $radios, $input_id, $options = NULL)
 {
-    return theme_field_radio_set($title, $radios, $options);
+    return theme_field_radio_set($title, $radios, $input_id, $options);
 }
 
 /**
@@ -1198,19 +1199,57 @@ function dialogbox_confirm($message, $confirm_anchor, $cancel_anchor)
  * @param string $title   title
  * @param string $message message
  * @param string $confirm confirm URL if using anchor (not used if using forms/form_id)
+ * @param array  $trigger type (id or class) and selector
  * @param array  $form_id form ID (used if you want to submit a form on confirmation)
+ * @param array  $id      modal div ID
+ * @param array  $options options
  *
  * @return string HTML
  */
 
-function modal_confirm($title, $message, $confirm, $form_id)
+function modal_confirm($title, $message, $confirm, $trigger, $form_id, $id, $options)
 {
-    return theme_modal_confirm($title, $message, $confirm, $form_id);
+    return theme_modal_confirm($title, $message, $confirm, $trigger, $form_id, $id, $options);
+}
+
+/**
+ * Modal input box.
+ *
+ * @param string $title    title
+ * @param string $message  message
+ * @param array  $trigger  type (id or class) and selector
+ * @param array  $input_id the ID where the input should get copied to
+ * @param array  $id       modal div ID
+ * @param array  $options  options
+ *
+ * @return string HTML
+ */
+
+function modal_input($title, $message, $trigger, $input_id, $id, $options)
+{
+    return theme_modal_input($title, $message, $trigger, $input_id, $id, $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 // I N F O  B O X E S
 ///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Infobox with anchor to 'follow me' link.
+ *
+ * @param string $title     table title
+ * @param string $message   message
+ * @param string $url       url
+ * @param string $link_text link text
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function infobox_and_redirect($title, $message, $url, $link_text, $options = NULL)
+{
+    return theme_infobox_and_redirect($title, $message, $url, $link_text, $options);
+}
 
 /**
  * Critical infobox.
@@ -1397,17 +1436,33 @@ function marketplace_filter($name, $values, $selected = 'all', $options = NULL)
 }
 
 /**
- * Returns marketplace search.
+ * Returns paginate HTML markup.
  *
- * @param string $basename app base name
- * @param array  $options options
+ * @param array $url     base URL
+ * @param int   $pages   number of pages
+ * @param int   $active  active page
+ * @param int   $max     maximum paginations to link to
+ * @param array $options options
  *
  * @return string HTML
  */
 
-function marketplace_search($placeholder)
+function paginate($url, $pages = 0, $active = 0, $max = 5, $options = NULL)
 {
-    return theme_marketplace_search($placeholder);
+    return theme_paginate($url, $pages, $active, $max, $options);
+}
+
+/**
+ * Returns marketplace search.
+ *
+ * @param string $search_string search string
+ *
+ * @return string HTML
+ */
+
+function marketplace_search($search_string = NULL)
+{
+    return theme_marketplace_search($search_string);
 }
 
 /**
@@ -1438,6 +1493,17 @@ function marketplace_developer_field($id, $field, $options)
 function marketplace_review($id, $field, $options)
 {
     return theme_marketplace_review($basename, $pseudonym, $options = NULL);
+}
+
+/**
+ * Returns marketplace HTML for layout of apps.
+ *
+ * @return string HTML
+ */
+
+function marketplace_layout()
+{
+    return theme_marketplace_layout();
 }
 
 ///////////////////////////////////////////////////////////////////////////////

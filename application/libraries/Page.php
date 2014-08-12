@@ -367,7 +367,7 @@ class MY_Page
 
         if (file_exists($doc_base . '/' . $css))
             $widgets['css'] = Config::get_app_url($app) . '/' . $css;
-        if (file_exists($doc_base . '/' . $css))
+        if (file_exists($doc_base . '/' . $js))
             $widgets['javascript'] = Config::get_app_url($app) . '/' . $js;
         return $widgets;
     }
@@ -402,6 +402,9 @@ class MY_Page
 
         if (isset($options['javascript']))
             $this->javascript = array_merge($options['javascript'], $this->javascript);
+
+        if (isset($options['breadcrumb_links']))
+            $this->data['breadcrumb_links'] = $options['breadcrumb_links'];
 
         //if (empty($this->data['type'])) TODO
             $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
@@ -906,10 +909,7 @@ class MY_Page
 $meta
 
 <!-- Jquery -->
-<script type='text/javascript' src='/js/jquery-1.10.2.min.js'></script>
-<script type='text/javascript' src='/js/jquery-migrate-1.2.1.min.js'></script>
-<script type='text/javascript' src='/js/jquery-1.0.0.cookie.js'></script>
-<script type='text/javascript' src='/js/jquery.base64.min.js'></script>
+<script type='text/javascript' src='/js/jquery.min.js'></script>
 
 <!-- Global Functions -->
 <script type='text/javascript' src='/js/globals.js.php'></script>
@@ -1297,35 +1297,30 @@ $meta
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $apps_list = clearos_get_apps();
-
-        // Find most recently installed
-        //-----------------------------
-
-        $most_recent = 0;
-
-        foreach ($apps_list as $app => $details) {
-            if ($details['installed'] > $most_recent)
-                $most_recent = $details['installed'];
-
-        }
-
         // If timestamps are okay, use the cache file
         //-------------------------------------------
 
         $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id') . 
             $_SERVER['SERVER_PORT'];
 
+        // Find most recently installed
+        //-----------------------------
+
+        $last_change = CLEAROS_TEMP_DIR . '/app_last_change';
+
+
         // TODO - re-enable cache
-        /*
-        if (file_exists($menu_cache)) {
+        if (file_exists($menu_cache) && file_exists($last_change)) {
             $stat = stat($menu_cache);
             $cache_time = $stat['ctime'];
+            $stat = stat($last_change);
+            $most_recent = $stat['ctime'];
 
             if ($cache_time > $most_recent)
                 return unserialize( file_get_contents($menu_cache) );
         }
-        */
+
+        $apps_list = clearos_get_apps();
 
         // Load valid pages for given users
         //---------------------------------
