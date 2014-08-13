@@ -103,6 +103,11 @@ var lang_marketplace_support_16_description = '" . lang('marketplace_support_16_
 var lang_marketplace_support_policy = '" . lang('marketplace_support_policy') . "';
 var lang_marketplace_support_legend = '" . lang('marketplace_support_legend') . "';
 var lang_marketplace_learn_more = '" . lang('marketplace_learn_more') . "';
+var lang_marketplace_sdn_account_setup_help_1 = '" . lang("marketplace_sdn_account_setup_help_1") . "';
+var lang_marketplace_sdn_account_setup_help_2 = '" . lang("marketplace_sdn_account_setup_help_2") . "';
+var lang_marketplace_sdn_account_setup = '" . lang('marketplace_sdn_account_setup') . "';
+var lang_marketplace_setup_payment_on_clear = '" . lang('marketplace_setup_payment_on_clear') . "';
+var lang_warning = '" . lang("base_warning") . "';
 
 // Main
 //-----
