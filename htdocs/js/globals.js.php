@@ -173,10 +173,11 @@ function clearos_prevent_review() {
     clearos_dialog_box('review_error', '" . lang('base_warning') . "', '" . lang('marketplace_no_install_no_review') . "');
 }
 
-function clearos_add_review(id) {
+function clearos_add_review(title) {
     auth_options.reload_after_auth = false;
     clearos_is_authenticated();
     $('#review-form').modal({show: true, backdrop: 'static'});
+    $('#review-app-name').html(title);
     // Sometimes browser autocompletes this field
     $('#comment').val('');
 }
@@ -278,6 +279,26 @@ function clearos_app_rating(basename, ratings) {
     return html;
 }
 
+function clearos_get_app_screenshot(basename, index) {
+    $.ajax({
+        type: 'GET',
+        dataType: 'json',
+        url: '/app/marketplace/ajax/get_app_screenshot/' + basename + '/' + index,
+        success: function(data) {
+            // Success..pass data to theme to update HTML.
+            if (data.code == 0)
+                $('#ss-' + basename + '_' + index).attr('src', data.location);
+        },
+        error: function(xhr, text, err) {
+            console.log(xhr.responseText.toString());
+        }
+    });
+}
+
+function clearos_screenshots(basename, screenshots) {
+    return theme_screenshots(basename, screenshots);
+}
+
 function clearos_get_app_logo(basename, domid) {
     $.ajax({
         type: 'GET',
@@ -292,6 +313,10 @@ function clearos_get_app_logo(basename, domid) {
             console.log(xhr.responseText.toString());
         }
     });
+}
+
+function clearos_screenshots(basename, screenshots) {
+    return theme_screenshots(basename, screenshots);
 }
 
 function clearos_related_apps(type, list) {
