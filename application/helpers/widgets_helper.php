@@ -864,9 +864,46 @@ function field_info($id, $label, $text, $options = NULL)
  * @return string HTML
  */
 
+function radio_set($title, $radios, $input_id, $options = NULL)
+{
+    return theme_radio_set($title, $radios, $input_id, $options);
+}
+
+/**
+ * Radio set.
+ *
+ * @param string $title    title
+ * @param array  $radios   radio array
+ * @param string $input_id input ID
+ * @param array  $options  options
+ *
+ * @return string HTML
+ */
+
 function field_radio_set($title, $radios, $input_id, $options = NULL)
 {
     return theme_field_radio_set($title, $radios, $input_id, $options);
+}
+
+/**
+ * Radio set item.
+ *
+ * @param string $name      name of text input element
+ * @param string $group     button group
+ * @param string $label     label for text input field
+ * @param string $checked   checked flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function radio_set_item($name, $group, $label, $checked = FALSE, $options = NULL) 
+{
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
+
+    $html = theme_radio_set_item($name, $group, $label, $checked, $input_id, $options);
+
+    return $html;
 }
 
 /**
@@ -1194,6 +1231,22 @@ function dialogbox_confirm($message, $confirm_anchor, $cancel_anchor)
 }
 
 /**
+ * Modal info box.
+ *
+ * @param string $id      DOM id
+ * @param string $title   title
+ * @param string $message message
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function modal_info($id, $title, $message, $options)
+{
+    return theme_modal_info($id, $title, $message, $options);
+}
+
+/**
  * Modal confirmation box.
  *
  * @param string $title   title
@@ -1319,6 +1372,22 @@ function box_open($title = NULL, $options = NULL)
 function box_close()
 {
     return theme_box_close();
+}
+
+/**
+ * Box footer.
+ *
+ * @param string $content content
+ *
+ * @return string HTML
+ */
+
+function box_footer($id = NULL, $content = '')
+{
+    if ($id == NULL)
+        $id = 'bf-' . rand(0, 100);
+
+    return theme_box_footer($id, $content);
 }
 
 /**

@@ -173,6 +173,11 @@ function clearos_prevent_review() {
     clearos_dialog_box('review_error', '" . lang('base_warning') . "', '" . lang('marketplace_no_install_no_review') . "');
 }
 
+function clearos_loading(options)
+{
+    return theme_clearos_loading(options);
+}
+
 function clearos_add_review(title) {
     auth_options.reload_after_auth = false;
     clearos_is_authenticated();
