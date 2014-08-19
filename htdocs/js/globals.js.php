@@ -328,9 +328,9 @@ function clearos_related_apps(type, list) {
     theme_related_app(type, list);
 }
 
-function clearos_marketplace_app_list(type, list, limit, total) {
+function clearos_marketplace_app_list(type, list, limit, total, options) {
     // theme_app function passes all information to theme to create HTML and place inside div
-    theme_app(type, list);
+    theme_app(type, list, options);
     if (list.length < total) {
         // We need to populate the paginate widget
         
@@ -351,6 +351,11 @@ function clearos_marketplace_app_list(type, list, limit, total) {
         }
     }
 }
+
+$(document).on('click', '.sidebar-review-app', function(e) {
+    e.preventDefault();
+    $('#review-form').modal({show: true, backdrop: 'static'});
+});
 
 function clearos_load_lang(apps, obj) {
     payload = '&targets=' + apps; 
