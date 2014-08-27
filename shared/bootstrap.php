@@ -80,9 +80,9 @@ if (!empty(Config::$theme_paths)) {
     $theme_real_paths = array();
 
     foreach (Config::$theme_paths as $path)
-        $real_paths[] = (preg_match('/^\//', $path)) ? $path : $home_dir . '/' . $path;
+        $theme_real_paths[] = (preg_match('/^\//', $path)) ? $path : $home_dir . '/' . $path;
 
-    Config::$theme_paths = $real_paths;
+    Config::$theme_paths = $theme_real_paths;
 }
 
 // Add default paths
