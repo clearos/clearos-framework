@@ -130,7 +130,7 @@ class Logger
 
             // Log messages to standard out when in command-line mode
             if (ini_get('display_errors') && preg_match('/cli/', php_sapi_name()))
-                echo "$logline\n";
+                file_put_contents('php://stderr', "$logline\n");
 
             // Log messages to custom log file (if set) and standard out on
             if (ini_get('error_log')) {

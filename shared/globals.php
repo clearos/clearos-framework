@@ -68,7 +68,21 @@ define('CLEAROS_CACHE_DIR', '/var/clearos/framework/cache');
 // in PHP's configuration when date() functions are called.  On a ClearOS 
 // system, the default time zone for the system is correct.
 
-@date_default_timezone_set(@date_default_timezone_get());
+$zone = 'UTC'; // default
+
+if (file_exists('/etc/sysconfig/clock')) {
+    $lines = preg_split("/\n/", file_get_contents('/etc/sysconfig/clock'));
+
+    foreach ($lines as $line) {
+        $matches = array();
+        if (preg_match('/^ZONE="(.*)"/', $line, $matches)) {
+            $zone = $matches[1];
+            break;
+        }
+    }
+}
+
+@date_default_timezone_set($zone);
 
 // Set error and exception handlers
 //---------------------------------
