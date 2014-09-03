@@ -974,8 +974,10 @@ function progress_bar($id, $options)
 /**
  * Display a login page.
  *
- * @param string $label   form field label
- * @param string $id      HTML ID
+ * @param string $redirect  redirect URL
+ * @param string $languages language options
+ * @param string $lang      language pref
+ * @param string $errmsg    failed login message
  * @param array  $options options
  *
  * @return string HTML output
