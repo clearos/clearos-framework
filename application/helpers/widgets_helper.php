@@ -968,6 +968,27 @@ function progress_bar($id, $options)
 } 
 
 ///////////////////////////////////////////////////////////////////////////////
+// L O G I N   P A G E / F O R M
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Display a login page.
+ *
+ * @param string $redirect  redirect URL
+ * @param string $languages language options
+ * @param string $lang      language pref
+ * @param string $errmsg    failed login message
+ * @param array  $options options
+ *
+ * @return string HTML output
+ */
+
+function login_form($redirect, $languages, $lang = 'en_US', $errmsg = NULL, $options = NULL)
+{
+    return theme_login_form($redirect, $languages, $lang, $errmsg, $options);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // F O R M  H E A D E R / F O O T E R
 ///////////////////////////////////////////////////////////////////////////////
 
