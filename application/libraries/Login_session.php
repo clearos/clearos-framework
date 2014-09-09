@@ -336,13 +336,19 @@ class MY_Login_Session
 
         $session['theme'] = 'default';
         $session['theme_mode'] = 'normal';
+        // If you have controllers where you need to validate a post was done (eg. restart server controller)
+        // match against this value
+        $session['form_post_verify'] = rand(0, 9999);
 
         if (clearos_load_library('base/Webconfig')) {
             $webconfig = new Webconfig();
 
             try {
                 $session['theme'] = $webconfig->get_theme();
-                $session['theme_mode'] = $webconfig->get_theme_mode();
+//              $session['theme_mode'] = $webconfig->get_theme_mode();
+                // Load custom settings
+                Logger::profile_framework(__METHOD__, __LINE__, "Loading custom theme settings");
+                $session['theme_' . $session['theme']] = $webconfig->get_theme_settings();
             } catch (Exception $e) {
                 // Use default
             }

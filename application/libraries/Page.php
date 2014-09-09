@@ -113,6 +113,8 @@ class MY_Page
     const TYPE_WIZARD = 'wizard';
     const TYPE_CONSOLE = 'console';
     const TYPE_DASHBOARD = 'dashboard';
+    const TYPE_DASHBOARD_WIDGET = 'dashboard_widget';
+    const TYPE_EXCEPTION = 'exception';
 
     const MODE_CONTROL_PANEL = 'control_panel';
     const MODE_NORMAL = 'normal';
@@ -347,6 +349,29 @@ class MY_Page
         $this->_display_page();
     }
 
+    // TODO TODO //
+    public function get_dashboard_widgets($app, $data, $options = array())
+    {
+        Logger::profile_framework(__METHOD__, __LINE__);
+
+        $widgets = array(
+            'html' => array($this->framework->load->view($app . '/dashboard', $data, TRUE)),
+            'css' => NULL,
+            'javascript' => NULL
+        );
+
+        $css =  $app . '.css';
+        $js =  $app . '.js.php';
+
+        $doc_base = clearos_app_base($app) . '/htdocs/';
+
+        if (file_exists($doc_base . '/' . $css))
+            $widgets['css'] = Config::get_app_url($app) . '/' . $css;
+        if (file_exists($doc_base . '/' . $js))
+            $widgets['javascript'] = Config::get_app_url($app) . '/' . $js;
+        return $widgets;
+    }
+
     /**
      * Displays a page with a single form.
      *
@@ -378,7 +403,10 @@ class MY_Page
         if (isset($options['javascript']))
             $this->javascript = array_merge($options['javascript'], $this->javascript);
 
-        if (empty($this->data['type']))
+        if (isset($options['breadcrumb_links']))
+            $this->data['breadcrumb_links'] = $options['breadcrumb_links'];
+
+        //if (empty($this->data['type'])) TODO
             $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         // Load wizard view if enabled
@@ -413,7 +441,6 @@ class MY_Page
             // forward firewall) takes place.
             //
             // Also. disable this behavior in wizard mode.
-
             if (($this->framework->session->userdata['theme_mode'] !== self::MODE_CONTROL_PANEL) 
                 && (!isset($this->framework->session->userdata['wizard'])))
             {
@@ -571,8 +598,6 @@ class MY_Page
 
             $this->framework->form_only = TRUE;
 
-            ob_start();
-
             // The controllers parameter can contain a simple list:
             // dhcp/settings, dhcp/subnets, dhcp/leases
             //
@@ -582,7 +607,10 @@ class MY_Page
             //   [method] => dashboard
             //   [params] => eth0
 
+            $this->data['widget_views'] = array();
+
             foreach ($controllers as $controller) {
+                ob_start();
                 if (is_array($controller)) {
                     $basename = preg_replace('/.*\//', '', $controller['controller']);
                     $method = $controller['method'];
@@ -599,9 +627,16 @@ class MY_Page
                     $this->framework->load->module($controller);
                     $this->framework->$basename->index();
                 }
+
+                $this->data['widget_views'][] = ob_get_clean();
             }
 
-            $this->data['app_view'] = ob_get_clean();
+            if ($options['type'] == MY_Page::TYPE_DASHBOARD_WIDGET) {
+                $this->framework->form_only = FALSE;
+                return $this->data['widget_views'];
+            }
+
+            $this->data['app_view'] = implode(' ', $this->data['widget_views']);
 
             // Now we set form_only back to the default
             $this->framework->form_only = FALSE;
@@ -635,16 +670,16 @@ class MY_Page
 
         $segments = explode('/', $_SERVER['PHP_SELF']);
 
-        $message = "<p>" . clearos_exception_message($exception) . "</p>";
-
         if ($this->framework->form_only) {
+            $message = "<p>" . clearos_exception_message($exception) . "</p>";
             echo infobox_warning(lang('base_error'), $message);
         } else {
             $link = "<p align='center'>" . anchor_custom('/app/' . $segments[2], lang('base_back')) . "</p>";
 
-            $this->data['type'] = MY_Page::TYPE_SPLASH;
+            $this->data['type'] = MY_Page::TYPE_EXCEPTION;
             $this->data['title'] = lang('base_ooops');
-            $this->data['app_view'] = infobox_warning(lang('base_ooops'), $message . $link);
+            $this->data['app_view'] = infobox_warning(lang('base_ooops'), lang('base_unhandled_exception') . ':TODO: ' . clearos_exception_message($exception));
+            $this->data['exception'] = clearos_exception_message($exception);
             $this->_display_page();
         }
     }
@@ -874,10 +909,7 @@ class MY_Page
 $meta
 
 <!-- Jquery -->
-<script type='text/javascript' src='/js/jquery-1.10.2.min.js'></script>
-<script type='text/javascript' src='/js/jquery-migrate-1.2.1.min.js'></script>
-<script type='text/javascript' src='/js/jquery-1.0.0.cookie.js'></script>
-<script type='text/javascript' src='/js/jquery.base64.min.js'></script>
+<script type='text/javascript' src='/js/jquery.min.js'></script>
 
 <!-- Global Functions -->
 <script type='text/javascript' src='/js/globals.js.php'></script>
@@ -885,7 +917,7 @@ $meta
         // <head> extras defined in theme (head.php)
         //------------------------------------------
 
-        $head .= theme_page_head($theme_path);
+        $head .= theme_page_head($this->framework->session->userdata('theme_' . $this->framework->session->userdata('theme')));
 
         // <head> extras defined in app
         //------------------------------------------
@@ -917,13 +949,11 @@ $meta
         echo theme_page_doctype() . "\n";
         echo $this->_build_page_head();
 
-        // The original ClearOS 6 theme_page handles everything from <body> to </html>
-        // The later themes added a javascripts hook before the closing </body> tag
         if (function_exists('theme_page_javascript')) {
-            echo "<!-- Body -->\n<body>\n";
+            echo theme_page_open($this->framework->session->userdata['theme_' . $this->framework->session->userdata['theme']]);
             echo theme_page($this->data);
-            echo theme_page_javascript();
-            echo "\n</body>\n</html>";
+            echo theme_page_javascript($this->framework->session->userdata['theme_' . $this->framework->session->userdata['theme']]);
+            echo theme_page_close($this->data);
         } else {
             echo theme_page($this->data);
         }
@@ -1267,35 +1297,30 @@ $meta
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $apps_list = clearos_get_apps();
-
-        // Find most recently installed
-        //-----------------------------
-
-        $most_recent = 0;
-
-        foreach ($apps_list as $app => $details) {
-            if ($details['installed'] > $most_recent)
-                $most_recent = $details['installed'];
-
-        }
-
         // If timestamps are okay, use the cache file
         //-------------------------------------------
 
         $menu_cache = CLEAROS_TEMP_DIR . '/menu_cache_' . $this->framework->session->userdata('session_id') . 
             $_SERVER['SERVER_PORT'];
 
+        // Find most recently installed
+        //-----------------------------
+
+        $last_change = CLEAROS_TEMP_DIR . '/app_last_change';
+
+
         // TODO - re-enable cache
-        /*
-        if (file_exists($menu_cache)) {
+        if (file_exists($menu_cache) && file_exists($last_change)) {
             $stat = stat($menu_cache);
             $cache_time = $stat['ctime'];
+            $stat = stat($last_change);
+            $most_recent = $stat['ctime'];
 
             if ($cache_time > $most_recent)
                 return unserialize( file_get_contents($menu_cache) );
         }
-        */
+
+        $apps_list = clearos_get_apps();
 
         // Load valid pages for given users
         //---------------------------------
@@ -1425,6 +1450,12 @@ $meta
         $this->data['devel_app_source'] = (preg_match('/^\/usr\/clearos/', $app_base)) ? 'Live' : 'Development';
         $this->data['devel_framework_source'] = (preg_match('/^\/usr\/clearos/', __FILE__)) ? 'Live' : 'Development';
 
+        $app_data = $this->_load_app_data();
+        $this->data['current_basename'] = $app_data['basename'];
+        $this->data['current_name'] = $app_data['name'];
+        $this->data['current_category'] = $app_data['category'];
+        $this->data['current_subcategory'] = $app_data['subcategory'];
+        
         $this->data = array_merge($this->data, $session_data, $menu_data);
     }
 
@@ -1531,6 +1562,25 @@ $meta
 
         $install_wizard->set_state($current);
 
+        // Unset any existing breadcrumb links
+        unset($this->data['breadcrumb_links']);
+        $this->data['breadcrumb_links'] = array();
+        if ($current > 0)
+            $this->data['breadcrumb_links']['wizard_previous'] = array(
+                'url' => $steps[$current - 1]['nav'],
+                'tag' => lang('base_previous'),
+                'display_tag' => TRUE,
+                'button' => TRUE,
+                'tag_position' => 'right'
+            );
+        if ($current < count($steps))
+            $this->data['breadcrumb_links']['wizard_next'] = array(
+                'url' => $steps[$current + 1]['nav'], 
+                'tag' => lang('base_next'),
+                'display_tag' => TRUE,
+                'button' => 'high',
+                'tag_position' => 'left'
+            );
         return TRUE;
     }
 }

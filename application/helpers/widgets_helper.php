@@ -245,6 +245,21 @@ function anchor_previous($url, $importance = 'high', $options = NULL)
 }
 
 /**
+ * Select anchor.
+ *
+ * @param string $url        URL of anchor
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function anchor_select($url, $importance = 'low', $options = NULL)
+{
+    return theme_anchor($url, lang('base_select'), $importance, 'theme-anchor-select', $options);
+}
+
+/**
  * View anchor.
  *
  * @param string $url        URL of anchor
@@ -367,6 +382,21 @@ function form_submit_ok($name, $importance = 'high', $options = NULL)
 function form_submit_previous($name, $importance = 'high', $options = NULL)
 {
     return theme_form_submit($name, lang('base_previous'), $importance, 'theme-form-submit-previous', $options);
+}
+
+/**
+ * Select button.
+ *
+ * @param string $name       name of select button
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function form_submit_select($name, $importance = 'high', $options = NULL)
+{
+    return theme_form_submit($name, lang('base_select'), $importance, 'theme-form-submit-select', $options);
 }
 
 /**
@@ -537,6 +567,41 @@ function field_password($name, $value, $label, $read_only = FALSE, $options = NU
 
     return $html;
 } 
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  C O L O U R
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Colour input field.
+ *
+ * @param string $name      name of text input element
+ * @param string $value     value of text input 
+ * @param string $label     label for text input field
+ * @param string $read_only read only flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function field_color($name, $value, $label, $read_only = FALSE, $options = NULL)
+{
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
+    $value = ($read_only) ? $value : set_value($name, $value);
+    $error = form_error($name);
+    $options['color-picker'] = TRUE;
+
+    if ($read_only)
+        $html = theme_field_view($label, $value, $name, $value, $input_id, $options);
+    else
+        $html = theme_field_color($name, $value, $label, $error, $input_id, $options);
+
+    return $html;
+} 
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  F I L E  I N P U T
+///////////////////////////////////////////////////////////////////////////////
 
 /**
  * File input field.
@@ -791,16 +856,54 @@ function field_info($id, $label, $text, $options = NULL)
 /**
  * Radio set.
  *
- * @param string $title   title
- * @param array  $radios  radio array
- * @param array  $options options
+ * @param string $title    title
+ * @param array  $radios   radio array
+ * @param string $input_id input ID
+ * @param array  $options  options
  *
  * @return string HTML
  */
 
-function field_radio_set($title, $radios, $options = NULL)
+function radio_set($title, $radios, $input_id, $options = NULL)
 {
-    return theme_field_radio_set($title, $radios, $options);
+    return theme_radio_set($title, $radios, $input_id, $options);
+}
+
+/**
+ * Radio set.
+ *
+ * @param string $title    title
+ * @param array  $radios   radio array
+ * @param string $input_id input ID
+ * @param array  $options  options
+ *
+ * @return string HTML
+ */
+
+function field_radio_set($title, $radios, $input_id, $options = NULL)
+{
+    return theme_field_radio_set($title, $radios, $input_id, $options);
+}
+
+/**
+ * Radio set item.
+ *
+ * @param string $name      name of text input element
+ * @param string $group     button group
+ * @param string $label     label for text input field
+ * @param string $checked   checked flag
+ * @param array  $options   options
+ *
+ * @return string HTML
+ */
+
+function radio_set_item($name, $group, $label, $checked = FALSE, $options = NULL) 
+{
+    $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
+
+    $html = theme_radio_set_item($name, $group, $label, $checked, $input_id, $options);
+
+    return $html;
 }
 
 /**
@@ -863,6 +966,27 @@ function progress_bar($id, $options)
 {
     return theme_progress_bar($id, $options);
 } 
+
+///////////////////////////////////////////////////////////////////////////////
+// L O G I N   P A G E / F O R M
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Display a login page.
+ *
+ * @param string $redirect  redirect URL
+ * @param string $languages language options
+ * @param string $lang      language pref
+ * @param string $errmsg    failed login message
+ * @param array  $options options
+ *
+ * @return string HTML output
+ */
+
+function login_form($redirect, $languages, $lang = 'en_US', $errmsg = NULL, $options = NULL)
+{
+    return theme_login_form($redirect, $languages, $lang, $errmsg, $options);
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // F O R M  H E A D E R / F O O T E R
@@ -1127,9 +1251,79 @@ function dialogbox_confirm($message, $confirm_anchor, $cancel_anchor)
     return theme_dialogbox_confirm($message, $confirm_anchor, $cancel_anchor);
 }
 
+/**
+ * Modal info box.
+ *
+ * @param string $id      DOM id
+ * @param string $title   title
+ * @param string $message message
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function modal_info($id, $title, $message, $options)
+{
+    return theme_modal_info($id, $title, $message, $options);
+}
+
+/**
+ * Modal confirmation box.
+ *
+ * @param string $title   title
+ * @param string $message message
+ * @param string $confirm confirm URL if using anchor (not used if using forms/form_id)
+ * @param array  $trigger type (id or class) and selector
+ * @param array  $form_id form ID (used if you want to submit a form on confirmation)
+ * @param array  $id      modal div ID
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function modal_confirm($title, $message, $confirm, $trigger, $form_id, $id, $options)
+{
+    return theme_modal_confirm($title, $message, $confirm, $trigger, $form_id, $id, $options);
+}
+
+/**
+ * Modal input box.
+ *
+ * @param string $title    title
+ * @param string $message  message
+ * @param array  $trigger  type (id or class) and selector
+ * @param array  $input_id the ID where the input should get copied to
+ * @param array  $id       modal div ID
+ * @param array  $options  options
+ *
+ * @return string HTML
+ */
+
+function modal_input($title, $message, $trigger, $input_id, $id, $options)
+{
+    return theme_modal_input($title, $message, $trigger, $input_id, $id, $options);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // I N F O  B O X E S
 ///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Infobox with anchor to 'follow me' link.
+ *
+ * @param string $title     table title
+ * @param string $message   message
+ * @param string $url       url
+ * @param string $link_text link text
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function infobox_and_redirect($title, $message, $url, $link_text, $options = NULL)
+{
+    return theme_infobox_and_redirect($title, $message, $url, $link_text, $options);
+}
 
 /**
  * Critical infobox.
@@ -1176,12 +1370,230 @@ function infobox_highlight($title, $message, $options = NULL)
     return theme_infobox('highlight', $title, $message, $options);
 }
 
+/**
+ * Open a box.
+ *
+ * @param string $title   title
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function box_open($title = NULL, $options = NULL)
+{
+    return theme_box_open($title, $options);
+}
+
+/**
+ * Close box.
+ *
+ * @return string HTML
+ */
+
+function box_close()
+{
+    return theme_box_close();
+}
+
+/**
+ * Box footer.
+ *
+ * @param string $content content
+ *
+ * @return string HTML
+ */
+
+function box_footer($id = NULL, $content = '')
+{
+    if ($id == NULL)
+        $id = 'bf-' . rand(0, 100);
+
+    return theme_box_footer($id, $content);
+}
+
+/**
+ * Open a row.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function row_open($options = NULL)
+{
+    return theme_row_open($options);
+}
+
+/**
+ * End a row.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function row_close($options = NULL)
+{
+    return theme_row_close($options);
+}
+
+/**
+ * Open a column.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function column_open($desktop, $tablet = NULL, $phone = NULL, $options = NULL)
+{
+    return theme_column_open($desktop, $tablet, $phone, $options);
+}
+
+/**
+ * End a column.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function column_close($options = NULL)
+{
+    return theme_column_close($options);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // S U M M A R Y  V I E W
 ///////////////////////////////////////////////////////////////////////////////
 
 function control_panel($links) {
     echo theme_control_panel($links);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// I M A G E S
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * App Logo.
+ *
+ * @param string $basename app base name
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function app_logo($basename = NULL, $options = NULL)
+{
+    return theme_app_logo($basename, $options);
+}
+
+/**
+ * Returns a screenshot display list.
+ *
+ * @param string $id      id
+ * @param array  $images  array of metadata containing screenshot info
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function screenshot_set($id, $images = NULL, $options = NULL)
+{
+    return theme_screenshot_set($id, $images, $options);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// M A R K E T P L A C E
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Returns marketplace filter options.
+ *
+function theme_marketplace_filter($name, $values, $selected = 'all', $options)
+ * @param string $name     name
+ * @param array  $values   values
+ * @param string $selected selected value
+ * @param array  $options  options
+ *
+ * @return string HTML
+ */
+
+function marketplace_filter($name, $values, $selected = 'all', $options = NULL)
+{
+    return theme_marketplace_filter($name, $values, $selected, $options);
+}
+
+/**
+ * Returns paginate HTML markup.
+ *
+ * @param array $url     base URL
+ * @param int   $pages   number of pages
+ * @param int   $active  active page
+ * @param int   $max     maximum paginations to link to
+ * @param array $options options
+ *
+ * @return string HTML
+ */
+
+function paginate($url, $pages = 0, $active = 0, $max = 5, $options = NULL)
+{
+    return theme_paginate($url, $pages, $active, $max, $options);
+}
+
+/**
+ * Returns marketplace search.
+ *
+ * @param string $search_string search string
+ *
+ * @return string HTML
+ */
+
+function marketplace_search($search_string = NULL)
+{
+    return theme_marketplace_search($search_string);
+}
+
+/**
+ * Returns marketplace HTML for developer field.
+ *
+ * @param string $id      id
+ * @param string $field   human readable field name
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function marketplace_developer_field($id, $field, $options)
+{
+    return theme_marketplace_developer_field($id, $field, $options = NULL);
+}
+
+/**
+ * Returns marketplace HTML for review .
+ *
+ * @param string $basename basename
+ * @param string $pseudonym, pseudonymn
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function marketplace_review($id, $field, $options)
+{
+    return theme_marketplace_review($basename, $pseudonym, $options = NULL);
+}
+
+/**
+ * Returns marketplace HTML for layout of apps.
+ *
+ * @return string HTML
+ */
+
+function marketplace_layout()
+{
+    return theme_marketplace_layout();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1276,7 +1688,10 @@ function menu($app, $tag)
 
 function devel_print_r($obj)
 {
-    echo "<pre style='text-align: left; clear: both;'>";
-    print_r($obj);
-    echo "</pre>";
+    //  echo "<pre style='text-align: left; clear: both; position: absolute; background-color: white; width: 100%;z-index: 9999;'>";
+    //  print_r($obj);
+    //  echo "</pre>";
+    echo "<script type='text/javascript'>\n";
+    echo "  console.log(" . json_encode($obj) . ");\n";
+    echo "</script>\n";
 }

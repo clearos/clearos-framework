@@ -412,6 +412,19 @@ function clearos_profile($method, $line, $message = NULL)
 }
 
 /**
+ * Returns file path to the theme.
+ *
+ * @param string $theme theme name
+ *
+ * @return string theme URL
+ */
+
+function clearos_theme_path($theme)
+{
+    return Config::get_theme_path($theme);
+}
+
+/**
  * Returns URL path to the theme.
  *
  * @param string $theme theme name
