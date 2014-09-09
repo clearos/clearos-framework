@@ -1565,20 +1565,22 @@ $meta
         // Unset any existing breadcrumb links
         unset($this->data['breadcrumb_links']);
         $this->data['breadcrumb_links'] = array();
-        $this->data['breadcrumb_links']['wizard_previous'] = array(
-            'url' => $steps[$current - 1]['nav'],
-            'tag' => lang('base_previous'),
-            'display_tag' => TRUE,
-            'button' => TRUE,
-            'tag_position' => 'right'
-        );
-        $this->data['breadcrumb_links']['wizard_next'] = array(
-            'url' => $steps[$current + 1]['nav'], 
-            'tag' => lang('base_next'),
-            'display_tag' => TRUE,
-            'button' => 'high',
-            'tag_position' => 'left'
-        );
+        if ($current > 0)
+            $this->data['breadcrumb_links']['wizard_previous'] = array(
+                'url' => $steps[$current - 1]['nav'],
+                'tag' => lang('base_previous'),
+                'display_tag' => TRUE,
+                'button' => TRUE,
+                'tag_position' => 'right'
+            );
+        if ($current < count($steps))
+            $this->data['breadcrumb_links']['wizard_next'] = array(
+                'url' => $steps[$current + 1]['nav'], 
+                'tag' => lang('base_next'),
+                'display_tag' => TRUE,
+                'button' => 'high',
+                'tag_position' => 'left'
+            );
         return TRUE;
     }
 }
