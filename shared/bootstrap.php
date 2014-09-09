@@ -51,7 +51,7 @@ getenv('CLEAROS_BOOTSTRAP'); // Pull in environment variable
 // Quick way to enable debug
 //--------------------------
 
-if (file_exists('/tmp/webconfig.debug')) {
+if (file_exists('/tmp/webconfig.debug') || file_exists('/etc/clearos/webconfig.debug')) {
     Config::$debug_mode = TRUE;
     Config::$debug_log = '/tmp/webconfig.log';
 }
