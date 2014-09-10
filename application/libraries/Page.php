@@ -1273,13 +1273,23 @@ $meta
         // Icons
         //------
 
-        $icon_basename = $app_name . '_50x50.png';
+        // PNG
+        $icon_png = $app_name . '_50x50.png';
         $icon_path = $app_base . '/htdocs/' . $icon_basename;
 
         if (file_exists($icon_path))
-            $app['icon_path'] = clearos_app_htdocs($app_name) . '/' . $icon_basename;
+            $app['icon_png'] = clearos_app_htdocs($app_name) . '/' . $icon_basename;
         else
-            $app['icon_path'] = '/assets/app_default_50x50.png';
+            $app['icon_png'] = '/assets/app_default_50x50.png';
+
+        // SVG
+        $icon_svg = $app_name . '.svg';
+        $icon_path = $app_base . '/htdocs/' . $icon_basename;
+
+        if (file_exists($icon_path))
+            $app['icon_svg'] = clearos_app_htdocs($app_name) . '/' . $icon_basename;
+        else
+            $app['icon_svg'] = '/assets/app_default.svg';
 
         // Done
         //-----
