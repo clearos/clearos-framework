@@ -174,7 +174,7 @@ function clearos_is_authenticated() {
             } else if (data.code == 0 && !data.authorized) {
 
                 // Open dialog
-                $('#sdn-login-dialog').modal({show: true, backdrop: 'static'});
+                clearos_modal_infobox_open('sdn-login-dialog');
                 // If user closes modal box, redirect to non-edit mode
                 $('#sdn-login-dialog').on('hidden.bs.modal', function() {
                     if (auth_options.no_redirect_on_cancel)
@@ -298,7 +298,7 @@ function clearos_add_review() {
 }
 
 function clearos_display_review_form() {
-    $('#review-form').modal({show: true, backdrop: 'static'});
+    clearos_modal_infobox_open('review-form');
     // Sometimes browser autocompletes this field
     $('#review-comment').val('');
 }
