@@ -303,6 +303,14 @@ function clearos_display_review_form() {
     $('#review-comment').val('');
 }
 
+function clearos_modal_infobox_open(id, options) {
+    theme_modal_infobox_open(id, options);
+}
+
+function clearos_modal_infobox_close(id, options) {
+    theme_modal_infobox_close(id, options);
+}
+
 function submit_review(update) {
     $.ajax({
         type: 'POST',
