@@ -1274,7 +1274,7 @@ $meta
         //------
 
         // PNG
-        $icon_png = $app_name . '_50x50.png';
+        $icon_basename = $app_name . '_50x50.png';
         $icon_path = $app_base . '/htdocs/' . $icon_basename;
 
         if (file_exists($icon_path))
@@ -1283,7 +1283,7 @@ $meta
             $app['icon_png'] = '/assets/app_default_50x50.png';
 
         // SVG
-        $icon_svg = $app_name . '.svg';
+        $icon_basename = $app_name . '.svg';
         $icon_path = $app_base . '/htdocs/' . $icon_basename;
 
         if (file_exists($icon_path))
@@ -1579,6 +1579,7 @@ $meta
             $this->data['breadcrumb_links']['wizard_previous'] = array(
                 'url' => $steps[$current - 1]['nav'],
                 'tag' => lang('base_previous'),
+                'id' => 'wizard_nav_previous',
                 'display_tag' => TRUE,
                 'button' => TRUE,
                 'tag_position' => 'right'
@@ -1587,6 +1588,7 @@ $meta
             $this->data['breadcrumb_links']['wizard_next'] = array(
                 'url' => $steps[$current + 1]['nav'], 
                 'tag' => lang('base_next'),
+                'id' => 'wizard_nav_next',
                 'display_tag' => TRUE,
                 'button' => 'high',
                 'tag_position' => 'left'

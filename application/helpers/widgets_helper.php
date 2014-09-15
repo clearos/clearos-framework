@@ -1371,6 +1371,21 @@ function infobox_highlight($title, $message, $options = NULL)
 }
 
 /**
+ * Default infobox.
+ *
+ * @param string $title   table title
+ * @param string $message message
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function infobox_info($title, $message, $options = NULL)
+{
+    return theme_infobox('info', $title, $message, $options);
+}
+
+/**
  * Open a box.
  *
  * @param string $title   title
