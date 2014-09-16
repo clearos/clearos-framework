@@ -155,7 +155,6 @@ function clearos_is_authenticated() {
         type: 'POST',
         dataType: 'json',
         data: data_payload,
-        async: false,
         url: '/app/marketplace/ajax/is_authenticated',
         success: function(data) {
             if (data.code == 0 && data.authorized) {

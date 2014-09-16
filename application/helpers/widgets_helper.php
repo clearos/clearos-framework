@@ -856,7 +856,6 @@ function field_info($id, $label, $text, $options = NULL)
 /**
  * Radio set.
  *
- * @param string $title    title
  * @param array  $radios   radio array
  * @param string $input_id input ID
  * @param array  $options  options
@@ -864,9 +863,9 @@ function field_info($id, $label, $text, $options = NULL)
  * @return string HTML
  */
 
-function radio_set($title, $radios, $input_id, $options = NULL)
+function radio_set($radios, $input_id, $options = NULL)
 {
-    return theme_radio_set($title, $radios, $input_id, $options);
+    return theme_radio_set($radios, $input_id, $options);
 }
 
 /**

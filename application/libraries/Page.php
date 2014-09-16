@@ -1206,6 +1206,7 @@ $meta
             $data['wizard_description'] = $data['controllers'][$segments[4]]['wizard_description'];
             // If Marketplace app selector, add action as req'd
             //if (preg_match('/mode1|mode2/' , $segments[5]))
+            // TODO  Code review
             if (preg_match('/selection/' , $segments[4]))
                 $options['action'] = array(
                     'url' => '/app/marketplace/all',
