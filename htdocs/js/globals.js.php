@@ -293,7 +293,7 @@ function clearos_loading(options)
 function clearos_add_review() {
     auth_options.no_redirect_on_cancel = true;
     auth_options.callback = 'clearos_display_review_form';
-    clearos_is_authenticated(clearos_display_review_form);
+    clearos_is_authenticated();
 }
 
 function clearos_display_review_form() {
