@@ -118,9 +118,6 @@ my_location = get_location_info();
 
 $(document).ready(function() {
     theme_clearos_on_page_ready(my_location);
-    $('#submit_review').on('click', function () {
-        submit_review(false);
-    });
 });
 
 // Functions
@@ -322,7 +319,7 @@ function submit_review(update) {
                 // Check to see if there's already a review
                 if (data.code == 8) {
                     $('#review-form').modal('hide');
-                    $('#confirm-review-replace-wrapper').modal('show');
+                    $('#confirm-review-replace').modal('show');
                     return;
                 }
                 $('#review-message-bar').html(theme_clearos_info_box('warning', lang_warning, data.errmsg));
