@@ -345,7 +345,7 @@ class MY_Login_Session
 
             try {
                 $session['theme'] = $webconfig->get_theme();
-//              $session['theme_mode'] = $webconfig->get_theme_mode();
+                // $session['theme_mode'] = $webconfig->get_theme_mode();
                 // Load custom settings
                 Logger::profile_framework(__METHOD__, __LINE__, "Loading custom theme settings");
                 $session['theme_' . $session['theme']] = $webconfig->get_theme_settings();

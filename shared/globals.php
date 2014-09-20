@@ -10,7 +10,7 @@
  * @package    Shared
  * @subpackage Helpers
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2011 ClearFoundation
+ * @copyright  2011-2014 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
@@ -41,12 +41,14 @@ use \clearos\framework\Config as Config;
 use \clearos\framework\Error as Error;
 use \clearos\framework\Lang as Lang;
 use \clearos\framework\Logger as Logger;
+use \clearos\framework\Themes as Themes;
 
 require_once 'libraries/Apps.php';
 require_once 'libraries/Config.php';
 require_once 'libraries/Error.php';
 require_once 'libraries/Lang.php';
 require_once 'libraries/Logger.php';
+require_once 'libraries/Themes.php';
 
 ///////////////////////////////////////////////////////////////////////////////
 // G L O B A L  C O N S T A N T S
@@ -212,6 +214,17 @@ function clearos_driver($driver_engine)
 
 function clearos_get_apps() {
     return Apps::get_list();
+}
+
+/**
+ * Returns themes information.
+ *
+ * @return array thems information
+ */
+
+function clearos_get_themes()
+{
+    return Themes::get_list();
 }
 
 /**

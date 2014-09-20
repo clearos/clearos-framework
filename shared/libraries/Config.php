@@ -335,6 +335,20 @@ class Config
     }
 
     /**
+     * Returns theme paths.
+     *
+     * @return array theme paths
+     */
+
+    public static function get_theme_paths()
+    {
+        if (empty(Config::$theme_paths))
+            return array(Config::$theme_path);
+        else
+            return Config::$theme_paths;
+    }
+
+    /**
      * Returns the theme URL.
      *
      * @param string $theme theme name
