@@ -1663,6 +1663,7 @@ function convert_to_hash($items) {
 function convert_to_id($name) {
     $id = $name;
 
+    $id = preg_replace('/\[\]/', '', $id);
     $id = preg_replace('/\]\[/', '.', $id);
     $id = preg_replace('/\[/', '.', $id);
     $id = preg_replace('/\]/', '', $id);
