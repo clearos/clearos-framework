@@ -53,7 +53,7 @@ getenv('CLEAROS_BOOTSTRAP'); // Pull in environment variable
 
 if (file_exists('/tmp/webconfig.debug') || file_exists('/etc/clearos/webconfig.debug')) {
     Config::$debug_mode = TRUE;
-    Config::$debug_log = '/tmp/webconfig.log';
+    Config::$debug_log = '/var/log/webconfig/debug.log';
 }
 
 // If the CLEAROS_CONFIG enviroment variable is set, load the values.
@@ -92,7 +92,7 @@ if (!in_array('/usr/clearos/apps', Config::$apps_paths))
     Config::$apps_paths[] = '/usr/clearos/apps';
 
 if (!empty(Config::$theme_paths) && !in_array('/usr/clearos/themes', Config::$theme_paths))
-    Config::$theme_paths[] = '/usr/clearos/apps';
+    Config::$theme_paths[] = '/usr/clearos/themes';
 
 // Translations in developer mode 
 //-------------------------------
