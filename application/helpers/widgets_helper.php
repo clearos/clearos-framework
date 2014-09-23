@@ -262,6 +262,22 @@ function anchor_select($url, $importance = 'low', $options = NULL)
 /**
  * View anchor.
  *
+ * @param string $button_text main button text
+ * @param arrays $urls        array of URL/text key/value pairs
+ * @param string $importance  importance of the button ('high' or 'low')
+ * @param array  $options     options
+ *
+ * @return string HTML
+ */
+
+function anchor_multi($button_text, $urls, $importance = 'high', $options = NULL)
+{
+    return theme_multi_anchor($button_text, $urls, $importance, 'theme-anchor-multi', $options);
+}
+
+/**
+ * View anchor.
+ *
  * @param string $url        URL of anchor
  * @param string $importance importance of the button ('high' or 'low')
  * @param array  $options    options
@@ -272,6 +288,20 @@ function anchor_select($url, $importance = 'low', $options = NULL)
 function anchor_view($url, $importance = 'high', $options = NULL)
 {
     return theme_anchor($url, lang('base_view'), $importance, 'theme-anchor-view', $options);
+}
+
+/**
+ * Drag anchor.
+ *
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function anchor_drag($importance = 'high', $options = NULL)
+{
+    return theme_anchor('#', NULL, $importance, 'theme-anchor-drag', $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -934,6 +964,77 @@ function field_radio_set_item($name, $group, $label, $checked = FALSE, $read_onl
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+// S L I D E R S
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Display a slider as part of a form field.
+ *
+ * @param string $label   form field label
+ * @param string $id      HTML ID
+ * @param int    $value   value
+ * @param int    $min     minimum
+ * @param int    $max     maximum
+ * @param int    $step    step
+ * @param array  $options options
+ *
+ * @return string HTML output
+ */
+
+function field_slider($label, $id, $value, $min, $max, $step, $options)
+{
+    return theme_field_slider($label, $id, $value, $min, $max, $step, $options);
+}
+
+/**
+ * Display slider set.
+ *
+ * @param array  $sliders  list of sliders in HTML format
+ * @param string $input_id input ID
+ * @param array  $options  options
+ *
+ * @return string HTML for field slider set
+ */
+
+function slider_set($sliders, $input_id, $options = NULL)
+{
+    return theme_slider_set($sliders, $input_id, $options);
+}
+
+/**
+ * Display slider set.
+ *
+ * @param array  $sliders  list of sliders in HTML format
+ * @param string $input_id input ID
+ * @param array  $options  options
+ *
+ * @return string HTML for field slider set
+ */
+
+function field_slider_set($sliders, $input_id, $options = NULL)
+{
+    return theme_field_slider_set($sliders, $input_id, $options);
+}
+
+/**
+ * Return slider set item.
+ *
+ * @param string $input_id    input ID
+ * @param int    $value       value
+ * @param int    $min         minimum
+ * @param int    $max         maximum
+ * @param int    $step        step
+ * @param string $orientation orientation
+ * @param array  $options     options
+ *
+ */
+
+function slider_set_item($input_id, $value, $min, $max, $step, $orientation, $options)
+{
+    return theme_slider_set_item($input_id, $value, $min, $max, $step, $orientation, $options);
+}
+
+///////////////////////////////////////////////////////////////////////////////
 // P R O G R E S S  B A R S
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -1237,17 +1338,28 @@ function list_table($title, $anchors, $headers, $items, $options = NULL)
  * @return string HTML
  */
 
-function dialogbox_confirm_delete($message, $items, $confirm_anchor, $cancel_anchor)
+function dialogbox_confirm_delete($message, $items, $confirm_anchor, $cancel_anchor, $options)
 {
     if (! is_array($items))
         $items = array($items);
 
-    return theme_dialogbox_confirm_delete($message, $items, $confirm_anchor, $cancel_anchor);
+    return theme_dialogbox_confirm_delete($message, $items, $confirm_anchor, $cancel_anchor, $options);
 }
 
-function dialogbox_confirm($message, $confirm_anchor, $cancel_anchor)
+/**
+ * Confirm delete dialog box.
+ *
+ * @param string $message        message
+ * @param string $confirm_anchor URL
+ * @param string $cancel_anchor  URL
+ * @param array  $options        options
+ *
+ * @return string HTML
+ */
+
+function dialogbox_confirm($message, $confirm_anchor, $cancel_anchor, $options = NULL)
 {
-    return theme_dialogbox_confirm($message, $confirm_anchor, $cancel_anchor);
+    return theme_dialogbox_confirm($message, $confirm_anchor, $cancel_anchor, $options);
 }
 
 /**
