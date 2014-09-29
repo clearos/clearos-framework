@@ -1604,6 +1604,20 @@ function control_panel($links) {
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Get Image.
+ *
+ * @param string $name    name of image
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function image($name, $options = NULL)
+{
+    return theme_image($name, $options);
+}
+
+/**
  * App Logo.
  *
  * @param string $basename app base name
