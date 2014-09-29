@@ -1524,17 +1524,19 @@ function box_close()
 /**
  * Box footer.
  *
+ * @param string $id      DOM ID
  * @param string $content content
+ * @param array  $options options
  *
  * @return string HTML
  */
 
-function box_footer($id = NULL, $content = '')
+function box_footer($id = NULL, $content = '', $options)
 {
     if ($id == NULL)
         $id = 'bf-' . rand(0, 100);
 
-    return theme_box_footer($id, $content);
+    return theme_box_footer($id, $content, $options);
 }
 
 /**
