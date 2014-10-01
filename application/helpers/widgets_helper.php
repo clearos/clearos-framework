@@ -1511,6 +1511,46 @@ function box_open($title = NULL, $options = NULL)
 }
 
 /**
+ * Open box content, provide content and close container.
+ *
+ * @param string $content content
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function box_content($content, $options = NULL)
+{
+    return theme_box_content($content, $options);
+}
+
+/**
+ * Open box content.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function box_content_open($options = NULL)
+{
+    return theme_box_content_open($options);
+}
+
+/**
+ * Close box box content.
+ *
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function box_content_close()
+{
+    return theme_box_content_close();
+}
+
+/**
  * Close box.
  *
  * @return string HTML
