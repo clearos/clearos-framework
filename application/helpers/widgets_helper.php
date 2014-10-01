@@ -1762,7 +1762,7 @@ function marketplace_developer_field($id, $field, $options)
  * @return string HTML
  */
 
-function marketplace_review($id, $field, $options)
+function marketplace_review($basename, $pseudonym, $options)
 {
     return theme_marketplace_review($basename, $pseudonym, $options = NULL);
 }
