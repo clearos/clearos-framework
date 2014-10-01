@@ -420,10 +420,6 @@ function clearos_get_app_screenshot(basename, index) {
     });
 }
 
-function clearos_screenshots(basename, screenshots) {
-    return theme_screenshots(basename, screenshots);
-}
-
 function clearos_get_app_logo(basename, domid) {
     $.ajax({
         type: 'GET',
