@@ -174,6 +174,7 @@ class Apps
 
                         $apps_list[$app_name]['name'] = $app['name'];
                         $apps_list[$app_name]['basename'] = $app['basename'];
+                        $apps_list[$app_name]['description'] = $app['description'];
                         $apps_list[$app_name]['menu_enabled'] = (isset($app['menu_enabled'])) ? $app['menu_enabled'] : TRUE;
                         $apps_list[$app_name]['user_access'] = (isset($app['user_access'])) ? $app['user_access'] : FALSE;
                         $apps_list[$app_name]['category'] = $app['category'];

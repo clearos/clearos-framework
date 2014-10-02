@@ -1,6 +1,6 @@
 <?php
 
-function form_open($action = '', $attributes = '', $hidden = array())
+function form_open($action = '', $attributes = '', $hidden = array(), $options = NULL)
 {
     $CI =& get_instance();
 
@@ -22,9 +22,14 @@ function form_open($action = '', $attributes = '', $hidden = array())
     // - added a wrapper around form
     // - added default form class
     // - added a newline 
+    // - added default classes
+    $class = "form-horizontal theme-form";
+    if (isset($options) && $options['class'])
+        $class = $options['class'];
+
     // TODO -is div container really necessary? [BC]
     $form = "<div class='theme-form-container'>\n";
-    $form .= '<form class="form-horizontal theme-form" action="'.$action.'"';
+    $form .= '<form class="' . $class . '" action="'.$action.'"';
 
     $form .= _attributes_to_string($attributes, TRUE);
 
