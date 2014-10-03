@@ -46,6 +46,13 @@ echo "
 var auth_options = new Object();
 var sdn_org = '';
 var internet_connection = false;
+var UNIT = [];
+UNIT[0] = '';
+UNIT[9] = '';
+UNIT[100] = '" . lang('marketplace_monthly') . "';
+UNIT[1000] = '" . lang('marketplace_1_year') . "';
+UNIT[2000] = '" . lang('marketplace_2_year') . "';
+UNIT[3000] = '" . lang('marketplace_3_year') . "';
 var lang = new Object();
 var lang_yes = '" . lang("base_yes") . "';
 var lang_no = '" . lang("base_no") . "';
