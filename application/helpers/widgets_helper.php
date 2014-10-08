@@ -518,6 +518,29 @@ function field_button_set($buttons, $options = NULL)
 //
 ///////////////////////////////////////////////////////////////////////////////
 
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  B A N N E R
+///////////////////////////////////////////////////////////////////////////////
+
+/**
+ * Displays a single block of text instead of showing a field/value pair.
+ *
+ * @param string $text    text shown
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function field_banner($text, $options = NULL)
+{
+    return theme_field_banner($text, $options);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// F I E L D  V I E W
+///////////////////////////////////////////////////////////////////////////////
+// FIXME: It looks like field_view and field_info do the same thing.  Merge.
+
 /**
  * Field view.
  *
@@ -536,7 +559,7 @@ function field_view($label, $text, $name = NULL, $value = NULL, $options = NULL)
     $input_id = (isset($options['id'])) ? $options['id'] : $implied_id;
 
     return theme_field_view($label, $text, $name, $value, $input_id, $options);
-} 
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // F I E L D  I N P U T

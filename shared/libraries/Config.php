@@ -289,6 +289,9 @@ class Config
     {
         Logger::profile(__METHOD__, __LINE__);
 
+        // FIXME: always use home_reports for ClearOS 7 beta
+        return 'home_reports';
+
         if (clearos_app_installed('professional_reports'))
             return 'professional_reports';
         else

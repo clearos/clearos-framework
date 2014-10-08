@@ -391,12 +391,6 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        /*
-        // TODO: what to do with help and summary widgets in control panel mode
-        if ($this->framework->session->userdata['theme_mode'] === self::MODE_CONTROL_PANEL) {
-        }
-        */
-
         if (empty($this->data))
             $this->_load_meta_data();
 
@@ -406,7 +400,8 @@ class MY_Page
         if (isset($options['breadcrumb_links']))
             $this->data['breadcrumb_links'] = $options['breadcrumb_links'];
 
-        //if (empty($this->data['type'])) TODO
+        // Set default page type, but not if we are just handling a "form only" request
+        if (!$this->framework->form_only)
             $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         // Load wizard view if enabled
@@ -564,91 +559,63 @@ class MY_Page
         $this->data['title'] = $title;
         $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
-        // Control panel style
-        //--------------------
+        // Non-intuitive, but this saves app developers from handling a 
+        // useless variable in their controllers.  The form_only variable
+        // is set to TRUE to indicate that only the raw form should be 
+        // loaded (no headers, no footers, etc.).
 
-        if ($this->framework->session->userdata['theme_mode'] === self::MODE_CONTROL_PANEL) {
-            $app_data = $this->_load_app_data();
+        $this->framework->form_only = TRUE;
 
-            // FIXME: the logic below for controllers needs to be introduced here... maybe
-            foreach ($controllers as $controller) {
-                $basename = preg_replace('/.*\//', '', $controller);
-                if (isset($app_data['controllers'][$basename]['title']))
-                    $data[$controller]['title'] = $app_data['controllers'][$basename]['title'];
-                else if (isset($app_data['controllers'][$controller]['title']))
-                    $data[$controller]['title'] = $app_data['controllers'][$controller]['title'];
+        // The controllers parameter can contain a simple list:
+        // dhcp/settings, dhcp/subnets, dhcp/leases
+        //
+        // Or it can be a more complex hash array with detailed
+        // information on the controller:
+        //   [controller] => network_report/iface
+        //   [method] => dashboard
+        //   [params] => eth0
+
+        $this->data['widget_views'] = array();
+
+        foreach ($controllers as $controller) {
+            ob_start();
+            if (is_array($controller)) {
+                $basename = preg_replace('/.*\//', '', $controller['controller']);
+                $method = $controller['method'];
+
+                $this->framework->load->module($controller['controller']);
+
+                if (empty($controller['params']))
+                    $this->framework->$basename->$method();
                 else
-                    $data[$controller]['title'] = $controller;
+                    $this->framework->$basename->$method($controller['params']);
+            } else {
+                $basename = preg_replace('/.*\//', '', $controller);
+
+                $this->framework->load->module($controller);
+                $this->framework->$basename->index();
             }
 
-            // Add common widgets
-            $data[$app_data['basename'] . '/summary']['title'] = lang('base_summary');
-            $data[$app_data['basename'] . '/help']['title'] = lang('base_help');
-
-            $this->data['app_view'] = theme_control_panel($data);
-
-            // Full desktop style
-            //-------------------
-
-        } else {
-            // Non-intuitive, but this saves app developers from handling a 
-            // useless variable in their controllers.  The form_only variable
-            // is set to TRUE to indicate that only the raw form should be 
-            // loaded (no headers, no footers, etc.).
-
-            $this->framework->form_only = TRUE;
-
-            // The controllers parameter can contain a simple list:
-            // dhcp/settings, dhcp/subnets, dhcp/leases
-            //
-            // Or it can be a more complex hash array with detailed
-            // information on the controller:
-            //   [controller] => network_report/iface
-            //   [method] => dashboard
-            //   [params] => eth0
-
-            $this->data['widget_views'] = array();
-
-            foreach ($controllers as $controller) {
-                ob_start();
-                if (is_array($controller)) {
-                    $basename = preg_replace('/.*\//', '', $controller['controller']);
-                    $method = $controller['method'];
-
-                    $this->framework->load->module($controller['controller']);
-
-                    if (empty($controller['params']))
-                        $this->framework->$basename->$method();
-                    else
-                        $this->framework->$basename->$method($controller['params']);
-                } else {
-                    $basename = preg_replace('/.*\//', '', $controller);
-
-                    $this->framework->load->module($controller);
-                    $this->framework->$basename->index();
-                }
-
-                $this->data['widget_views'][] = ob_get_clean();
-            }
-
-            if ($options['type'] == MY_Page::TYPE_DASHBOARD_WIDGET) {
-                $this->framework->form_only = FALSE;
-                return $this->data['widget_views'];
-            }
-
-            $this->data['app_view'] = implode(' ', $this->data['widget_views']);
-
-            // Now we set form_only back to the default
-            $this->framework->form_only = FALSE;
-
-            $app = $this->framework->uri->segment(1);
-
-            $this->data['page_help'] = $this->_get_help_view($app);
-            $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
-            $this->data['page_wizard_intro'] = $this->_get_wizard_intro_view($app);
-            $this->data['page_summary'] = $this->_get_summary_view($app);
-            $this->data['page_report'] = $this->_get_report_view($app);
+            $this->data['widget_views'][] = ob_get_clean();
         }
+
+        if ($options['type'] == MY_Page::TYPE_DASHBOARD_WIDGET) {
+            $this->framework->form_only = FALSE;
+            return $this->data['widget_views'];
+        }
+
+        $this->data['app_view'] = implode(' ', $this->data['widget_views']);
+
+        // Now we set form_only back to the default
+        $this->framework->form_only = FALSE;
+
+        $app = $this->framework->uri->segment(1);
+
+        $this->data['page_help'] = $this->_get_help_view($app);
+        $this->data['page_inline_help'] = $this->_get_inline_help_view($app);
+        $this->data['page_wizard_intro'] = $this->_get_wizard_intro_view($app);
+        $this->data['page_summary'] = $this->_get_summary_view($app);
+        $this->data['page_report'] = $this->_get_report_view($app);
 
         $this->_display_page();
     }
@@ -754,7 +721,6 @@ class MY_Page
         $this->_load_meta_data();
 
         $this->data['title'] = lang('base_help');
-        // $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_help_view($app);
 
         $this->_display_page();
@@ -780,7 +746,6 @@ class MY_Page
         $this->_load_meta_data();
 
         $this->data['title'] = lang('base_dashboard_report');
-        // $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_report_view($app);
 
         $this->_display_page();
@@ -806,7 +771,6 @@ class MY_Page
         $this->_load_meta_data();
 
         $this->data['title'] = lang('base_summary');
-        // $this->data['type'] = MY_Page::TYPE_CONFIGURATION;
         $this->data['app_view'] = $this->_get_summary_view($app);
 
         $this->_display_page();
