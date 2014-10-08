@@ -504,5 +504,24 @@ function clearos_load_lang(apps, obj) {
     });
 }
 
+/**
+ * Converts a value to a human-readable format, e.g. integer IPs into quad-format.
+ */
+
+function clearos_human_readable(value, type) {
+    if (type == 'ip') {
+        var ip = value%256;
+
+        for (var i = 3; i > 0; i--) {
+            value = Math.floor(value/256);
+            ip = value%256 + '.' + ip;
+        }
+
+        return ip;
+    } else {
+        return value;
+    }
+}
+
 ";
-// vim: syntax=php ts=4
+// vim: syntax=javascript ts=4
