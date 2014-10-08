@@ -275,7 +275,20 @@ function clearos_exception_message($exception)
     return '';
 }
 
-  
+/**
+ * Returns debug state.
+ *
+ * @return boolean TRUE if boolean is valid
+ */
+
+function clearos_is_debug()
+{
+    if (Config::$debug_mode)
+        return TRUE;
+    else
+        return FALSE;
+}
+
 /**
  * Common boolean validation for ClearOS.
  *
