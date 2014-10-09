@@ -875,8 +875,9 @@ $meta
 <!-- Jquery -->
 <script type='text/javascript' src='/js/jquery.min.js'></script>
 
-<!-- Global Functions -->
+<!-- Global and theme functions -->
 <script type='text/javascript' src='/js/globals.js.php'></script>
+<script type='text/javascript' src='/js/widgets.js.php'></script>
 ";
         // <head> extras defined in theme (head.php)
         //------------------------------------------

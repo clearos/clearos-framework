@@ -9,7 +9,7 @@
  * @package    Application
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2011 ClearFoundation
+ * @copyright  2011-2014 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
@@ -39,60 +39,8 @@ $bootstrap = getenv('CLEAROS_BOOTSTRAP') ? getenv('CLEAROS_BOOTSTRAP') : '/usr/c
 require_once $bootstrap . '/bootstrap.php';
 
 ///////////////////////////////////////////////////////////////////////////////
-// A N C H O R S
+// A N C H O R S - S T A N D A R D
 ///////////////////////////////////////////////////////////////////////////////
-
-/**
- * Custom anchor.
- *
- * @param string $url        URL of anchor
- * @param string $text       anchor text
- * @param string $importance importance of the button ('high' or 'low')
- * @param array  $options    options
- *
- * @return string HTML
- */
-
-function anchor_custom($url, $text, $importance = 'high', $options = NULL)
-{
-    return theme_anchor($url, $text, $importance, 'theme-anchor-custom', $options);
-}
-
-/**
- * Dialog box anchor.
- *
- * @param string $id         HTML ID
- * @param string $text       anchor text
- * @param string $importance importance of the button ('high' or 'low')
- * @param array  $options    options
- *
- * @return string HTML
- */
-
-function anchor_dialog($id, $text, $importance = 'high', $options = NULL)
-{
-    $options['id'] = $id;
-
-    return theme_anchor_dialog('#', $text, $importance, 'theme-anchor-dialog', $options);
-}
-
-/**
- * Javascript anchor.
- *
- * @param string $id         HTML ID
- * @param string $text       anchor text
- * @param string $importance importance of the button ('high' or 'low')
- * @param array  $options    options
- *
- * @return string HTML
- */
-
-function anchor_javascript($id, $text, $importance = 'high', $options = NULL)
-{
-    $options['id'] = $id;
-
-    return theme_anchor('#', $text, $importance, 'theme-anchor-javascript', $options);
-}
 
 /**
  * Add anchor.
@@ -262,22 +210,6 @@ function anchor_select($url, $importance = 'low', $options = NULL)
 /**
  * View anchor.
  *
- * @param string $button_text main button text
- * @param arrays $urls        array of URL/text key/value pairs
- * @param string $importance  importance of the button ('high' or 'low')
- * @param array  $options     options
- *
- * @return string HTML
- */
-
-function anchor_multi($button_text, $urls, $importance = 'high', $options = NULL)
-{
-    return theme_multi_anchor($button_text, $urls, $importance, 'theme-anchor-multi', $options);
-}
-
-/**
- * View anchor.
- *
  * @param string $url        URL of anchor
  * @param string $importance importance of the button ('high' or 'low')
  * @param array  $options    options
@@ -290,18 +222,58 @@ function anchor_view($url, $importance = 'high', $options = NULL)
     return theme_anchor($url, lang('base_view'), $importance, 'theme-anchor-view', $options);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// A N C H O R S - S P E C I A L
+///////////////////////////////////////////////////////////////////////////////
+
 /**
- * Drag anchor.
+ * Custom anchor.
  *
+ * @param string $url        URL of anchor
+ * @param string $text       anchor text
  * @param string $importance importance of the button ('high' or 'low')
  * @param array  $options    options
  *
  * @return string HTML
  */
 
-function anchor_drag($importance = 'high', $options = NULL)
+function anchor_custom($url, $text, $importance = 'high', $options = NULL)
 {
-    return theme_anchor('#', NULL, $importance, 'theme-anchor-drag', $options);
+    return theme_anchor($url, $text, $importance, 'theme-anchor-custom', $options);
+}
+
+/**
+ * Javascript anchor.
+ *
+ * @param string $id         HTML ID
+ * @param string $text       anchor text
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function anchor_javascript($id, $text, $importance = 'high', $options = NULL)
+{
+    $options['id'] = $id;
+
+    return theme_anchor('#', $text, $importance, 'theme-anchor-javascript', $options);
+}
+
+/**
+ * Multi-select anchor.
+ *
+ * @param string $urls       URLs of anchor
+ * @param string $text       anchor text
+ * @param string $importance importance of the button ('high' or 'low')
+ * @param array  $options    options
+ *
+ * @return string HTML
+ */
+
+function anchor_multi($urls, $text, $importance = 'high', $options = NULL)
+{
+    return theme_anchor($urls, $text, $importance, 'theme-anchor-multi', $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1245,9 +1217,9 @@ function sidebar_footer($options = NULL)
  * @return string HTML
  */
 
-function chart_widget($title, $payload, $options = NULL)
+function chart_container($title, $payload, $options = NULL)
 {
-    return theme_chart_widget($title, $payload, $options);
+    return theme_chart_container($title, $payload, $options);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1716,7 +1688,6 @@ function screenshot_set($id, $images = NULL, $options = NULL)
 /**
  * Returns marketplace filter options.
  *
-function theme_marketplace_filter($name, $values, $selected = 'all', $options)
  * @param string $name     name
  * @param array  $values   values
  * @param string $selected selected value

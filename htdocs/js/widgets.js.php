@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Global javascript helper functions.
+ * Javascript helpers for theming.
  *
  * The functions is javascript equivalent to the framework/shared/globals.php
  * file.  It's a place to put functions that we think should be in the global
@@ -48,26 +48,92 @@ header('Content-Type: application/x-javascript');
 
 echo "
 
-/**
- * Converts a value to a human-readable format, e.g. integer IPs into quad-format.
- *
- * @param string $value value
- * @param string $type  data type
- */
+// Anchors
+//--------
 
-function clearos_human_readable(value, type) {
-    if (type == 'ip') {
-        var ip = value%256;
+function clearos_anchor(href, text, options) {
+    return theme_anchor(href, text, options);
+}
 
-        for (var i = 3; i > 0; i--) {
-            value = Math.floor(value/256);
-            ip = value%256 + '.' + ip;
-        }
+// Dialog box
+//-----------
 
-        return ip;
-    } else {
-        return value;
-    }
+function clearos_dialog_box(id, title, message, options) {
+    return theme_dialog_box(id, title, message, options);
+}
+
+function clearos_dialog_close(obj) {
+    return theme_dialog_close(obj);
+}
+
+// Infobox
+//---------
+
+function clearos_infobox_warning(title, message, options)
+{
+    return theme_infobox('warning', title, message, options);
+}
+
+function clearos_infobox_info(title, message, options)
+{
+    return theme_infobox('info', title, message, options);
+}
+
+function clearos_modal_infobox_open(id, options) {
+    theme_modal_infobox_open(id, options);
+}
+
+function clearos_modal_infobox_close(id, options) {
+    theme_modal_infobox_close(id, options);
+}
+
+// Progress bar
+//-------------
+
+function clearos_progress_bar(value, options)
+{
+    return theme_progress_bar(value, options);
+}
+
+function clearos_set_progress_bar(id, value, options)
+{
+    return theme_set_progress_bar(id, value, options);
+}
+
+// Loading
+//--------
+
+function clearos_loading(options)
+{
+    return theme_loading(options);
+}
+
+// Screenshots
+//------------
+
+function clearos_screenshots(basename, screenshots) {
+    return theme_screenshots(basename, screenshots);
+}
+
+// Related apps
+//-------------
+
+function clearos_related_apps(type, list) {
+    theme_related_app(type, list);
+}
+
+// Summary table
+//--------------
+
+function clearos_summary_table(table_id, data, data_type, urls, highlight, sort, report_id) {
+    return theme_summary_table(table_id, data, data_type, urls, highlight, sort, report_id);
+}
+
+// Chart
+//------
+
+function clearos_chart(chart_id, chart_type, data, format, series, series_labels, series_units, series_title) {
+    return theme_chart(chart_id, chart_type, data, format, series, series_labels, series_units, series_title);
 }
 
 ";
