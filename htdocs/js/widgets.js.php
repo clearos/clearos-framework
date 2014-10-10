@@ -108,6 +108,14 @@ function clearos_loading(options)
     return theme_loading(options);
 }
 
+// Loaded
+//--------
+
+function clearos_loaded(id)
+{
+    return theme_loaded(id);
+}
+
 // Screenshots
 //------------
 
