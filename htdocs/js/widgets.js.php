@@ -140,8 +140,15 @@ function clearos_summary_table(table_id, data, data_type, urls, highlight, sort,
 // Chart
 //------
 
-function clearos_chart(chart_id, chart_type, data, format, series, series_labels, series_units, series_title) {
-    return theme_chart(chart_id, chart_type, data, format, series, series_labels, series_units, series_title);
+function clearos_chart(chart_id, chart_type, data, format, series, series_labels, series_units, series_title, options) {
+    return theme_chart(chart_id, chart_type, data, format, series, series_labels, series_units, series_title, options);
+}
+
+// Pie Chart
+//----------
+
+function clearos_pie_chart(chart_id, data, options) {
+    return theme_chart(chart_id, 'pie', data, '', '', '', '', '', options);
 }
 
 ";
