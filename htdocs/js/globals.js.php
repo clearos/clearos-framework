@@ -70,5 +70,11 @@ function clearos_human_readable(value, type) {
     }
 }
 
+$(document).ready(function() {
+    $('#app-info-action').on('click', function (e) {
+        e.preventDefault();
+        clearos_modal_infobox_open('app-info-content');
+    });
+});
 ";
 // vim: syntax=javascript ts=4

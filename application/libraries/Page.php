@@ -400,6 +400,26 @@ class MY_Page
         if (isset($options['breadcrumb_links']))
             $this->data['breadcrumb_links'] = $options['breadcrumb_links'];
 
+        // Add Info button
+        $this->data['breadcrumb_links']['app-info'] = array(
+            'url' => '#',
+            'tag' => lang('base_information'),
+            'id' => 'app-info-action',
+            'display_tag' => FALSE,
+            'button' => FALSE,
+            'tag_position' => 'right'
+        );
+        // Add Documentation button
+        $this->data['breadcrumb_links']['app-documentation'] = array(
+            'url' => 'http://www.clearcenter.com/redirect/ClearOS/6.2.0/userguide/' . $this->data['current_basename'],
+            'tag' => lang('base_documentation'),
+            'id' => 'app-documentation',
+            'display_tag' => FALSE,
+            'button' => FALSE,
+            'target' => '_blank',
+            'tag_position' => 'right'
+        );
+
         // Set default page type, but not if we are just handling a "form only" request
         if (!$this->framework->form_only)
             $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
@@ -616,6 +636,26 @@ class MY_Page
         $this->data['page_wizard_intro'] = $this->_get_wizard_intro_view($app);
         $this->data['page_summary'] = $this->_get_summary_view($app);
         $this->data['page_report'] = $this->_get_report_view($app);
+
+        // Add Info button
+        $this->data['breadcrumb_links']['app-info'] = array(
+            'url' => '#',
+            'tag' => lang('base_information'),
+            'id' => 'app-info-action',
+            'display_tag' => FALSE,
+            'button' => FALSE,
+            'tag_position' => 'right'
+        );
+        // Add Documentation button
+        $this->data['breadcrumb_links']['app-documentation'] = array(
+            'url' => 'http://www.clearcenter.com/redirect/ClearOS/6.2.0/userguide/' . $this->data['current_basename'],
+            'tag' => lang('base_documentation'),
+            'id' => 'app-documentation',
+            'display_tag' => FALSE,
+            'button' => FALSE,
+            'target' => '_blank',
+            'tag_position' => 'right'
+        );
 
         $this->_display_page();
     }
