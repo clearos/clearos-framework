@@ -1,6 +1,6 @@
 <?php
 
-function form_open($action = '', $attributes = '', $hidden = array(), $options = NULL)
+function form_open($action = '', $attributes = '', $hidden = array())
 {
     $CI =& get_instance();
 
@@ -18,17 +18,7 @@ function form_open($action = '', $attributes = '', $hidden = array(), $options =
     // If no action is provided then set to the current url
     $action OR $action = $CI->config->site_url($CI->uri->uri_string());
 
-    // ClearFoundation
-    // - added a wrapper around form
-    // - added default form class
-    // - added a newline 
-    // - added default classes
     $class = "form-horizontal theme-form";
-    if (isset($options) && $options['class'])
-        $class = $options['class'];
-
-    // TODO -is div container really necessary? [BC]
-    $form = "<div class='theme-form-container'>\n";
     $form .= '<form class="' . $class . '" action="'.$action.'"';
 
     $form .= _attributes_to_string($attributes, TRUE);
@@ -67,10 +57,8 @@ function form_fieldset($legend_text = '', $attributes = array())
 }
 
 
-function form_close($extra = '')
+function form_close()
 {
-    // ClearFoundation add a wrapper around form
-    // TODO Is div wrapper really necessary?? [BC]
-    return "</form>".$extra."</div>\n";
+    return '</form>';
 }
 
