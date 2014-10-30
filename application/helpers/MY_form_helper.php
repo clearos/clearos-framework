@@ -18,9 +18,7 @@ function form_open($action = '', $attributes = '', $hidden = array())
     // If no action is provided then set to the current url
     $action OR $action = $CI->config->site_url($CI->uri->uri_string());
 
-    $class = "form-horizontal theme-form";
-    $form .= '<form class="' . $class . '" action="'.$action.'"';
-
+    $form .= '<form class="theme-form" action="' . $action . '"';
     $form .= _attributes_to_string($attributes, TRUE);
 
     $form .= '>';
