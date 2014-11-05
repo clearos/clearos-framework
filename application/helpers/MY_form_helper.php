@@ -1,6 +1,6 @@
 <?php
 
-function form_open($action = '', $attributes = '', $hidden = array())
+function form_open($action = '', $attributes = '', $hidden = array(), $options = array())
 {
     $CI =& get_instance();
 
@@ -18,7 +18,14 @@ function form_open($action = '', $attributes = '', $hidden = array())
     // If no action is provided then set to the current url
     $action OR $action = $CI->config->site_url($CI->uri->uri_string());
 
-    $form .= '<form class="theme-form" action="' . $action . '"';
+    $form = '<form action="'.$action.'"';
+
+    // Add hook to ClearOS theme engine
+    if (function_exists('theme_form_classes')) {
+        $theme_classes = implode(' ', theme_form_classes($options));
+        $form .= ' class="' . $theme_classes . '" ';
+    }
+
     $form .= _attributes_to_string($attributes, TRUE);
 
     $form .= '>';
