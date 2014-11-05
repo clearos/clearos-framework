@@ -685,7 +685,8 @@ class MY_Page
 
             $this->data['type'] = MY_Page::TYPE_EXCEPTION;
             $this->data['title'] = lang('base_ooops');
-            $this->data['app_view'] = infobox_warning(lang('base_ooops'), lang('base_unhandled_exception') . ':TODO: ' . clearos_exception_message($exception));
+            // FIXME: add alert?  backtrace?
+            $this->data['app_view'] = infobox_warning(lang('base_ooops'), clearos_exception_message($exception));
             $this->data['exception'] = clearos_exception_message($exception);
             $this->_display_page();
         }
