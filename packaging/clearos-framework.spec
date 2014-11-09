@@ -39,7 +39,7 @@ cp -r system $RPM_BUILD_ROOT/usr/clearos/framework
 
 install -m 0644 license.txt $RPM_BUILD_ROOT/usr/clearos/framework
 install -m 0644 packaging/framework.conf $RPM_BUILD_ROOT/usr/clearos/sandbox/etc/httpd/conf.d
-install -m 0644 packaging/framework-permissions%{dist}.conf $RPM_BUILD_ROOT/usr/clearos/sandbox/etc/httpd/conf.d
+install -m 0644 packaging/framework-permissions.conf $RPM_BUILD_ROOT/usr/clearos/sandbox/etc/httpd/conf.d
 
 %pre
 # TODO: Remove in ClearOS 7 - upgrade workaround for 6.4
@@ -78,4 +78,4 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(1777,root,root) /var/clearos/framework/tmp
 /usr/clearos/framework
 /usr/clearos/sandbox/etc/httpd/conf.d/framework.conf
-/usr/clearos/sandbox/etc/httpd/conf.d/framework-permissions%{dist}.conf 
+/usr/clearos/sandbox/etc/httpd/conf.d/framework-permissions.conf 
