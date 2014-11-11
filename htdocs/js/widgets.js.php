@@ -87,6 +87,13 @@ function clearos_modal_infobox_close(id, options) {
     theme_modal_infobox_close(id, options);
 }
 
+// Format a date/timestamp
+//-------------------------
+
+function clearos_format_date(value, format) {
+    return theme_format_date(value, format);
+}
+
 // Progress bar
 //-------------
 
