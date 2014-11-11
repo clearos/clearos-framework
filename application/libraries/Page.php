@@ -1001,6 +1001,14 @@ $meta
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
+        // The 'hide_app_description' is a standard (but optional) setting in the theme
+        // that allows the themer to expose in a setting whether to hide the information bar on an app
+        $theme = $this->framework->session->userdata('theme');
+        if (isset($this->framework->session->userdata['theme_' . $theme]['hide_app_description'])) {
+             if ($this->framework->session->userdata['theme_' . $theme]['hide_app_description'])
+                 return "";
+        }
+
         $data = $this->_load_app_data($app);
 
         // TODO: Move these to a driver package
