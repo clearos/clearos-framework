@@ -977,16 +977,7 @@ $meta
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        // TODO: just a quick hack to load the Marketplace filters.
-        // Implement this properly.
-
-        if ($app == 'marketplace') {
-            $callback = $this->framework->load->view('marketplace/filter', NULL, TRUE);
-        } else {
-            $callback = '';
-        }
-
-        return $callback;
+        return '';
     }
 
     /**
