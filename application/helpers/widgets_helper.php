@@ -1649,7 +1649,8 @@ function control_panel($links) {
 
 function image($name, $options = NULL)
 {
-    return theme_image($name, $options);
+    $parts = explode('/', uri_string());
+    return theme_image($name, $parts[0], $options);
 }
 
 /**
