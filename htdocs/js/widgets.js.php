@@ -123,6 +123,13 @@ function clearos_loaded(id)
     return theme_loaded(id);
 }
 
+// Marketplace (APP Rating)
+//-------------------------
+
+function clearos_star_rating(rating) {
+    return theme_star_rating(rating);
+}
+
 // Screenshots
 //------------
 
