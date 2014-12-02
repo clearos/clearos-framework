@@ -1591,7 +1591,7 @@ $meta
                 'tag' => lang('base_previous'),
                 'id' => 'wizard_nav_previous',
                 'display_tag' => TRUE,
-                'button' => 'high',
+                'button' => 'low',
                 'tag_position' => 'right'
             );
         if ($current < count($steps))

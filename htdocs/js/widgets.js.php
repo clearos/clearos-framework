@@ -144,6 +144,13 @@ function clearos_related_apps(type, list) {
     theme_related_app(type, list);
 }
 
+// Hook to add key/value pair to sidebar
+//-------------
+
+function clearos_add_sidebar_pair(key, value) {
+    theme_add_sidebar_pair(key, value);
+}
+
 // Summary table
 //--------------
 
