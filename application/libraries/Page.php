@@ -1225,8 +1225,12 @@ $meta
             $data['wizard_description'] = $data['controllers'][$segments[2]]['wizard_description'];
         }
 
-        if (isset($segments[4]) && isset($data['controllers'][$segments[4]]['wizard_name'])) {
-            $data['wizard_name'] = $data['controllers'][$segments[4]]['wizard_name'];
+        if (isset($segments[4])) {
+            // hack for Marketplace /wizard/selection controller...it's really dirty in here.
+            if (isset($data['controllers'][$segments[4]]['wizard_name']))
+                $data['wizard_name'] = $data['controllers'][$segments[4]]['wizard_name'];
+            else
+                unset($data['wizard_name']);
         } else if (isset($segments[3]) && isset($data['controllers'][$segments[3]]['wizard_name'])) {
             $data['wizard_name'] = $data['controllers'][$segments[3]]['wizard_name'];
         } else if (isset($segments[2]) && isset($data['controllers'][$segments[2]]['wizard_name'])) {
@@ -1587,7 +1591,7 @@ $meta
                 'tag' => lang('base_previous'),
                 'id' => 'wizard_nav_previous',
                 'display_tag' => TRUE,
-                'button' => TRUE,
+                'button' => 'high',
                 'tag_position' => 'right'
             );
         if ($current < count($steps))
