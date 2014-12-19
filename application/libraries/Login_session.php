@@ -130,8 +130,16 @@ class MY_Login_Session
         if (clearos_load_library('base/Authorization')) {
             $authorization = new Authorization();
 
-            if ($authorization->authenticate($username, $password))
+            if ($authorization->authenticate($username, $password)) {
                 $is_valid = TRUE;
+                // Set some acl values for main nav
+                $nav_access = array(
+                    'dashboard' => $authorization->check_acl($username, '/app/dashboard'),
+                    'marketplace' => $authorization->check_acl($username, '/app/marketplace'),
+                    'support' => $authorization->check_acl($username, '/app/support')
+                );
+                $this->framework->session->set_userdata('nav_acl', $nav_access);
+            }
         }
 
         return $is_valid;
