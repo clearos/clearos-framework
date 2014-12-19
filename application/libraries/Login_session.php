@@ -45,7 +45,6 @@ require_once $bootstrap . '/bootstrap.php';
 use \clearos\framework\Logger as Logger;
 use \clearos\apps\base\Authorization as Authorization;
 use \clearos\apps\base\OS as OS;
-use \clearos\apps\base\Product as Product;
 use \clearos\apps\base\Webconfig as Webconfig;
 use \clearos\apps\language\Locale as Locale;
 use \clearos\apps\network\Hostname as Hostname;
@@ -312,28 +311,19 @@ class MY_Login_Session
             setlocale(LC_ALL, $session['lang_code']);
         }
 
-        // Product Info
-        //-------------
+        // OS Info
+        //--------
 
         $session['os_name'] = 'Linux';
         $session['os_version'] = '2.6';
         $session['redirect'] = '';
 
-        if (clearos_load_library('base/Product')) {
-            try {
-                $product = new Product();
-                $session['os_name'] = $product->get_name();
-                $session['os_version'] = $product->get_version();
-                $session['os_base_version'] = $product->get_base_version();
-            } catch (Exception $e) {
-                // Use default
-            }
-        } else if (clearos_load_library('base/OS')) {
+        if (clearos_load_library('base/OS')) {
             try {
                 $os = new OS();
                 $session['os_name'] = $os->get_name();
                 $session['os_version'] = $os->get_version();
-                $session['os_base_version'] = $session['os_version'];
+                $session['os_base_version'] = $os->get_base_version();
             } catch (Exception $e) {
                 // Use default
             }
