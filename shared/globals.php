@@ -161,16 +161,17 @@ function clearos_app_installed($app)
 
 function clearos_version()
 {
-    $contents = file_get_contents('/etc/product');    
+    $contents = file_get_contents('/etc/clearos-release');
     $matches = array();
 
-    if (preg_match('/base_version\s*=\s*(\d+)/s', $contents, $matches))
-        $version = (int)$matches[1];
+    $osinfo = explode(" release ", $contents);
 
-    if (is_int($version))
-        return $version;
-    else
+    if (count($osinfo) != 2)
         return 0;
+
+    $version = preg_replace('/\..*/', '', $osinfo[1]);
+
+    return $version;
 }
 
 /**
