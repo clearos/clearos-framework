@@ -75,6 +75,10 @@ $(document).ready(function() {
         e.preventDefault();
         clearos_modal_infobox_open('app-info-content');
     });
+    $('#app-tips-action').on('click', function (e) {
+        e.preventDefault();
+        clearos_modal_infobox_open('app-tips-content');
+    });
 });
 ";
 // vim: syntax=javascript ts=4

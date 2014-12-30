@@ -400,6 +400,17 @@ class MY_Page
         if (isset($options['breadcrumb_links']))
             $this->data['breadcrumb_links'] = $options['breadcrumb_links'];
 
+        // Add Tip button
+        if (isset($this->data['tooltips'])) {
+            $this->data['breadcrumb_links']['app-tip'] = array(
+                'url' => '#',
+                'tag' => lang('base_tips_and_hints'),
+                'id' => 'app-tips-action',
+                'display_tag' => FALSE,
+                'button' => FALSE,
+                'tag_position' => 'right'
+            );
+        }
         // Add Info button
         $this->data['breadcrumb_links']['app-info'] = array(
             'url' => '#',
@@ -637,6 +648,17 @@ class MY_Page
         $this->data['page_summary'] = $this->_get_summary_view($app);
         $this->data['page_report'] = $this->_get_report_view($app);
 
+        // Add Tip button
+        if (isset($this->data['tooltips'])) {
+            $this->data['breadcrumb_links']['app-tip'] = array(
+                'url' => '#',
+                'tag' => lang('base_tips_and_hints'),
+                'id' => 'app-tips-action',
+                'display_tag' => FALSE,
+                'button' => FALSE,
+                'tag_position' => 'right'
+            );
+        }
         // Add Info button
         $this->data['breadcrumb_links']['app-info'] = array(
             'url' => '#',
@@ -1475,6 +1497,7 @@ $meta
         $this->data['current_name'] = $app_data['name'];
         $this->data['current_category'] = $app_data['category'];
         $this->data['current_subcategory'] = $app_data['subcategory'];
+        $this->data['tooltips'] = $app_data['tooltip'];
         
         $this->data = array_merge($this->data, $session_data, $menu_data);
     }
