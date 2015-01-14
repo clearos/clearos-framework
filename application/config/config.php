@@ -254,7 +254,10 @@ else
 $config['sess_cookie_name']		= 'clearos_session';
 $config['sess_expiration']		= 7200;
 $config['sess_expire_on_close']	= TRUE;
-$config['sess_encrypt_cookie']	= FALSE;
+if (isset($_SERVER['SERVER_PORT']) && ($_SERVER['SERVER_PORT'] == 1501))
+    $config['sess_encrypt_cookie']	= FALSE;
+else
+    $config['sess_encrypt_cookie']	= TRUE;
 $config['sess_use_database']	= FALSE;
 $config['sess_table_name']		= 'ci_sessions';
 $config['sess_match_ip']		= FALSE;
