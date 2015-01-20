@@ -314,7 +314,7 @@ class MY_Login_Session
         // OS Info
         //--------
 
-        $session['os_name'] = 'Linux';
+        $session['os_name'] = 'ClearOS';
         $session['os_version'] = '2.6';
         $session['redirect'] = '';
 
