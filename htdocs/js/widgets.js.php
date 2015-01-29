@@ -79,6 +79,16 @@ function clearos_infobox_info(title, message, options)
     return theme_infobox('info', title, message, options);
 }
 
+function clearos_infobox_success(title, message, options)
+{
+    return theme_infobox('success', title, message, options);
+}
+
+function clearos_infobox_critical(title, message, options)
+{
+    return theme_infobox('critical', title, message, options);
+}
+
 function clearos_modal_infobox_open(id, options) {
     theme_modal_infobox_open(id, options);
 }
