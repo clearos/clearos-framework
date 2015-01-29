@@ -157,8 +157,8 @@ function clearos_related_apps(type, list) {
 // Hook to add key/value pair to sidebar
 //-------------
 
-function clearos_add_sidebar_pair(key, value) {
-    theme_add_sidebar_pair(key, value);
+function clearos_add_sidebar_pair(key, value, options) {
+    theme_add_sidebar_pair(key, value, options);
 }
 
 // Summary table
