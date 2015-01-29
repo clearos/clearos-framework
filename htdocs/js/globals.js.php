@@ -71,6 +71,8 @@ function clearos_human_readable(value, type) {
 }
 
 $(document).ready(function() {
+    $('#wizard_nav_next').removeAttr('disabled');
+    $('#wizard_nav_previous').removeAttr('disabled');
     $('#app-info-action').on('click', function (e) {
         e.preventDefault();
         clearos_modal_infobox_open('app-info-content');
