@@ -777,12 +777,14 @@ function field_multiselect_dropdown($name, $values, $selected, $label, $use_valu
 function field_toggle_enable_disable($name, $value, $label, $read_only = FALSE, $options = NULL)
 {
     $value = ($read_only) ? $value : set_value($name, $value);
+    if (isset($value) || $value == '' || $value == NULL)
+        $value = 0;
     $error = form_error($name);
     $input_id = (isset($options['id'])) ? $options['id'] : convert_to_id($name);
 
     $values = array(
-        '0' => lang('base_disabled'),
-        '1' => lang('base_enabled')
+        0 => lang('base_disabled'),
+        1 => lang('base_enabled')
     );
 
     if ($read_only) {
