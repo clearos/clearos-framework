@@ -48,11 +48,18 @@ header('Content-Type: application/x-javascript');
 
 echo "
 
-// Anchors
-//--------
+// Anchor
+//-------
 
 function clearos_anchor(href, text, options) {
     return theme_anchor(href, text, options);
+}
+
+// Anchors
+//--------
+
+function clearos_anchors(links, options) {
+    return theme_anchors(links, options);
 }
 
 // Dialog box
