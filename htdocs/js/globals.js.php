@@ -50,9 +50,6 @@ echo "
 
 /**
  * Converts a value to a human-readable format, e.g. integer IPs into quad-format.
- *
- * @param string $value value
- * @param string $type  data type
  */
 
 function clearos_human_readable(value, type) {
