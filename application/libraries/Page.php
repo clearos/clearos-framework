@@ -432,7 +432,7 @@ class MY_Page
         );
 
         // Set default page type, but not if we are just handling a "form only" request
-        if (!$this->framework->form_only)
+        if (empty($this->framework->form_only) || !$this->framework->form_only)
             $this->data['type'] = (isset($options['type'])) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
 
         // Load wizard view if enabled
@@ -1497,7 +1497,7 @@ $meta
         $this->data['current_name'] = $app_data['name'];
         $this->data['current_category'] = $app_data['category'];
         $this->data['current_subcategory'] = $app_data['subcategory'];
-        $this->data['tooltips'] = $app_data['tooltip'];
+        $this->data['tooltips'] = empty($app_data['tooltip']) ? '' : $app_data['tooltip'];
         
         $this->data = array_merge($this->data, $session_data, $menu_data);
     }
