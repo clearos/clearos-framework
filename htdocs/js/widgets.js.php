@@ -175,6 +175,20 @@ function clearos_summary_table(table_id, data, data_type, urls, highlight, sort,
     return theme_summary_table(table_id, data, data_type, urls, highlight, sort, report_id);
 }
 
+// Enable symbol
+//--------------
+
+function clearos_enabled() {
+    return theme_enabled_disabled(true);
+}
+
+// Disable symbol
+//---------------
+
+function clearos_disabled() {
+    return theme_enabled_disabled(false);
+}
+
 // Chart
 //------
 
