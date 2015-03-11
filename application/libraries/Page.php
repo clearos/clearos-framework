@@ -401,7 +401,7 @@ class MY_Page
             $this->data['breadcrumb_links'] = $options['breadcrumb_links'];
 
         // Add Tip button
-        if (isset($this->data['tooltips'])) {
+        if (!empty($this->data['tooltips'])) {
             $this->data['breadcrumb_links']['app-tip'] = array(
                 'url' => '#',
                 'tag' => lang('base_tips_and_hints'),
@@ -649,7 +649,7 @@ class MY_Page
         $this->data['page_report'] = $this->_get_report_view($app);
 
         // Add Tip button
-        if (isset($this->data['tooltips'])) {
+        if (!empty($this->data['tooltips'])) {
             $this->data['breadcrumb_links']['app-tip'] = array(
                 'url' => '#',
                 'tag' => lang('base_tips_and_hints'),
