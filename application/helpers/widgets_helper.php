@@ -1641,6 +1641,20 @@ function control_panel($links) {
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
+ * Get Icon.
+ *
+ * @param string $name    name of icon
+ * @param array  $options options
+ *
+ * @return string HTML
+ */
+
+function icon($name, $options = NULL)
+{
+    return theme_icon($name, $options);
+}
+
+/**
  * Get Image.
  *
  * @param string $name    name of image
