@@ -30,7 +30,7 @@
 
 // TODO: figure out a better way to implement this quasi captive portal stull.
 if (($_SERVER['SERVER_PORT'] == 82) && file_exists('/usr/clearos/apps/web_proxy/htdocs/'))
-    header("Location: /app/web_proxy/warning/configuration");
+    header("Location: http://" . $_SERVER['SERVER_ADDR'] . ":82/app/web_proxy/warning/configuration");
 else if (file_exists('/usr/clearos/apps/base/htdocs/'))
 	header("Location: /app/base/");
 else
