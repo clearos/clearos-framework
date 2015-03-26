@@ -28,10 +28,10 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-// TODO: figure out a better way to implement this quasi captive portal stull.
+// TODO: figure out a better way to implement this quasi captive portal stuff.
 if (($_SERVER['SERVER_PORT'] == 82) && file_exists('/usr/clearos/apps/web_proxy/htdocs/'))
     header("Location: http://" . $_SERVER['SERVER_ADDR'] . ":82/app/web_proxy/warning/configuration");
 else if (file_exists('/usr/clearos/apps/base/htdocs/'))
-	header("Location: /app/base/");
+    header("Location: /app/base/");
 else
-	echo 'No apps installed.  You can go about your business.  Move along... move along.';
+    echo 'No apps installed.  You can go about your business.  Move along... move along.';
