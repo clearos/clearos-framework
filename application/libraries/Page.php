@@ -648,6 +648,9 @@ class MY_Page
         $this->data['page_summary'] = $this->_get_summary_view($app);
         $this->data['page_report'] = $this->_get_report_view($app);
 
+        if (isset($options['breadcrumb_links']))
+            $this->data['breadcrumb_links'] = $options['breadcrumb_links'];
+
         // Add Tip button
         if (!empty($this->data['tooltips'])) {
             $this->data['breadcrumb_links']['app-tip'] = array(
