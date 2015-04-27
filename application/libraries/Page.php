@@ -7,7 +7,7 @@
  * @package    Application
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2011 ClearFoundation
+ * @copyright  2011-2015 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
@@ -44,6 +44,7 @@ use \clearos\framework\Logger as Logger;
 use \clearos\framework\Config as Config;
 use \clearos\apps\base\Access_Control as Access_Control;
 use \clearos\apps\base\Install_Wizard as Install_Wizard;
+use \clearos\apps\events\Events as Events;
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -90,7 +91,7 @@ use \clearos\apps\base\Install_Wizard as Install_Wizard;
  * @package    Application
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2011 ClearFoundation
+ * @copyright  2011-2015 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
@@ -979,6 +980,12 @@ $meta
 
         echo theme_page_doctype() . "\n";
         echo $this->_build_page_head();
+
+        // Grab alerts from Events library
+        if (clearos_load_library('events/Events')) {
+            $events = new Events();
+            $this->data['alerts'] = $events->get_events(Events::FLAG_CRIT, 10);
+        }
 
         if (function_exists('theme_page_javascript')) {
             echo theme_page_open($this->framework->session->userdata['theme_' . $this->framework->session->userdata['theme']]);
