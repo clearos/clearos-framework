@@ -984,7 +984,12 @@ $meta
         // Grab alerts from Events library
         if (clearos_load_library('events/Events')) {
             $events = new Events();
-            $this->data['alerts'] = $events->get_events(Events::FLAG_CRIT, 10);
+
+            try {
+                $this->data['alerts'] = $events->get_events(Events::FLAG_CRIT, 10);
+            } catch (\Exception $e) {
+                // Not fatal
+            }
         }
 
         if (function_exists('theme_page_javascript')) {
