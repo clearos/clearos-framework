@@ -1623,7 +1623,8 @@ $meta
         // Unset any existing breadcrumb links
         unset($this->data['breadcrumb_links']);
         $this->data['breadcrumb_links'] = array();
-        if ($current > 0)
+
+        if ($current > 0) {
             $this->data['breadcrumb_links']['wizard_previous'] = array(
                 'url' => $steps[$current - 1]['nav'],
                 'tag' => lang('base_previous'),
@@ -1632,15 +1633,29 @@ $meta
                 'button' => 'low',
                 'tag_position' => 'right'
             );
-        if ($current < count($steps))
+        }
+
+        if ($current < count($steps)) {
+            // See tracker #2197.
+            if (isset($steps[$current]['inline_form']) && $steps[$current]['inline_form'])
+                $url = '#';
+            else
+                $url = $steps[$current + 1]['nav'];
+
+            // To handle inline forms, we keep the "next" click in our session
+            $basename = preg_replace('/^\/app\//', '', $steps[$current + 1]['nav']);
+            $this->framework->session->set_userdata('wizard_redirect', $basename);
+
             $this->data['breadcrumb_links']['wizard_next'] = array(
-                'url' => $steps[$current + 1]['nav'], 
+                'url' => $url,
                 'tag' => lang('base_next'),
                 'id' => 'wizard_nav_next',
                 'display_tag' => TRUE,
                 'button' => 'high',
                 'tag_position' => 'left'
             );
+        }
+
         return TRUE;
     }
 }
