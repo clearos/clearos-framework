@@ -986,7 +986,7 @@ $meta
             $events = new Events();
 
             try {
-                $this->data['alerts'] = $events->get_events(Events::FLAG_CRIT, 10);
+                $this->data['alerts'] = $events->get_events(Events::FLAG_CRIT, Events::FLAG_NULL, 10);
             } catch (\Exception $e) {
                 // Not fatal
             }
