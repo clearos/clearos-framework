@@ -41,14 +41,6 @@ install -m 0644 license.txt $RPM_BUILD_ROOT/usr/clearos/framework
 install -m 0644 packaging/framework.conf $RPM_BUILD_ROOT/usr/clearos/sandbox/etc/httpd/conf.d
 install -m 0644 packaging/framework-permissions.conf $RPM_BUILD_ROOT/usr/clearos/sandbox/etc/httpd/conf.d
 
-%pre
-# TODO: Remove in ClearOS 7 - upgrade workaround for 6.4
-if ( [ -d /usr/clearos/framework/application/libraries ] && [ ! -e /usr/clearos/framework/application/libraries/MY_Form_validation.php ] ); then
-    logger -p local6.notice -t installer "clearos-framework - detected upgrade"
-    touch /var/clearos/framework/upgrade
-    sleep 10
-fi
-
 %post
 # Generate session key
 if [ ! -e /var/clearos/framework/session_key ]; then
@@ -56,12 +48,6 @@ if [ ! -e /var/clearos/framework/session_key ]; then
     chmod 640 /var/clearos/framework/session_key
     chown root.webconfig /var/clearos/framework/session_key
     cat /dev/urandom | tr -dc A-Za-z0-9 | head -c32 > /var/clearos/framework/session_key
-fi
-
-if [ -e /var/clearos/framework/upgrade ]; then
-    sleep 10
-    logger -p local6.notice -t installer "clearos-framework - finished upgrade"
-    rm -f /var/clearos/framework/upgrade
 fi
 
 %clean
