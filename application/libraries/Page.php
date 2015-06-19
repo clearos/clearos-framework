@@ -45,6 +45,7 @@ use \clearos\framework\Config as Config;
 use \clearos\apps\base\Access_Control as Access_Control;
 use \clearos\apps\base\Install_Wizard as Install_Wizard;
 use \clearos\apps\events\Events as Events;
+use \clearos\apps\registration\Registration as Registration;
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -990,6 +991,11 @@ $meta
             } catch (\Exception $e) {
                 // Not fatal
             }
+        }
+
+        if (clearos_load_library('registration/Registration')) {
+            $registration = new Registration();
+            $this->data['subscription_notice'] = $registration->get_subscription_notice();
         }
 
         if (function_exists('theme_page_javascript')) {
