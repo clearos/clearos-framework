@@ -993,9 +993,21 @@ $meta
             }
         }
 
-        if (clearos_load_library('registration/Registration')) {
+        if (clearos_load_library('registration/Registration') && $this->framework->session->userdata('username')) {
             $registration = new Registration();
-            $this->data['subscription_notice'] = $registration->get_subscription_notice();
+            $notice = $registration->get_sdn_notice();
+            if ($notice['root_only'] && $this->framework->session->userdata('username') != 'root') {
+                // Show nothing
+            } else {
+                if ($notice['persistence'] == 'page') {
+                    $this->data['sdn_notice'] = $notice;
+                } else if ($notice['persistence'] == 'session' && $notice['id'] != $this->framework->session->userdata('sdn_notice')) {
+                    $this->data['sdn_notice'] = $notice;
+                    $this->framework->session->set_userdata('sdn_notice', $this->data['sdn_notice']['id']);
+                } else if ($notice['persistence'] == 'one_time') {
+                    $this->data['sdn_notice'] = $notice;
+                }
+            }
         }
 
         if (function_exists('theme_page_javascript')) {

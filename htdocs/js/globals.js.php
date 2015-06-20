@@ -67,22 +67,6 @@ function clearos_human_readable(value, type) {
     }
 }
 
-/**
- * Acknowledges a subscription notication.
- */
-
-function acknowledge_subscription_notice(id) {
-    $.ajax({
-        url: '/app/registration/ajax/acknowledge_subscription_notice/' + id,
-        method: 'GET',
-        dataType: 'json',
-        success : function(json) {
-        },
-        error: function (xhr, text_status, error_thrown) {
-        }
-    });
-}
-
 $(document).ready(function() {
     $('#wizard_nav_next').removeAttr('disabled');
     $('#wizard_nav_previous').removeAttr('disabled');
