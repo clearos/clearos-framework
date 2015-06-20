@@ -483,13 +483,11 @@ function clearos_theme_url($theme)
 
 function _clearos_error_handler($errno, $errmsg, $file, $line, $context)
 {
-    // If the @ symbol was used to suppress errors, bail
-    //--------------------------------------------------
+    // If developer requests error suppression, then do so
+    //----------------------------------------------------
 
-    /* FIXME -- revisit this ... it seems to suppress too much.
     if (error_reporting(0) === 0)
         return;
-    */
 
     // Log the error
     //--------------
