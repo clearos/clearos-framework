@@ -987,7 +987,7 @@ $meta
             $events = new Events();
 
             try {
-                $this->data['alerts'] = $events->get_events(Events::FLAG_CRIT, Events::FLAG_RESOLVED, 10);
+                $this->data['alerts'] = $events->get_events(Events::FLAG_WARN | Events::FLAG_CRIT, Events::FLAG_RESOLVED, 10);
             } catch (\Exception $e) {
                 // Not fatal
             }
@@ -1517,13 +1517,6 @@ $meta
 
         $menu_data['menus'] = $this->_load_menu_data();
         $session_data = $this->_load_session_data();
-
-        // Add some developer information
-        $segments = explode('/', $_SERVER['PHP_SELF']);
-        $app_base = clearos_app_base($segments[2]);
-        
-        $this->data['devel_app_source'] = (preg_match('/^\/usr\/clearos/', $app_base)) ? 'Live' : 'Development';
-        $this->data['devel_framework_source'] = (preg_match('/^\/usr\/clearos/', __FILE__)) ? 'Live' : 'Development';
 
         $app_data = $this->_load_app_data();
         $this->data['current_basename'] = $app_data['basename'];

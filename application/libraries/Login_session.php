@@ -46,6 +46,7 @@ use \clearos\framework\Logger as Logger;
 use \clearos\apps\base\Authorization as Authorization;
 use \clearos\apps\base\OS as OS;
 use \clearos\apps\base\Webconfig as Webconfig;
+use \clearos\apps\events\Event_Utils as Event_Utils;
 use \clearos\apps\language\Locale as Locale;
 use \clearos\apps\network\Hostname as Hostname;
 
@@ -366,6 +367,21 @@ class MY_Login_Session
 
         $this->framework->session->set_userdata('logged_in', 'TRUE');
         $this->framework->session->set_userdata('username', $username);
+
+        $segments = explode('/', $_SERVER['PHP_SELF']);
+        $app_base = clearos_app_base($segments[2]);
+
+        // Do we need to add alerts for developer?
+        if (!preg_match('/^\/usr\/clearos/', $app_base)) {
+            if (clearos_load_library('events/Event_Utils'))
+                Event_Utils::add_event('This app is using development code.', 'WARN');
+        }
+        if (!preg_match('/^\/usr\/clearos/', __FILE__)) {
+            // TODO - some kind of race condition if there are two inserts at the same time
+            sleep(1);
+            if (clearos_load_library('events/Event_Utils'))
+                Event_Utils::add_event('Framework is in development mode.', 'WARN');
+        }
 
         // Override default session time-out?
         if ($custom_expiration !== NULL) {
