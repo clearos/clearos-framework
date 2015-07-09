@@ -192,8 +192,8 @@ function clearos_disabled() {
 // Chart
 //------
 
-function clearos_chart(chart_id, chart_type, data, format, series, series_labels, series_units, series_title, options) {
-    return theme_chart(chart_id, chart_type, data, format, series, series_labels, series_units, series_title, options);
+function clearos_chart(chart_id, chart_type, data, data_titles, data_types, data_units, options) {
+    return theme_chart(chart_id, chart_type, data, data_titles, data_types, data_units, options);
 }
 
 // Pie Chart
