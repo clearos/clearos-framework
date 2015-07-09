@@ -374,13 +374,11 @@ class MY_Login_Session
         // Do we need to add alerts for developer?
         if (!preg_match('/^\/usr\/clearos/', $app_base)) {
             if (clearos_load_library('events/Event_Utils'))
-                Event_Utils::add_event('This app is using development code.', 'WARN');
+                Event_Utils::add_event('This app is using development code.', 'WARN', 'DEVEL_MODE_APP', 'devel');
         }
         if (!preg_match('/^\/usr\/clearos/', __FILE__)) {
-            // TODO - some kind of race condition if there are two inserts at the same time
-            sleep(1);
             if (clearos_load_library('events/Event_Utils'))
-                Event_Utils::add_event('Framework is in development mode.', 'WARN');
+                Event_Utils::add_event('.mework is in development mode.', 'WARN', 'DEVEL_MODE_FRAME', 'devel');
         }
 
         // Override default session time-out?
