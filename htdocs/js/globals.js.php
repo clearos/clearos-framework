@@ -50,6 +50,7 @@ echo "
 
 /**
  * Converts a value to a human-readable format, e.g. integer IPs into quad-format.
+ * FIXME: deprecated: remove
  */
 
 function clearos_human_readable(value, type) {
