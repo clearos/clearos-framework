@@ -200,7 +200,7 @@ function clearos_chart(chart_id, chart_type, data, data_titles, data_types, data
 //----------
 
 function clearos_pie_chart(chart_id, data, options) {
-    return theme_chart(chart_id, 'pie', data, '', '', '', '', '', options);
+    return theme_chart(chart_id, 'pie', data, '', '', '', options);
 }
 
 ";
