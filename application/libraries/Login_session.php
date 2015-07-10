@@ -378,7 +378,7 @@ class MY_Login_Session
         }
         if (!preg_match('/^\/usr\/clearos/', __FILE__)) {
             if (clearos_load_library('events/Event_Utils'))
-                Event_Utils::add_event('.mework is in development mode.', 'WARN', 'DEVEL_MODE_FRAME', 'devel');
+                Event_Utils::add_event('Framework is in development mode.', 'WARN', 'DEVEL_MODE_FRAME', 'devel');
         }
 
         // Override default session time-out?
