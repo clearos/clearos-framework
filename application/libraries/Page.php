@@ -44,6 +44,7 @@ use \clearos\framework\Logger as Logger;
 use \clearos\framework\Config as Config;
 use \clearos\apps\base\Access_Control as Access_Control;
 use \clearos\apps\base\Install_Wizard as Install_Wizard;
+use \clearos\apps\registration\Registration as Registration;
 
 ///////////////////////////////////////////////////////////////////////////////
 // C L A S S
@@ -916,6 +917,23 @@ $meta
 
         echo theme_page_doctype() . "\n";
         echo $this->_build_page_head();
+
+        if (clearos_load_library('registration/Registration') && $this->framework->session->userdata('username')) {
+            $registration = new Registration();
+            $notice = $registration->get_sdn_notice();
+            if ($notice['root_only'] && $this->framework->session->userdata('username') != 'root') {
+                // Show nothing
+            } else {
+                if ($notice['persistence'] == 'page') {
+                    $this->data['sdn_notice'] = $notice;
+                } else if ($notice['persistence'] == 'session' && $notice['id'] != $this->framework->session->userdata('sdn_notice')) {
+                    $this->data['sdn_notice'] = $notice;
+                    $this->framework->session->set_userdata('sdn_notice', $this->data['sdn_notice']['id']);
+                } else if ($notice['persistence'] == 'one_time') {
+                    $this->data['sdn_notice'] = $notice;
+                }
+            }
+        }
 
         // The original ClearOS 6 theme_page handles everything from <body> to </html>
         // The later themes added a javascripts hook before the closing </body> tag
