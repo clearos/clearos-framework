@@ -921,7 +921,9 @@ $meta
         if (clearos_load_library('registration/Registration') && $this->framework->session->userdata('username')) {
             $registration = new Registration();
             $notice = $registration->get_sdn_notice();
-            if ($notice['root_only'] && $this->framework->session->userdata('username') != 'root') {
+            if (empty($notice)) {
+                // Do nothing
+            } else if ($notice['root_only'] && $this->framework->session->userdata('username') != 'root') {
                 // Show nothing
             } else {
                 if ($notice['persistence'] == 'page') {
