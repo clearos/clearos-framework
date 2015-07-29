@@ -80,7 +80,7 @@ class Lang
         $deft_lang = ( ! isset($config['language'])) ? 'en_US' : $config['language'];
         $language = ($deft_lang == '') ? 'en_US' : $deft_lang;
 
-        // use /etc/sysconfig/i18n which is cached in PHP format to keep things snappy.
+        // use /etc/locale.conf which is cached in PHP format to keep things snappy.
         if (file_exists(CLEAROS_TEMP_DIR . '/language_cache.php'))
             include CLEAROS_TEMP_DIR . '/language_cache.php';
 

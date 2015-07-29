@@ -64,7 +64,7 @@ function webconfig_cache()
         $lang_cache_time = $stat['ctime'];
     }
 
-    if (!file_exists('/etc/sysconfig/i18n')) {
+    if (!file_exists('/etc/locale.conf')) {
         if (!file_exists(CLEAROS_TEMP_DIR . '/language_cache.php')) {
             // Concatenation is to avoid breaking syntax highlighting
             $contents = "<?php \$language = 'en_US'; ?" . ">\n";
@@ -75,12 +75,12 @@ function webconfig_cache()
         return;
     }
 
-    $stat = stat('/etc/sysconfig/i18n');
+    $stat = stat('/etc/locale.conf');
     $lang_actual_time = $stat['ctime'];
 
     if ($lang_cache_time < $lang_actual_time) {
         $raw_contents =
-        $lines = preg_split("/\n/", file_get_contents('/etc/sysconfig/i18n'));
+        $lines = preg_split("/\n/", file_get_contents('/etc/locale.conf'));
 
         foreach ($lines as $line) {
             if (preg_match('/^LANG=/', $line)) {
