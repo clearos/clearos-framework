@@ -1237,6 +1237,12 @@ $meta
 
         // TODO: see TODO in _load_menu_data
         $data['show_marketplace'] = $this->framework->session->userdata('show_marketplace');
+
+        // Show app recommendations
+        $theme = $this->framework->session->userdata('theme');
+        if (isset($this->framework->session->userdata['theme_' . $theme]['show_recommended_apps']))
+             $data['show_recommended_apps'] = $this->framework->session->userdata['theme_' . $theme]['show_recommended_apps'];
+
         return theme_summary_box($data);
     }
 
