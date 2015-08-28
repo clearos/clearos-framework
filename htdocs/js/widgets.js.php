@@ -161,8 +161,15 @@ function clearos_related_apps(type, list) {
     theme_related_app(type, list);
 }
 
+// Hook to create key/value DOM
+//-----------------------------
+
+function clearos_key_value_pair(key, value, options) {
+    return theme_key_value_pair(key, value, options)
+}
+
 // Hook to add key/value pair to sidebar
-//-------------
+//--------------------------------------
 
 function clearos_add_sidebar_pair(key, value, options) {
     theme_add_sidebar_pair(key, value, options);
