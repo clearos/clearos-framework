@@ -587,6 +587,13 @@ class MY_Page
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
+        // If in wizard mode and this function is called, send back to beginning
+        // Prevents users from messing around with URL's.
+        if (isset($this->framework->session->userdata['wizard'])) {
+            $this->set_message("Please complete the post-install wizard.");
+            redirect('/base/wizard');
+        }
+ 
         $this->_load_meta_data();
 
         $this->data['title'] = $title;
