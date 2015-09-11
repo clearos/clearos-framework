@@ -372,13 +372,15 @@ class MY_Login_Session
         $app_base = clearos_app_base($segments[2]);
 
         // Do we need to add alerts for developer?
-        if (!preg_match('/^\/usr\/clearos/', $app_base)) {
-            if (clearos_load_library('events/Event_Utils'))
-                Event_Utils::add_event('This app is using development code.', 'WARN', 'DEVEL_MODE_APP', 'devel');
-        }
-        if (!preg_match('/^\/usr\/clearos/', __FILE__)) {
-            if (clearos_load_library('events/Event_Utils'))
-                Event_Utils::add_event('Framework is in development mode.', 'WARN', 'DEVEL_MODE_FRAME', 'devel');
+        if (clearos_load_library('events/Event_Utils')) {
+            if (!preg_match('/^\/usr\/clearos/', $app_base))
+                Event_Utils::add_event('This app is using development code.', 'WARN', 'DEVEL_MODE_APP', 'devel', TRUE);
+            else
+                Event_Utils::resolve_event('DEVEL_MODE_APP');
+            if (!preg_match('/^\/usr\/clearos/', __FILE__))
+                Event_Utils::add_event('Framework is in development mode.', 'WARN', 'DEVEL_MODE_FRAME', 'devel', TRUE);
+            else
+                Event_Utils::resolve_event('DEVEL_MODE_FRAME');
         }
 
         // Override default session time-out?
