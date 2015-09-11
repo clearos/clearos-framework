@@ -890,7 +890,7 @@ class MY_Page
         $css =  $app . '.css';
 
         if (file_exists($doc_base . '/' . $css))
-            $css_head .= "<link type='text/css' href='" . $app_url . '/' . $css ."' rel='stylesheet'>\n";
+            $css_head .= "<link type='text/css' media='screen' href='" . $app_url . '/' . $css ."' rel='stylesheet'>\n";
 
         // Add Javascript hooks
         //---------------------
