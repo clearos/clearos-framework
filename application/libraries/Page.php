@@ -1068,11 +1068,11 @@ $meta
         // TODO: translate
 
         if (empty($data['user_guide_url'])) {
-            $data['user_guide_url'] = 'http://www.clearcenter.com/redirect/ClearOS/6.2.0/userguide/' . $data['basename'];
+            $data['user_guide_url'] = 'http://www.clearos.com/redirect/ClearOS/7/userguide/' . $data['basename'];
             $data['user_guide_url_text'] = 'User Guide';
         }
 
-        if (preg_match('/Professional/', $this->framework->session->userdata('os_name'))) {
+        if (preg_match('/Business/', $this->framework->session->userdata('os_name'))) {
             $data['support_url'] = 'http://www.clearcenter.com/getsupport';
             $data['support_url_text'] = 'ClearCARE Support';
         }
