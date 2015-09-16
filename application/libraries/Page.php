@@ -424,7 +424,7 @@ class MY_Page
         );
         // Add Documentation button
         $this->data['breadcrumb_links']['app-documentation'] = array(
-            'url' => 'http://www.clearcenter.com/redirect/ClearOS/6.2.0/userguide/' . $this->data['current_basename'],
+            'url' => 'http://www.clearos.com/redirect/ClearOS/7/userguide/' . $this->data['current_basename'],
             'tag' => lang('base_documentation'),
             'id' => 'app-documentation',
             'display_tag' => FALSE,
@@ -682,7 +682,7 @@ class MY_Page
         );
         // Add Documentation button
         $this->data['breadcrumb_links']['app-documentation'] = array(
-            'url' => 'http://www.clearcenter.com/redirect/ClearOS/6.2.0/userguide/' . $this->data['current_basename'],
+            'url' => 'http://www.clearos.com/redirect/ClearOS/7/userguide/' . $this->data['current_basename'],
             'tag' => lang('base_documentation'),
             'id' => 'app-documentation',
             'display_tag' => FALSE,
