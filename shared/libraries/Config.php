@@ -291,8 +291,10 @@ class Config
 
         if (clearos_app_installed('professional_reports'))
             return 'professional_reports';
-        else
+        else if (clearos_app_installed('home_reports'))
             return 'home_reports';
+        else
+            return '';
     }
 
     /**
