@@ -994,7 +994,7 @@ $meta
             $events = new Events();
 
             try {
-                $this->data['alerts'] = $events->get_events(Events::FLAG_WARN | Events::FLAG_CRIT, Events::FLAG_RESOLVED, 10);
+                $this->data['alerts'] = $events->get_events(Events::FLAG_WARN | Events::FLAG_CRIT, Events::FLAG_RESOLVED, 5);
             } catch (\Exception $e) {
                 // Not fatal
             }
