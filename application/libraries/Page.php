@@ -1438,7 +1438,9 @@ $meta
 
         foreach ($apps_list as $app_name => $app) {
             // If this page is not allowed, skip it
-            if ($username !== 'root') {
+            // Note: the demo flag is for the demo servers.  It provides a simple way to allow all pages.
+            // instead of having to enumerate a full list of apps in the ACL file.
+            if (! (($username === 'root') || (($username === 'get') && file_exists('/var/clearos/base/access_control/custom/cleardemo')))) {
                 $full_name = '/app/' . $app_name;
                 if (! in_array($full_name, $valid_pages))
                     continue;
