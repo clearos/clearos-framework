@@ -994,7 +994,8 @@ $meta
             $events = new Events();
 
             try {
-                $this->data['alerts'] = $events->get_events(Events::FLAG_WARN | Events::FLAG_CRIT, Events::FLAG_RESOLVED, 5);
+                if ($this->framework->session->userdata('username') == 'root' || $this->framework->session->userdata['nav_acl']['events'])
+                    $this->data['alerts'] = $events->get_events(Events::FLAG_WARN | Events::FLAG_CRIT, Events::FLAG_RESOLVED, 5);
             } catch (\Exception $e) {
                 // Not fatal
             }

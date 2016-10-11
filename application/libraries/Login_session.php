@@ -128,7 +128,8 @@ class MY_Login_Session
                 $nav_access = array(
                     'dashboard' => $authorization->check_acl($username, '/app/dashboard'),
                     'marketplace' => $authorization->check_acl($username, '/app/marketplace'),
-                    'support' => $authorization->check_acl($username, '/app/support')
+                    'support' => $authorization->check_acl($username, '/app/support'),
+                    'events' => $authorization->check_acl($username, '/app/events')
                 );
                 $this->framework->session->set_userdata('nav_acl', $nav_access);
             }
