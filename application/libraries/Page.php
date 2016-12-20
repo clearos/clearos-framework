@@ -680,9 +680,17 @@ class MY_Page
             'button' => FALSE,
             'tag_position' => 'right'
         );
+
+        $data = $this->_load_app_data($app);
+
+        if (empty($data['documentation_url']))
+            $url = 'http://www.clearos.com/redirect/ClearOS/7/userguide/' . $this->data['current_basename'];
+        else
+            $url = $data['documentation_url'];
+
         // Add Documentation button
         $this->data['breadcrumb_links']['app-documentation'] = array(
-            'url' => 'http://www.clearos.com/redirect/ClearOS/7/userguide/' . $this->data['current_basename'],
+            'url' => $url,
             'tag' => lang('base_documentation'),
             'id' => 'app-documentation',
             'display_tag' => FALSE,
