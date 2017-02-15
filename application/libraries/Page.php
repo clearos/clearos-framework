@@ -106,6 +106,7 @@ class MY_Page
     const TYPE_CONFIGURATION = 'configuration';
     const TYPE_WIDE_CONFIGURATION = 'wide_configuration';
     const TYPE_LOGIN = 'login';
+    const TYPE_2FACTOR_AUTH = '2factor_auth';
     const TYPE_REPORT = 'report'; // TODO: deprecated, remove
     const TYPE_REPORTS = 'reports';
     const TYPE_REPORT_OVERVIEW = 'report_overview';
