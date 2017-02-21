@@ -97,7 +97,11 @@ class MY_Lang extends MX_Lang {
             if($lang = Modules::load_file($_langfile, $path, 'lang')) {
                 // KLUDGE: add special language mapping file
                 if ($_langfile == 'base_lang') {
-                    $include_file = clearos_app_base('base') . '/language/en_US/base_framework_lang.php';
+                    $include_file = clearos_app_base('base') . '/deploy/i18n/base_framework_lang.php';
+                    if (file_exists($include_file))
+                        include $include_file;
+
+                    $include_file = clearos_app_base('base') . '/deploy/i18n/' . $idiom . '/base_countries_lang.php';
                     if (file_exists($include_file))
                         include $include_file;
                 }
