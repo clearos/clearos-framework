@@ -214,7 +214,6 @@ class MY_Login_Session
         else
             return FALSE;
     }
-
     /**
      * Changes session locale.
      *
@@ -227,25 +226,36 @@ class MY_Login_Session
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        // Set language code
-        $this->framework->session->set_userdata('lang_code', $code);
-
-        // Set text direction and encoding
-        if (clearos_load_library('language/Locale')) {
+        if (!clearos_load_library('language/Locale')) {
+            $this->framework->session->set_userdata('lang_code', 'en_US');
+            $this->framework->session->set_userdata('translation_code', 'en');
+            $this->framework->session->set_userdata('text_direction', 'LTR');
+            $this->framework->session->set_userdata('encoding', 'UTF-8');
+        } else {
             try {
                 $locale = new Locale();
-                $text_direction = $locale->get_text_direction();
-                $encoding = $locale->get_encoding();
+                $translation_code = $locale->get_translation_code($code);
+                $text_direction = $locale->get_text_direction($code);
+                $encoding = $locale->get_encoding($code);
 
+                $this->framework->session->set_userdata('lang_code', $code);
+                $this->framework->session->set_userdata('translation_code', $translation_code);
                 $this->framework->session->set_userdata('text_direction', $text_direction);
                 $this->framework->session->set_userdata('encoding', $encoding);
+
+                setcookie('clearos_lang', $code, time()+60*60*24*365, '/');
             } catch (Exception $e) {
-                // Use default
+                // Keep going
             }
         }
 
         // Clear the cache when changing the session language
-        $this->framework->page->clear_cache();
+        try {
+            $this->framework->load->library('page');
+            $this->framework->page->clear_cache();
+        } catch (Exception $e) {
+            // Keep going
+        }
     }
 
     /**
@@ -287,21 +297,36 @@ class MY_Login_Session
         // The language code can left alone if it is already set.
 
         if (! $this->framework->session->userdata('lang_code')) {
-            $session['lang_code'] = 'en_US';
-            $session['encoding'] = 'utf-8';
-            $session['text_direction'] = 'LTR';
+            $lang_code = 'en_US';
 
-            if (clearos_load_library('language/Locale')) {
+            if ($this->framework->input->cookie('clearos_lang')) {
+                $lang_code = $this->framework->input->cookie('clearos_lang');
+            } else if (clearos_load_library('language/Locale')) {
+                $this->framework->load->library('user_agent');
+
                 try {
                     $locale = new Locale();
-                    $session['lang_code'] = $locale->get_language_code();
-                    $session['text_direction'] = $locale->get_text_direction();
-                    $session['encoding'] = $locale->get_encoding();
+                    $languages = $locale->get_languages();
+
+                    foreach ($this->framework->agent->languages() as $browser_lang) {
+                        $matches = array();
+
+                        if (preg_match('/(.*)-(.*)/', $browser_lang, $matches))
+                            $browser_lang = $matches[1] . '_' . strtoupper($matches[2]);
+                        else
+                            $browser_lang = $browser_lang . '_' . strtoupper($browser_lang);
+
+                        if (array_key_exists($browser_lang, $languages)) {
+                            $lang_code = $browser_lang;
+                            break;
+                        }
+                    }
                 } catch (Exception $e) {
                     // Use default
                 }
             }
 
+            $this->set_language($lang_code);
             setlocale(LC_ALL, $session['lang_code']);
         }
 
@@ -405,7 +430,9 @@ class MY_Login_Session
     {
         Logger::profile_framework(__METHOD__, __LINE__);
 
-        $preserve = array('lang_code', 'theme', 'theme_model');
+        setcookie('clearos_lang', $this->framework->session->userdata('lang_code'), time()+60*60*24*365, '/');
+
+        $preserve = array('translation_code', 'lang_code', 'theme', 'theme_model');
 
         foreach ($this->framework->session->userdata as $key => $field) {
             if (in_array($key, $preserve))
