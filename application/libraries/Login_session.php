@@ -299,7 +299,19 @@ class MY_Login_Session
         if (! $this->framework->session->userdata('lang_code')) {
             $lang_code = 'en_US';
 
-            if ($this->framework->input->cookie('clearos_lang')) {
+            // Logic:
+            // - Default to system language on console (since that's what tconsole will be using)
+            // - Use the save langugage in the browser cookie if it exists
+            // - Auto-detect based on web browser agent settings
+            // - Fall back to en_US
+            if (clearos_console() && clearos_load_library('language/Locale')) {
+                try {
+                    $locale = new Locale();
+                    $lang_code = $locale->get_language_code();
+                } catch (Exception $e) {
+                    // Use default
+                }
+            } else if ($this->framework->input->cookie('clearos_lang')) {
                 $lang_code = $this->framework->input->cookie('clearos_lang');
             } else if (clearos_load_library('language/Locale')) {
                 $this->framework->load->library('user_agent');
