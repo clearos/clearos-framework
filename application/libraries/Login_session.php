@@ -302,7 +302,7 @@ class MY_Login_Session
             // Logic:
             // - Default to system language on console (since that's what tconsole will be using)
             // - Use the save langugage in the browser cookie if it exists
-            // - Auto-detect based on web browser agent settings
+            // - Default to system language, but override on web browser auto-detect
             // - Fall back to en_US
             if (clearos_console() && clearos_load_library('language/Locale')) {
                 try {
@@ -319,6 +319,7 @@ class MY_Login_Session
                 try {
                     $locale = new Locale();
                     $languages = $locale->get_languages();
+                    $lang_code = $locale->get_language_code();
 
                     foreach ($this->framework->agent->languages() as $browser_lang) {
                         $matches = array();
