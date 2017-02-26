@@ -101,6 +101,10 @@ class MY_Lang extends MX_Lang {
                     if (file_exists($include_file))
                         include $include_file;
 
+                    $include_file = clearos_app_base('base') . '/deploy/i18n/en_US/base_countries_lang.php';
+                    if (file_exists($include_file))
+                        include $include_file;
+
                     $include_file = clearos_app_base('base') . '/deploy/i18n/' . $idiom . '/base_countries_lang.php';
                     if (file_exists($include_file))
                         include $include_file;
