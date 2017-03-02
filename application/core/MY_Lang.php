@@ -110,6 +110,39 @@ class MY_Lang extends MX_Lang {
                         include $include_file;
                 }
 
+                // KLUDGE: Workarounds for translation system.
+                // 1) translation system can set translations to blank
+                // 2) translation system uses &#39 for quotes.  Convert these back to
+                //    quotes for now.  Htmlentities() can be used, but that might have
+                //    unwanted side-effects.  KISS for now.
+                //-----------------------------------------------------------------------
+
+                $basename = preg_replace('/_lang/', '', $_langfile);
+                $clean_lang = $lang;
+                unset($lang);
+
+                $include_file = clearos_app_base($basename) . '/language/' . $idiom . '/' . $_langfile . '.php';
+
+                if (file_exists($include_file)) {
+                    include $include_file;
+                    $target_lang = $lang;
+
+                    unset($lang);
+                    $include_file = clearos_app_base($basename) . '/language/en_US/' . $_langfile . '.php';
+                    if (file_exists($include_file))
+                        include $include_file;
+
+                    foreach ($target_lang as $tag => $translation) {
+                        $trimmed_translation = trim($translation);
+                        if (empty($trimmed_translation))
+                            $clean_lang[$tag] = $lang[$tag];
+                        else if (preg_match('/&#39;/', $trimmed_translation))
+                            $clean_lang[$tag] = preg_replace('/&#39;/', "'", $clean_lang[$tag]);
+                    }
+                }
+
+                $lang = $clean_lang;
+
                 if ($return) return $lang;
 
                 // Developer mode -- add the "translated" info which holds state of all translated tags
