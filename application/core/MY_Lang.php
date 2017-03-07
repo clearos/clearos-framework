@@ -132,6 +132,9 @@ class MY_Lang extends MX_Lang {
                     if (file_exists($include_file))
                         include $include_file;
 
+                    foreach ($lang as $tag => $translation)
+                        $clean_lang[$tag] = $lang[$tag];
+
                     foreach ($target_lang as $tag => $translation) {
                         $trimmed_translation = trim($translation);
                         if (empty($trimmed_translation))
