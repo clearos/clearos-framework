@@ -132,15 +132,18 @@ class MY_Lang extends MX_Lang {
                     if (file_exists($include_file))
                         include $include_file;
 
-                    foreach ($lang as $tag => $translation)
-                        $clean_lang[$tag] = $lang[$tag];
-
                     foreach ($target_lang as $tag => $translation) {
                         $trimmed_translation = trim($translation);
                         if (empty($trimmed_translation))
                             $clean_lang[$tag] = $lang[$tag];
                         else if (preg_match('/&#39;/', $trimmed_translation))
                             $clean_lang[$tag] = preg_replace('/&#39;/', "'", $clean_lang[$tag]);
+                    }
+
+                    // Detect missing tags
+                    foreach ($lang as $tag => $translation) {
+                        if (!array_key_exists($tag, $clean_lang))
+                            $clean_lang[$tag] = $lang[$tag];
                     }
                 }
 
