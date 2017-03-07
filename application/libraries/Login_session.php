@@ -307,7 +307,7 @@ class MY_Login_Session
             if (clearos_console() && clearos_load_library('language/Locale')) {
                 try {
                     $locale = new Locale();
-                    $lang_code = $locale->get_language_code();
+                    $lang_code = $locale->get_language_code(TRUE);
                 } catch (Exception $e) {
                     // Use default
                 }
@@ -319,7 +319,7 @@ class MY_Login_Session
                 try {
                     $locale = new Locale();
                     $languages = $locale->get_languages();
-                    $lang_code = $locale->get_language_code();
+                    $lang_code = $locale->get_language_code(TRUE);
 
                     foreach ($this->framework->agent->languages() as $browser_lang) {
                         $matches = array();
