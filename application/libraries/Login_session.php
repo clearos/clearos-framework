@@ -384,6 +384,12 @@ class MY_Login_Session
             }
         }
 
+        // Wizard
+        //-------
+
+        if (file_exists('/var/clearos/base/wizard') && !clearos_console())
+            $session['wizard'] = TRUE;
+
         // Set the session
         //----------------
 
@@ -428,9 +434,6 @@ class MY_Login_Session
                 'custom_expiration', $custom_expiration
             );
         }
-
-        if (file_exists('/var/clearos/base/wizard') && !clearos_console())
-            $this->framework->session->set_userdata('wizard', TRUE);
     }
 
     /**
