@@ -1,6 +1,6 @@
 Name: clearos-framework
 Group: Development/Languages
-Version: 7.3.7
+Version: 7.3.8
 Release: 1%{dist}
 Summary: ClearOS framework
 License: CodeIgniter and LGPLv3
@@ -38,6 +38,7 @@ cp -r shared $RPM_BUILD_ROOT/usr/clearos/framework
 cp -r system $RPM_BUILD_ROOT/usr/clearos/framework
 
 install -m 0644 license.txt $RPM_BUILD_ROOT/usr/clearos/framework
+install -m 0644 packaging/certs.conf $RPM_BUILD_ROOT/usr/clearos/sandbox/etc/httpd/conf.d
 install -m 0644 packaging/framework.conf $RPM_BUILD_ROOT/usr/clearos/sandbox/etc/httpd/conf.d
 install -m 0644 packaging/framework-permissions.conf $RPM_BUILD_ROOT/usr/clearos/sandbox/etc/httpd/conf.d
 
@@ -63,5 +64,6 @@ rm -rf $RPM_BUILD_ROOT
 %dir %attr(1777,root,root) /var/clearos/framework/cache
 %dir %attr(1777,root,root) /var/clearos/framework/tmp
 /usr/clearos/framework
+%config(noreplace) /usr/clearos/sandbox/etc/httpd/conf.d/certs.conf
 /usr/clearos/sandbox/etc/httpd/conf.d/framework.conf
 /usr/clearos/sandbox/etc/httpd/conf.d/framework-permissions.conf 
