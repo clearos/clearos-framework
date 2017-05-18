@@ -151,19 +151,6 @@ class MY_Lang extends MX_Lang {
 
                 if ($return) return $lang;
 
-                // Developer mode -- add the "translated" info which holds state of all translated tags
-                if (file_exists('/etc/clearos/devel.d/translator_mode')) {
-                    $translated_file = '/var/clearos/base/translations/base/trunk/language/' . $idiom . '/translated.php';
-
-                    if ($idiom == 'en_US') {
-                        $this->language['is_en_us'] = TRUE;
-                    } else if (file_exists($translated_file) && (!isset($this->language['is_translated']))) {
-                        include $translated_file;
-                        $this->language['is_translated'] = $translated;
-                        $this->language['is_en_us'] = FALSE;
-                    }
-                }
-
                 $this->language = array_merge($this->language, $lang);
                 $this->is_loaded[] = $langfile.'_lang'.EXT;
                 unset($lang);
@@ -184,14 +171,7 @@ class MY_Lang extends MX_Lang {
     function line($line = '')
     {
         // ClearFoundation - custom handler for translators
-        if (file_exists('/etc/clearos/devel.d/translator_mode')) {
-            if (isset($this->language['is_en_us']) && $this->language['is_en_us'])
-                $line = $this->language[$line];
-            else if (isset($this->language['is_translated'][$line]) && $this->language['is_translated'][$line])
-                $line = $this->language[$line];
-            else
-                $line = '**' .  $line . '**';
-        } else if ($line == '' OR ! isset($this->language[$line])) {
+        if ($line == '' OR ! isset($this->language[$line])) {
             $line = '****' .  $line . '****';
         } else {
             $line = $this->language[$line];
