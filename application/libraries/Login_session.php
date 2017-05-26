@@ -47,6 +47,7 @@ use \clearos\apps\base\Authorization as Authorization;
 use \clearos\apps\base\OS as OS;
 use \clearos\apps\base\Webconfig as Webconfig;
 use \clearos\apps\events\Event_Utils as Event_Utils;
+use \clearos\apps\firewall_dynamic\Trigger as FD_Trigger;
 use \clearos\apps\language\Locale as Locale;
 use \clearos\apps\network\Hostname as Hostname;
 
@@ -434,6 +435,11 @@ class MY_Login_Session
                 'custom_expiration', $custom_expiration
             );
         }
+
+        // Webconfig login trigger for the firewall_dynamic app
+        if (!clearos_console() && clearos_load_library('firewall_dynamic/Trigger'))
+            FD_Trigger::execute('webconfig_login', ['u' => $username, 's' => $this->framework->input->ip_address()]);
+
     }
 
     /**
