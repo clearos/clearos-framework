@@ -97,7 +97,7 @@ use \clearos\apps\registration\Registration as Registration;
  * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
 
-class MY_Page
+class Page
 {
     ///////////////////////////////////////////////////////////////////////////////
     // C O N S T A N T S

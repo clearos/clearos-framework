@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
 /**
  * ClearOS loader class override.
@@ -7,7 +7,7 @@
  * @package    Base
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2013 ClearFoundation
+ * @copyright  2013-2017 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
@@ -21,7 +21,7 @@ require APPPATH."third_party/MX/Loader.php";
  * @package    Base
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2013 ClearFoundation
+ * @copyright  2013-2017 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
@@ -100,13 +100,10 @@ class MY_Loader extends MX_Loader {
             ($path2) AND $params = Modules::load_file($file, $path2, 'config');
         }
 
-        if ($path === FALSE) {
-
-            $this->_ci_load_class($library, $params, $object_name);
-            $_alias = $this->_ci_classes[$class];
-
+        if ($path === FALSE)
+        {
+            $this->_ci_load_library($library, $params, $object_name);
         } else {
-
             Modules::load_file($_library, $path);
 
             $library = ucfirst($_library);
