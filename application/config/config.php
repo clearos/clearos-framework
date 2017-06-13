@@ -440,7 +440,7 @@ $config['standardize_newlines'] = FALSE;
 |          for backwards compatibility purposes!
 |
 */
-$config['global_xss_filtering'] = FALSE;
+$config['global_xss_filtering'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -461,7 +461,7 @@ $config['csrf_token_name'] = 'ci_csrf_token';
 $config['csrf_cookie_name'] = 'ci_csrf_token';
 $config['csrf_expire'] = 0;
 $config['csrf_regenerate'] = TRUE;
-$config['csrf_exclude_uris'] = array();
+$config['csrf_exclude_uris'] = array('/app/regsitration/register');
 
 /*
 |--------------------------------------------------------------------------

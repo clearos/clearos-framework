@@ -4,6 +4,9 @@ function form_open($action = '', $attributes = '', $hidden = array(), $options =
 {
     $CI =& get_instance();
 
+    if (empty($attributes) || !array_key_exists('method', $attributes))
+        $attributes['method'] = 'post';
+
     if ($attributes == '')
     {
         $attributes = 'method="post"';
