@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Webconfig page class.
+ * Webconfig page constants class.
  *
  * @category   Framework
  * @package    Application
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2011-2015 ClearFoundation
+ * @copyright  2017 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
@@ -52,47 +52,21 @@ use \clearos\apps\registration\Registration as Registration;
 ///////////////////////////////////////////////////////////////////////////////
 
 /**
- * Webconfig page class.
+ * Webconfig page constants class.
  *
- * This class provides the mechanism for managing the type of a webconfig
- * page.  The view of a given ClearOS App is managed by the app developer,
- * while the view of the following is managed by this class:
+ * Due to 2.0 to 3.0 CodeIgniter changes, the "MY_Page" class was renambed
+ * to "Page".  However, the My_Page::XYZ constants are used in quite a few
+ * apps, e.g.:
  *
- * - Header 
- * - Footer
- * - Menu
- * - Summary
- * - Status messages
+ *    $options['type'] = MY_Page::TYPE_WIDE_CONFIGURATION;
  *
- * This class handles the data management (e.g. parsing menu meta data), 
- * while the theme developer handles the look and feel.  This class also 
- * provides the following variables for use in their overall webconfig page:
- *
- * - login (if logged in)
- * - full name (if logged in)
- * - hostname
- * - registration status
- * - locale
- * - OS name
- * - OS version
- * - theme
- * - theme mode
- * - app 16x16 icon
- * - app 32x32 icon
- * - success message (e.g. firewall rule has been deleted)
- * - warning message (e.g. OpenVPN is running, but the firewall is not allowing connections)
- * - page type (default, splash, wizard(?))
- * - page title
- *
- * This class also handles exceptions.  When an exception occurs in a
- * controller, further processing is halted.  The exception is then shown
- * via the handle_exception() method.
+ * For sanity, these constants have been preserved.
  *
  * @category   Framework
  * @package    Application
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2011-2015 ClearFoundation
+ * @copyright  2017 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
