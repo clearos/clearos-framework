@@ -1,13 +1,13 @@
 Name: clearos-framework
 Group: Development/Languages
-Version: 7.3.14
+Version: 7.4.0
 Release: 1%{dist}
 Summary: ClearOS framework
 License: CodeIgniter and LGPLv3
 Vendor: ClearFoundation
 Source: %{name}-%{version}.tar.gz
 Requires: clearos-base
-Requires: webconfig-php >= 5.3.3
+Requires: webconfig-php >= 5.4.16
 Requires: webconfig-mod_ssl
 Requires(post): /sbin/service
 Buildarch: noarch
