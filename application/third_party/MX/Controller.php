@@ -15,8 +15,8 @@ require dirname(__FILE__).'/Base.php';
  *
  * Install this file as application/third_party/MX/Controller.php
  *
- * @copyright	Copyright (c) 2011 Wiredesignz
- * @version 	5.4
+ * @copyright	Copyright (c) 2015 Wiredesignz
+ * @version 	5.5
  *
  * ClearFoundation: vanity & docs consistency -- changed the name to ClearOS
  * 
@@ -56,7 +56,8 @@ class ClearOS_Controller
 		$this->load->_autoloader($this->autoload);
 	}
 	
-	public function __get($class) {
+	public function __get($class) 
+	{
 		return CI::$APP->$class;
 	}
 
