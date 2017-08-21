@@ -1,4 +1,4 @@
-<?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php (defined('BASEPATH')) OR exit('No direct script access allowed');
 
 /**
  * ClearOS language class override.
@@ -7,7 +7,7 @@
  * @package    Base
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2013 ClearFoundation
+ * @copyright  2013-2017 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
@@ -21,7 +21,7 @@ require APPPATH."third_party/MX/Lang.php";
  * @package    Base
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2013 ClearFoundation
+ * @copyright  2013-2017 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/framework/
  */
@@ -51,7 +51,6 @@ class MY_Lang extends MX_Lang {
      */
 
     public function load($langfile = array(), $lang = '', $return = FALSE, $add_suffix = TRUE, $alt_path = '', $_module = '')    {
-        
         if (is_array($langfile)) {
             foreach($langfile as $_lang) $this->load($_lang);
             return $this->language;

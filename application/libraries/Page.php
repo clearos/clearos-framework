@@ -7,7 +7,7 @@
  * @package    Application
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2011-2015 ClearFoundation
+ * @copyright  2011-2017 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
@@ -93,16 +93,19 @@ use \clearos\apps\registration\Registration as Registration;
  * @package    Application
  * @subpackage Libraries
  * @author     ClearFoundation <developer@clearfoundation.com>
- * @copyright  2011-2015 ClearFoundation
+ * @copyright  2011-2017 ClearFoundation
  * @license    http://www.gnu.org/copyleft/lgpl.html GNU Lesser General Public License version 3 or later
  * @link       http://www.clearfoundation.com/docs/developer/apps/
  */
 
-class MY_Page
+class Page
 {
     ///////////////////////////////////////////////////////////////////////////////
     // C O N S T A N T S
     ///////////////////////////////////////////////////////////////////////////////
+
+    // Important Note!  If you add a constant here, please add it to MY_Page.
+    // See MY_Page for details.
 
     const TYPE_CONFIGURATION = 'configuration';
     const TYPE_WIDE_CONFIGURATION = 'wide_configuration';
