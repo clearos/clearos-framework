@@ -44,6 +44,7 @@ use \clearos\framework\Logger as Logger;
 use \clearos\framework\Config as Config;
 use \clearos\apps\base\Access_Control as Access_Control;
 use \clearos\apps\base\Install_Wizard as Install_Wizard;
+use \clearos\apps\base\Software as Software;
 use \clearos\apps\events\Events as Events;
 use \clearos\apps\registration\Registration as Registration;
 
@@ -1378,6 +1379,14 @@ $meta
             $app['icon_svg'] = clearos_app_htdocs($app_name) . '/' . $icon_basename;
         else
             $app['icon_svg'] = '/assets/app_default.svg';
+
+
+        if (isset($app['powered_by'])) {
+            foreach ($app['powered_by']['packages'] as $engine => $engine_data) {
+                $software = new Software($engine);
+                $app['powered_by']['packages'][$engine]['version'] = $software->get_version();
+            }
+        }
 
         // Done
         //-----
