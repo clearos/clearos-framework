@@ -1387,7 +1387,8 @@ $meta
         if (isset($app['powered_by'])) {
             foreach ($app['powered_by']['packages'] as $engine => $engine_data) {
                 $software = new Software($engine);
-                $app['powered_by']['packages'][$engine]['version'] = $software->get_version();
+                if ($software->is_installed())
+                    $app['powered_by']['packages'][$engine]['version'] = $software->get_version();
             }
         }
 
