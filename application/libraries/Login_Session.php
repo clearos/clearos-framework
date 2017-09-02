@@ -453,6 +453,7 @@ class Login_Session
         Logger::profile_framework(__METHOD__, __LINE__);
 
         setcookie('clearos_lang', $this->framework->session->userdata('lang_code'), time()+60*60*24*365, '/');
+        setcookie('ci_csrf_token', '', time()-1, '/');
 
         $preserve = array('translation_code', 'lang_code', 'theme', 'theme_model');
 
