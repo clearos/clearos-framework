@@ -486,7 +486,7 @@ function _clearos_error_handler($errno, $errmsg, $file, $line, $context)
     // If developer requests error suppression, then do so
     //----------------------------------------------------
 
-    if (error_reporting(0) === 0)
+    if (error_reporting() === 0)
         return;
 
     // Log the error
