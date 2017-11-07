@@ -463,7 +463,7 @@ $config['csrf_token_name'] = 'ci_csrf_token';
 $config['csrf_cookie_name'] = 'ci_csrf_token';
 $config['csrf_expire'] = 0;
 $config['csrf_regenerate'] = FALSE;
-$config['csrf_exclude_uris'] = array('');
+$config['csrf_exclude_uris'] = array('central_management/.*');
 
 /*
 |--------------------------------------------------------------------------
