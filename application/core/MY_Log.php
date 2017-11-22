@@ -98,7 +98,7 @@ class MY_Log extends CI_Log {
             $type = Error::TYPE_PROFILE;
         } else if ($level === 'INFO') {
             $clearos_level = CLEAROS_INFO;
-            $type = Error::TYPE_ERROR;
+            $type = Error::TYPE_PROFILE;
         } else {
             $clearos_level = CLEAROS_ERROR;
             $type = Error::TYPE_ERROR;
