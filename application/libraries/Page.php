@@ -293,7 +293,7 @@ class Page
             $this->_load_meta_data();
 
         // TODO: wizard mode does not work, use splash for now
-        if ($this->framework->session->userdata['wizard'])
+        if (!empty($this->framework->session->userdata['wizard']))
             $type = MY_Page::TYPE_SPLASH;
         else
             $type = isset($options['type']) ? $options['type'] : MY_Page::TYPE_CONFIGURATION;
@@ -644,7 +644,7 @@ class Page
             $this->data['widget_views'][] = ob_get_clean();
         }
 
-        if ($options['type'] == MY_Page::TYPE_DASHBOARD_WIDGET) {
+        if (!empty($options['type']) && ($options['type'] == MY_Page::TYPE_DASHBOARD_WIDGET)) {
             $this->framework->form_only = FALSE;
             return $this->data['widget_views'];
         }
@@ -1017,10 +1017,12 @@ $meta
         if (clearos_load_library('registration/Registration') && $this->framework->session->userdata('username')) {
             $registration = new Registration();
             $notice = $registration->get_sdn_notice();
-            if ($notice['root_only'] && $this->framework->session->userdata('username') != 'root') {
+            if (!empty($notice['root_only']) && $notice['root_only'] && $this->framework->session->userdata('username') != 'root') {
                 // Show nothing
             } else {
-                if ($notice['persistence'] == 'page') {
+                if (empty($notice['persistence'])) {
+                    // n/a
+                } else if ($notice['persistence'] == 'page') {
                     $this->data['sdn_notice'] = $notice;
                 } else if ($notice['persistence'] == 'session' && $notice['id'] != $this->framework->session->userdata('sdn_notice')) {
                     $this->data['sdn_notice'] = $notice;

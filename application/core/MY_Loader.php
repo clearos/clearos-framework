@@ -88,7 +88,7 @@ class MY_Loader extends MX_Loader {
         $class = strtolower(basename($library));
 
         if (isset($this->_ci_classes[$class]) AND $_alias = $this->_ci_classes[$class])
-            return CI::$APP->$_alias;
+            return;
 
         ($_alias = strtolower($object_name)) OR $_alias = $class;
 
