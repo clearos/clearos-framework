@@ -62,6 +62,7 @@ class MY_Router extends MX_Router
         $this->module = '';
         $this->directory = '';
         $ext = $this->config->item('controller_suffix').EXT;
+        $controller_type = (isset($_SERVER['REQUEST_URI']) && preg_match('/^\/api\//', $_SERVER['REQUEST_URI'])) ? 'api' : 'controllers';
         
         /* use module route if available */
         if (isset($segments[0]) AND $routes = Modules::parse_routes($segments[0], implode('/', $segments))) {
@@ -77,10 +78,10 @@ class MY_Router extends MX_Router
             // ClearFoundation -- add support for multiple development trees
             foreach (ClearOSConfig::$scm_subpaths as $scm_subpath) {        
                 /* module exists? */
-                if (is_dir($source = $location.$module.'/'.$scm_subpath.'/controllers/')) {
+                if (is_dir($source = $location.$module.'/'.$scm_subpath.'/' . $controller_type . '/')) {
                     
                     $this->module = $module;
-                    $this->directory = $offset.$module.'/'.$scm_subpath.'/controllers/';
+                    $this->directory = $offset.$module.'/'.$scm_subpath.'/' . $controller_type . '/';
                     
                     /* module sub-controller exists? */
                     if($directory AND is_file($source.$directory.$ext)) {
