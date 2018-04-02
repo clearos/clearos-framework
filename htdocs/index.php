@@ -34,4 +34,4 @@ if (($_SERVER['SERVER_PORT'] == 82) && file_exists('/usr/clearos/apps/web_proxy/
 else if (file_exists('/usr/clearos/apps/base/htdocs/'))
     header("Location: /app/base/");
 else
-    echo 'No apps installed.  You can go about your business.  Move along... move along.';
+    echo 'These aren\'t the APIs you\'re looking for.  You can go about your business.  Move along... move along.';

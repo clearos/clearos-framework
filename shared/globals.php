@@ -208,7 +208,20 @@ function clearos_driver($driver_engine)
 }
 
 /**
+ * Returns installed API information.
+ *
+ * @return array installed API information
+ */
+
+function clearos_get_apis() {
+    return Apps::get_list(TRUE, TRUE);
+}
+
+/**
  * Returns installed app information.
+ *
+ * Only apps with a UI and menu are returned.  In other words, what
+ * a normal user sees through the web-based administration interface.
  *
  * @return array installed app information
  */

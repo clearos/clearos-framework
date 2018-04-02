@@ -82,7 +82,7 @@ class Apps
      * @return string apps list
      */
 
-    public static function get_list($detailed = TRUE)
+    public static function get_list($detailed = TRUE, $include_apis = FALSE)
     {
         // Define menu order preferences
         //------------------------------
@@ -163,14 +163,16 @@ class Apps
                         if (!isset($app['basename']))
                             continue;
 
-                        // Skip apps without menus
-                        if (isset($app['menu_enabled']) && ($app['menu_enabled']) === FALSE)
-                            continue;
+                        if (! $include_apis) {
+                            // Skip apps without menus
+                            if (isset($app['menu_enabled']) && ($app['menu_enabled']) === FALSE)
+                                continue;
 
-                        // If only the -core package is installed, skip it
-                        $htdocs_dir = Config::get_app_base($app_name) . '/htdocs';
-                        if (!is_dir($htdocs_dir))
-                            continue;
+                            // If only the -core package is installed, skip it
+                            $htdocs_dir = Config::get_app_base($app_name) . '/htdocs';
+                            if (!is_dir($htdocs_dir))
+                                continue;
+                        }
 
                         $apps_list[$app_name]['name'] = $app['name'];
                         $apps_list[$app_name]['basename'] = $app['basename'];
