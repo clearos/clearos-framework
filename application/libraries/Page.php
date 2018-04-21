@@ -150,7 +150,7 @@ class Page
 
         $this->framework =& get_instance();
 
-        $this->report_driver = clearos_driver('reports');
+        $this->report_driver = 'reports';
     }
 
     /**
@@ -427,9 +427,15 @@ class Page
             'button' => FALSE,
             'tag_position' => 'right'
         );
+
         // Add Documentation button
+        $app_data = $this->_load_app_data($app);
+        if (empty($app_data['documentation_url']))
+            $url = 'http://www.clearos.com/redirect/ClearOS/7/userguide/' . $this->data['current_basename'];
+        else
+            $url = $app_data['documentation_url'];
         $this->data['breadcrumb_links']['app-documentation'] = array(
-            'url' => 'http://www.clearos.com/redirect/ClearOS/7/userguide/' . $this->data['current_basename'],
+            'url' => $url,
             'tag' => lang('base_documentation'),
             'id' => 'app-documentation',
             'display_tag' => FALSE,
@@ -1082,11 +1088,6 @@ $meta
 
         // TODO: Move these to a driver package
         // TODO: translate
-
-        if (empty($data['user_guide_url'])) {
-            $data['user_guide_url'] = 'http://www.clearos.com/redirect/ClearOS/7/userguide/' . $data['basename'];
-            $data['user_guide_url_text'] = 'User Guide';
-        }
 
         if (preg_match('/Business/', $this->framework->session->userdata('os_name'))) {
             $data['support_url'] = 'http://www.clearcenter.com/getsupport';
